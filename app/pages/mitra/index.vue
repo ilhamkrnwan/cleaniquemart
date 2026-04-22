@@ -1,3 +1,233 @@
+<script setup lang="ts">
+useSeoMeta({
+  title: 'Paket Kemitraan Sabun Curah — CleaniqueMart',
+  description: 'Mulai bisnis sabun curah menguntungkan bersama CleaniqueMart. Pilih Paket Starter Rp 15 juta, Paket King Rp 27,5 juta, atau konsultasi gratis. Lisensi resmi, training lengkap, ROI cepat.',
+})
+
+const carouselIndex = ref(0)
+const partnerCarouselIndex = ref(0)
+let partnerCarouselInterval: ReturnType<typeof setInterval> | null = null
+
+const { data: mitraEntries } = await useAsyncData('mitra-list', () =>
+  queryCollection('mitra')
+    .order('order', 'ASC')
+    .all()
+)
+
+const partnerList = computed(() => mitraEntries.value ?? [])
+
+const getWhatsAppLink = (tierName: string) => {
+  const text = encodeURIComponent(`Halo Admin CleaniqueMart, saya tertarik bergabung sebagai Mitra dengan *${tierName}*. Mohon info lengkap syarat dan ketentuannya 🙏`)
+  return `https://wa.me/6287885590088?text=${text}`
+}
+
+function getPartnerLink(partner: { path?: string | null; stem?: string | null }) {
+  if (partner.path) {
+    return partner.path
+  }
+
+  const slug = partner.stem?.replace('mitra/', '')
+  return slug ? `/mitra/${slug}` : '/mitra'
+}
+
+interface TierFeature {
+  label: string
+  included: boolean
+}
+
+interface Tier {
+  name: string
+  desc: string
+  price: string
+  originalPrice?: string
+  isPopular: boolean
+  isLimited?: boolean
+  isConsultation?: boolean
+  features: TierFeature[]
+  ctaLabel: string
+}
+
+const tiers: Tier[] = [
+  {
+    name: 'Paket Starter',
+    desc: 'Cocok untuk pemula yang ingin mulai bisnis sabun curah dengan modal terjangkau dan dukungan lengkap.',
+    price: 'Rp 15.000.000,-',
+    isPopular: false,
+    ctaLabel: 'Order Sekarang',
+    features: [
+      { label: 'Rak Depot 8 Kontainer', included: true },
+      { label: 'Produk Senilai Rp 6.000.000', included: true },
+      { label: 'Desain 3D Interior', included: true },
+      { label: 'Lisensi Resmi Cleanique Mart', included: true },
+      { label: 'Peralatan Produksi Lengkap', included: true },
+      { label: 'Include Biaya Kirim', included: true },
+      { label: 'Peralatan Packing', included: false },
+      { label: 'Set-Up Marketplace', included: false },
+      { label: 'Media Promo Cetak', included: true },
+      { label: 'Instalasi Media Promo di Lokasi', included: true },
+      { label: 'Training Chemical & Bisnis', included: true },
+      { label: 'Landing Page SEO Friendly', included: true },
+      { label: 'Listing & Optimasi Google Maps', included: true },
+      { label: 'Set-Up & Optimasi Sosmed', included: false },
+      { label: 'Filter UV', included: false },
+    ],
+  },
+  {
+    name: 'Paket King',
+    desc: 'Paket terlengkap untuk Anda yang serius membangun bisnis sabun curah profesional dengan semua fitur premium.',
+    price: 'Rp 27.500.000,-',
+    originalPrice: 'Rp 30.000.000,-',
+    isPopular: true,
+    isLimited: true,
+    ctaLabel: 'Order Sekarang',
+    features: [
+      { label: 'Rak Depot 8 Kontainer', included: true },
+      { label: 'Produk Senilai Rp 8.000.000', included: true },
+      { label: 'Desain 3D Interior', included: true },
+      { label: 'Lisensi Resmi Cleanique Mart', included: true },
+      { label: 'Peralatan Produksi Lengkap', included: true },
+      { label: 'Include Biaya Kirim', included: true },
+      { label: 'Peralatan Packing', included: true },
+      { label: 'Set-Up Marketplace', included: true },
+      { label: 'Media Promo Cetak', included: true },
+      { label: 'Instalasi Media Promo di Lokasi', included: true },
+      { label: 'Training Chemical & Bisnis', included: true },
+      { label: 'Landing Page SEO Friendly', included: true },
+      { label: 'Listing & Optimasi Google Maps', included: true },
+      { label: 'Set-Up & Optimasi Sosmed', included: true },
+      { label: 'Filter UV', included: true },
+    ],
+  },
+  {
+    name: 'Paket Konsultasi',
+    desc: 'Belum yakin? Konsultasikan kebutuhan bisnis Anda langsung dengan tim ahli kami secara gratis, tanpa syarat.',
+    price: 'Gratis',
+    isPopular: false,
+    isConsultation: true,
+    ctaLabel: 'Konsultasi Gratis',
+    features: [
+      { label: 'Sesi Konsultasi 1-on-1 dengan Tim Ahli', included: true },
+      { label: 'Analisis Potensi Pasar Wilayah Anda', included: true },
+      { label: 'Rekomendasi Paket Terbaik', included: true },
+      { label: 'Estimasi ROI & Proyeksi Keuntungan', included: true },
+      { label: 'Tanpa Komitmen Pembelian', included: true },
+      { label: 'Panduan Memulai Bisnis Sabun Curah', included: true },
+    ],
+  },
+]
+
+interface Faq {
+  label: string
+  content: string
+  open: boolean
+}
+
+const faqs = ref<Faq[]>([
+  {
+    label: 'Apakah ada biaya pendaftaran atau franchise fee untuk menjadi mitra CleaniqueMart?',
+    content: 'Tidak ada biaya pendaftaran, franchise fee, maupun royalti. Anda hanya membayar untuk paket produk fisik yang dipilih. Seluruh keuntungan penjualan 100% menjadi milik Anda sepenuhnya.',
+    open: false,
+  },
+  {
+    label: 'Berapa estimasi keuntungan atau ROI dari menjadi mitra sabun curah?',
+    content: 'Margin keuntungan rata-rata mitra kami mencapai 40–60% dari harga beli. Dengan harga beli mitra ±Rp 160.000/jerigen 25L dan harga jual eceran Rp 10.000–15.000/liter, estimasi profit bersih per jerigen bisa mencapai Rp 90.000–215.000.',
+    open: false,
+  },
+  {
+    label: 'Bagaimana sistem pengiriman untuk mitra di luar Yogyakarta?',
+    content: 'Kami bekerja sama dengan berbagai mitra kargo darat dan laut untuk pengiriman jerigen 25L ke seluruh Indonesia. Khusus Paket Starter dan King, biaya kirim sudah termasuk dalam paket. Untuk pembelian lanjutan, kami bantu carikan ongkir termurah ke wilayah Anda.',
+    open: false,
+  },
+  {
+    label: 'Apakah saya bebas menetapkan harga jual produk kepada pelanggan?',
+    content: 'Tentu. Kami hanya memberikan harga dasar mitra. Anda bebas menetapkan harga jual sesuai kondisi pasar di wilayah Anda. Kami menyarankan Harga Eceran Tertinggi (HET) sebagai panduan agar Anda tetap kompetitif.',
+    open: false,
+  },
+  {
+    label: 'Bagaimana jika produk rusak atau bocor saat pengiriman?',
+    content: 'Keamanan kemasan adalah prioritas kami. Apabila terjadi kerusakan atau kebocoran akibat kelalaian tim kami yang dapat dibuktikan dengan video unboxing, kami akan sepenuhnya mengganti kerugian tersebut.',
+    open: false,
+  },
+  {
+    label: 'Apakah produk CleaniqueMart sudah bersertifikat halal dan memiliki izin edar resmi?',
+    content: 'Ya, seluruh produk CleaniqueMart telah tersertifikasi halal dan memiliki nomor izin edar PKRT resmi. Sebagai mitra, Anda berhak mencantumkan logo sertifikat halal dan nomor izin edar pada seluruh materi promosi untuk meningkatkan kepercayaan pelanggan.',
+    open: false,
+  },
+])
+
+const toggleFaq = (index: number) => {
+  const targetFaq = faqs.value[index]
+
+  if (!targetFaq) {
+    return
+  }
+
+  targetFaq.open = !targetFaq.open
+}
+
+function clearPartnerAutoplay() {
+  if (!partnerCarouselInterval) {
+    return
+  }
+
+  clearInterval(partnerCarouselInterval)
+  partnerCarouselInterval = null
+}
+
+function startPartnerAutoplay() {
+  clearPartnerAutoplay()
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return
+  }
+
+  partnerCarouselInterval = setInterval(() => {
+    nextPartnerSlide(false)
+  }, 4000)
+}
+
+function goToPartnerSlide(index: number, shouldRestart = true) {
+  if (!partnerList.value.length) {
+    return
+  }
+
+  partnerCarouselIndex.value = (index + partnerList.value.length) % partnerList.value.length
+
+  if (shouldRestart) {
+    startPartnerAutoplay()
+  }
+}
+
+function nextPartnerSlide(shouldRestart = true) {
+  goToPartnerSlide(partnerCarouselIndex.value + 1, shouldRestart)
+}
+
+function prevPartnerSlide() {
+  goToPartnerSlide(partnerCarouselIndex.value - 1)
+}
+
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add('is-visible')
+    })
+  }, { threshold: 0.1 })
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
+  }, 100)
+
+  startPartnerAutoplay()
+})
+
+onUnmounted(() => {
+  clearPartnerAutoplay()
+})
+
+const goToTierSlide = (index: number) => {
+  carouselIndex.value = index
+}
+</script>
+
 <template>
   <div>
     <PageHero
@@ -178,9 +408,10 @@
         </div>
 
         <div class="partners-grid">
-          <article
-            v-for="(partner, index) in partners"
-            :key="partner.name"
+          <NuxtLink
+            v-for="(partner, index) in partnerList"
+            :key="partner.path ?? partner.stem"
+            :to="getPartnerLink(partner)"
             class="partner-card glass-card reveal"
             :style="{ transitionDelay: `${Math.min(index * 0.08, 0.56)}s` }"
           >
@@ -197,13 +428,13 @@
             </div>
             <div class="partner-card__body">
               <div class="partner-card__location">{{ partner.location }}</div>
-              <h3 class="partner-card__name">{{ partner.name }}</h3>
+              <h3 class="partner-card__name">{{ partner.title }}</h3>
               <p class="partner-card__address">
                 <span>Alamat:</span>
                 {{ partner.address }}
               </p>
             </div>
-          </article>
+          </NuxtLink>
         </div>
 
         <div class="partners-carousel" aria-label="Daftar mitra Cleanique Mart">
@@ -218,9 +449,10 @@
             </button>
 
             <div class="partners-carousel__track">
-              <article
-                v-for="(partner, index) in partners"
-                :key="partner.name"
+              <NuxtLink
+                v-for="(partner, index) in partnerList"
+                :key="partner.path ?? partner.stem"
+                :to="getPartnerLink(partner)"
                 class="partner-card partner-card--mobile glass-card partners-carousel__slide"
                 :class="{ 'partners-carousel__slide--active': partnerCarouselIndex === index }"
                 :aria-hidden="partnerCarouselIndex !== index"
@@ -238,13 +470,13 @@
                 </div>
                 <div class="partner-card__body">
                   <div class="partner-card__location">{{ partner.location }}</div>
-                  <h3 class="partner-card__name">{{ partner.name }}</h3>
+                  <h3 class="partner-card__name">{{ partner.title }}</h3>
                   <p class="partner-card__address">
                     <span>Alamat:</span>
                     {{ partner.address }}
                   </p>
                 </div>
-              </article>
+              </NuxtLink>
             </div>
 
             <button
@@ -259,12 +491,12 @@
 
           <div class="partners-carousel__dots" role="tablist" aria-label="Pilih mitra">
             <button
-              v-for="(partner, index) in partners"
-              :key="`partner-dot-${partner.name}`"
+              v-for="(partner, index) in partnerList"
+              :key="`partner-dot-${partner.path ?? partner.stem}`"
               type="button"
               class="partners-carousel__dot"
               :class="{ 'partners-carousel__dot--active': partnerCarouselIndex === index }"
-              :aria-label="`Lihat ${partner.name}`"
+              :aria-label="`Lihat ${partner.title}`"
               @click="goToPartnerSlide(index)"
             />
           </div>
@@ -307,314 +539,6 @@
     <HomeCTA />
   </div>
 </template>
-
-<script setup lang="ts">
-useSeoMeta({
-  title: 'Paket Kemitraan Sabun Curah — CleaniqueMart',
-  description: 'Mulai bisnis sabun curah menguntungkan bersama CleaniqueMart. Pilih Paket Starter Rp 15 juta, Paket King Rp 27,5 juta, atau konsultasi gratis. Lisensi resmi, training lengkap, ROI cepat.',
-})
-
-const carouselIndex = ref(0)
-const partnerCarouselIndex = ref(0)
-let partnerCarouselInterval: ReturnType<typeof setInterval> | null = null
-
-const getWhatsAppLink = (tierName: string) => {
-  const text = encodeURIComponent(`Halo Admin CleaniqueMart, saya tertarik bergabung sebagai Mitra dengan *${tierName}*. Mohon info lengkap syarat dan ketentuannya 🙏`)
-  return `https://wa.me/6287885590088?text=${text}`
-}
-
-interface TierFeature {
-  label: string
-  included: boolean
-}
-
-interface Tier {
-  name: string
-  desc: string
-  price: string
-  originalPrice?: string
-  isPopular: boolean
-  isLimited?: boolean
-  isConsultation?: boolean
-  features: TierFeature[]
-  ctaLabel: string
-}
-
-const tiers: Tier[] = [
-  {
-    name: 'Paket Starter',
-    desc: 'Cocok untuk pemula yang ingin mulai bisnis sabun curah dengan modal terjangkau dan dukungan lengkap.',
-    price: 'Rp 15.000.000,-',
-    isPopular: false,
-    ctaLabel: 'Order Sekarang',
-    features: [
-      { label: 'Rak Depot 8 Kontainer', included: true },
-      { label: 'Produk Senilai Rp 6.000.000', included: true },
-      { label: 'Desain 3D Interior', included: true },
-      { label: 'Lisensi Resmi Cleanique Mart', included: true },
-      { label: 'Peralatan Produksi Lengkap', included: true },
-      { label: 'Include Biaya Kirim', included: true },
-      { label: 'Peralatan Packing', included: false },
-      { label: 'Set-Up Marketplace', included: false },
-      { label: 'Media Promo Cetak', included: true },
-      { label: 'Instalasi Media Promo di Lokasi', included: true },
-      { label: 'Training Chemical & Bisnis', included: true },
-      { label: 'Landing Page SEO Friendly', included: true },
-      { label: 'Listing & Optimasi Google Maps', included: true },
-      { label: 'Set-Up & Optimasi Sosmed', included: false },
-      { label: 'Filter UV', included: false },
-    ],
-  },
-  {
-    name: 'Paket King',
-    desc: 'Paket terlengkap untuk Anda yang serius membangun bisnis sabun curah profesional dengan semua fitur premium.',
-    price: 'Rp 27.500.000,-',
-    originalPrice: 'Rp 30.000.000,-',
-    isPopular: true,
-    isLimited: true,
-    ctaLabel: 'Order Sekarang',
-    features: [
-      { label: 'Rak Depot 8 Kontainer', included: true },
-      { label: 'Produk Senilai Rp 8.000.000', included: true },
-      { label: 'Desain 3D Interior', included: true },
-      { label: 'Lisensi Resmi Cleanique Mart', included: true },
-      { label: 'Peralatan Produksi Lengkap', included: true },
-      { label: 'Include Biaya Kirim', included: true },
-      { label: 'Peralatan Packing', included: true },
-      { label: 'Set-Up Marketplace', included: true },
-      { label: 'Media Promo Cetak', included: true },
-      { label: 'Instalasi Media Promo di Lokasi', included: true },
-      { label: 'Training Chemical & Bisnis', included: true },
-      { label: 'Landing Page SEO Friendly', included: true },
-      { label: 'Listing & Optimasi Google Maps', included: true },
-      { label: 'Set-Up & Optimasi Sosmed', included: true },
-      { label: 'Filter UV', included: true },
-    ],
-  },
-  {
-    name: 'Paket Konsultasi',
-    desc: 'Belum yakin? Konsultasikan kebutuhan bisnis Anda langsung dengan tim ahli kami secara gratis, tanpa syarat.',
-    price: 'Gratis',
-    isPopular: false,
-    isConsultation: true,
-    ctaLabel: 'Konsultasi Gratis',
-    features: [
-      { label: 'Sesi Konsultasi 1-on-1 dengan Tim Ahli', included: true },
-      { label: 'Analisis Potensi Pasar Wilayah Anda', included: true },
-      { label: 'Rekomendasi Paket Terbaik', included: true },
-      { label: 'Estimasi ROI & Proyeksi Keuntungan', included: true },
-      { label: 'Tanpa Komitmen Pembelian', included: true },
-      { label: 'Panduan Memulai Bisnis Sabun Curah', included: true },
-    ],
-  },
-]
-
-interface Faq {
-  label: string
-  content: string
-  open: boolean
-}
-
-interface PartnerLocation {
-  name: string
-  location: string
-  address: string
-  image: string
-  imageAlt: string
-}
-
-const partners: PartnerLocation[] = [
-  {
-    name: 'Cleanique Mart Tapos Depok',
-    location: 'Depok',
-    address: 'Jl. Raya Tapos 17-A depan Perumahan Permata Cimanggis - Depok',
-    image: '/mitra/cleanique-mart-tapos-depok.webp',
-    imageAlt: 'Cleanique Mart Tapos Depok',
-  },
-  {
-    name: 'Cleanique Mart Palembang',
-    location: 'Palembang',
-    address: 'Jl. Pipa Reja No.31C, Pipa Jaya, Kec. Kemuning, Kota Palembang, Sumatera Selatan 30128',
-    image: '/mitra/cleanique_mart_palembang.webp',
-    imageAlt: 'Cleanique Mart Palembang',
-  },
-  {
-    name: 'Cleanique Mart Malang',
-    location: 'Malang',
-    address: 'Jl. Mayjen Sungkono A11, Kel. Bumiayu, Kec. Kedung Kandang, Kota Malang',
-    image: '/mitra/Cleanique-Mart-Malang-Depan-Toko.webp',
-    imageAlt: 'Cleanique Mart Malang',
-  },
-  {
-    name: 'Cleanique Mart Situbondo',
-    location: 'Situbondo',
-    address: 'Jln Cempaka II Gg Nusa Indah No. 1, sekitar 100 m barat pabrik es, Ds Sumberkolak, Kec Panarukan, Situbondo',
-    image: '/mitra/Cleanique-Mart-Situbondo-1.webp',
-    imageAlt: 'Cleanique Mart Situbondo',
-  },
-  {
-    name: 'Cleanique Mart Demak',
-    location: 'Demak',
-    address: 'Batursari, Mranggen, Demak, Jawa Tengah 59567',
-    image: '/mitra/Mitra-Cleanique-Mart-Demak.webp',
-    imageAlt: 'Cleanique Mart Demak',
-  },
-  {
-    name: 'Cleanique Mart Maguwoharjo',
-    location: 'Sleman',
-    address: 'Jl. Raya Tajem No. 6, RT/RW 02/30, Maguwoharjo, Depok, Sleman',
-    image: '/mitra/Mitra-Cleanique-Mart-Tajem.webp',
-    imageAlt: 'Cleanique Mart Maguwoharjo',
-  },
-  {
-    name: 'Cleanique Mart Temanggung 1',
-    location: 'Temanggung',
-    address: 'Jl. WR. Supratman No.34, Dongkelan Utara, Jampiroso, Kec. Temanggung, Kabupaten Temanggung, Jawa Tengah 56212',
-    image: '/mitra/Thumbnail-Mitra-Cleanique-Mart-Temanggung-1.webp',
-    imageAlt: 'Cleanique Mart Temanggung 1',
-  },
-  {
-    name: 'Cleanique Mart Temanggung 2',
-    location: 'Temanggung',
-    address: 'Jl. Megatan No. 4, Dusun Nglarangan RT 02, RW 04, Candi Mulyo, Kedu, Temanggung, Jawa Tengah',
-    image: '/mitra/Thumbnail-Mitra-Cleanique-Mart-Temanggung-2.webp',
-    imageAlt: 'Cleanique Mart Temanggung 2',
-  },
-  {
-    name: 'Cleanique Mart Karanganyar',
-    location: 'Karanganyar',
-    address: 'Jl. Alternatif Matesih, Supan, Tegalgede, Kec. Karanganyar, Kabupaten Karanganyar, Jawa Tengah 57714',
-    image: '/mitra/Thumbnail-Mitra-Cleanique-Mart-Karanganyar.webp',
-    imageAlt: 'Cleanique Mart Karanganyar',
-  },
-  {
-    name: 'Cleanique Mart Boyolali',
-    location: 'Boyolali',
-    address: 'Jalan Jinten No. 10, Pulisen, Boyolali, Jawa Tengah 57316',
-    image: '/mitra/Thumbnail-Mitra-Cleanique-Mart-Boyolali.webp',
-    imageAlt: 'Cleanique Mart Boyolali',
-  },
-  {
-    name: 'Cleanique Mart Jambi',
-    location: 'Jambi',
-    address: 'Jl. Kutilang IV No.29, RT.9, Tambak Sari, Kec. Jambi Sel., Kota Jambi, Jambi 36131',
-    image: '/mitra/Thumbnail-Mitra-Cleanique-Mart-Jambi.webp',
-    imageAlt: 'Cleanique Mart Jambi',
-  },
-  {
-    name: 'Cleanique Mart Jakarta Timur',
-    location: 'Jakarta Timur',
-    address: 'Jl. Cipinang Kebembem I No.24, RT.007/RW.7, Cipinang, Kec. Pulo Gadung, Kota Jakarta Timur, DKI Jakarta 13240',
-    image: '/mitra/cleanique-mart-jakarta-timur-thumbnail.webp',
-    imageAlt: 'Cleanique Mart Jakarta Timur',
-  },
-]
-
-const faqs = ref<Faq[]>([
-  {
-    label: 'Apakah ada biaya pendaftaran atau franchise fee untuk menjadi mitra CleaniqueMart?',
-    content: 'Tidak ada biaya pendaftaran, franchise fee, maupun royalti. Anda hanya membayar untuk paket produk fisik yang dipilih. Seluruh keuntungan penjualan 100% menjadi milik Anda sepenuhnya.',
-    open: false,
-  },
-  {
-    label: 'Berapa estimasi keuntungan atau ROI dari menjadi mitra sabun curah?',
-    content: 'Margin keuntungan rata-rata mitra kami mencapai 40–60% dari harga beli. Dengan harga beli mitra ±Rp 160.000/jerigen 25L dan harga jual eceran Rp 10.000–15.000/liter, estimasi profit bersih per jerigen bisa mencapai Rp 90.000–215.000.',
-    open: false,
-  },
-  {
-    label: 'Bagaimana sistem pengiriman untuk mitra di luar Yogyakarta?',
-    content: 'Kami bekerja sama dengan berbagai mitra kargo darat dan laut untuk pengiriman jerigen 25L ke seluruh Indonesia. Khusus Paket Starter dan King, biaya kirim sudah termasuk dalam paket. Untuk pembelian lanjutan, kami bantu carikan ongkir termurah ke wilayah Anda.',
-    open: false,
-  },
-  {
-    label: 'Apakah saya bebas menetapkan harga jual produk kepada pelanggan?',
-    content: 'Tentu. Kami hanya memberikan harga dasar mitra. Anda bebas menetapkan harga jual sesuai kondisi pasar di wilayah Anda. Kami menyarankan Harga Eceran Tertinggi (HET) sebagai panduan agar Anda tetap kompetitif.',
-    open: false,
-  },
-  {
-    label: 'Bagaimana jika produk rusak atau bocor saat pengiriman?',
-    content: 'Keamanan kemasan adalah prioritas kami. Apabila terjadi kerusakan atau kebocoran akibat kelalaian tim kami yang dapat dibuktikan dengan video unboxing, kami akan sepenuhnya mengganti kerugian tersebut.',
-    open: false,
-  },
-  {
-    label: 'Apakah produk CleaniqueMart sudah bersertifikat halal dan memiliki izin edar resmi?',
-    content: 'Ya, seluruh produk CleaniqueMart telah tersertifikasi halal dan memiliki nomor izin edar PKRT resmi. Sebagai mitra, Anda berhak mencantumkan logo sertifikat halal dan nomor izin edar pada seluruh materi promosi untuk meningkatkan kepercayaan pelanggan.',
-    open: false,
-  },
-])
-
-const toggleFaq = (index: number) => {
-  const targetFaq = faqs.value[index]
-
-  if (!targetFaq) {
-    return
-  }
-
-  targetFaq.open = !targetFaq.open
-}
-
-function clearPartnerAutoplay() {
-  if (!partnerCarouselInterval) {
-    return
-  }
-
-  clearInterval(partnerCarouselInterval)
-  partnerCarouselInterval = null
-}
-
-function startPartnerAutoplay() {
-  clearPartnerAutoplay()
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return
-  }
-
-  partnerCarouselInterval = setInterval(() => {
-    nextPartnerSlide(false)
-  }, 4000)
-}
-
-function goToPartnerSlide(index: number, shouldRestart = true) {
-  if (!partners.length) {
-    return
-  }
-
-  partnerCarouselIndex.value = (index + partners.length) % partners.length
-
-  if (shouldRestart) {
-    startPartnerAutoplay()
-  }
-}
-
-function nextPartnerSlide(shouldRestart = true) {
-  goToPartnerSlide(partnerCarouselIndex.value + 1, shouldRestart)
-}
-
-function prevPartnerSlide() {
-  goToPartnerSlide(partnerCarouselIndex.value - 1)
-}
-
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) entry.target.classList.add('is-visible')
-    })
-  }, { threshold: 0.1 })
-  setTimeout(() => {
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-  }, 100)
-
-  startPartnerAutoplay()
-})
-
-onUnmounted(() => {
-  clearPartnerAutoplay()
-})
-
-const goToTierSlide = (index: number) => {
-  carouselIndex.value = index
-}
-</script>
 
 <style scoped>
 /* Helpers used across page */

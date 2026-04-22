@@ -25,7 +25,7 @@
               </div>
 
               <h1 class="post-title">{{ post?.title }}</h1>
-              <p class="post-lead">{{ post?.description }}</p>
+              <p v-if="post?.description" class="post-lead">{{ post?.description }}</p>
 
               <!-- Hero Image -->
               <div class="post-hero-img">
@@ -42,7 +42,7 @@
 
             <!-- Body -->
               <div class="post-body">
-                <ContentRenderer :value="sanitizedPost" />
+                <ContentRenderer :value="post" />
             </div>
 
             <!-- Post Footer -->
@@ -69,9 +69,6 @@
                 <NuxtImg
                   src="/cleanique-mart-logo-outline-scaled.webp"
                   alt="Logo CleaniqueMart"
-                  fit="contain"
-                  width="200"
-                  height="70"
                   class="sidebar-cta__logo"
                   loading="lazy"
                 />
@@ -145,48 +142,6 @@ const { data: related } = await useAsyncData(`related-${slug}`, () =>
 if (!post.value) {
   throw createError({ statusCode: 404, statusMessage: 'Artikel tidak ditemukan' })
 }
-
-function sanitizeHeadingPrefix(text: string) {
-  return text
-    .replace(/^\s*#{1,6}\s+/, '')
-    .replace(/^\s*#(?=\d)/, '')
-}
-
-function sanitizeNode(node: any, parentTag = ''): any {
-  if (Array.isArray(node)) {
-    return node.map((item) => sanitizeNode(item, parentTag))
-  }
-
-  if (!node || typeof node !== 'object') {
-    return node
-  }
-
-  const cloned = { ...node }
-  const currentTag = typeof cloned.tag === 'string' ? cloned.tag : parentTag
-
-  if (typeof cloned.value === 'string' && ['p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(parentTag)) {
-    cloned.value = sanitizeHeadingPrefix(cloned.value)
-  }
-
-  if (cloned.children) {
-    cloned.children = sanitizeNode(cloned.children, currentTag)
-  }
-
-  return cloned
-}
-
-const sanitizedPost = computed(() => {
-  if (!post.value) {
-    return null
-  }
-
-  const cloned = structuredClone(post.value) as any
-  if (cloned.body) {
-    cloned.body = sanitizeNode(cloned.body)
-  }
-
-  return cloned
-})
 
 function updateStickyOffsets() {
   const navbarInner = document.querySelector('.navbar .navbar__inner') as HTMLElement | null
@@ -312,20 +267,21 @@ time {
   font-size: 1.1rem;
   line-height: 1.75;
   color: var(--color-text-light);
-  margin-bottom: var(--space-8);
+  margin-bottom: 0;
 }
 
 .post-hero-img {
+  margin-top: var(--space-5);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  aspect-ratio: 16/8;
   background: var(--color-sky);
 }
 
 .post-hero-img__img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
+  object-position: center top;
 }
 
 /* ── Body: Prose styling ── */
@@ -365,6 +321,17 @@ time {
   color: inherit;
   text-decoration: none;
   font-weight: inherit;
+}
+
+/* Hide auto permalink hash for headings to keep visible titles clean. */
+.post-body :deep(.header-anchor),
+.post-body :deep(h1 > a[href^="#"]:first-child),
+.post-body :deep(h2 > a[href^="#"]:first-child),
+.post-body :deep(h3 > a[href^="#"]:first-child),
+.post-body :deep(h4 > a[href^="#"]:first-child),
+.post-body :deep(h5 > a[href^="#"]:first-child),
+.post-body :deep(h6 > a[href^="#"]:first-child) {
+  display: none;
 }
 
 .post-body :deep(p) {

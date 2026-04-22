@@ -1,88 +1,14 @@
-<template>
-  <div>
-    <PageHero
-      title="Katalog <span class='accent'>Produk Premium</span>"
-      subtitle="Semua formulasi CleaniQue Mart diciptakan untuk performa tinggi, efisiensi maksimal, dan keamanan. Tersedia dalam ukuran jerigen 25 Liter untuk kebutuhan bisnis dan rumah tangga skala besar."
-      badge="Formulasi Profesional"
-    />
-
-    <section class="products-catalog section">
-      <div class="container">
-        <!-- Categories Filter (Visual only for now) -->
-        <div class="catalog-filters reveal">
-          <button class="filter-btn active">Semua Varian</button>
-          <button class="filter-btn">Deterjen</button>
-          <button class="filter-btn">Pembersih</button>
-          <button class="filter-btn">Perawatan Pakaian</button>
-        </div>
-
-        <div class="catalog-grid">
-          <article
-            v-for="(product, i) in products"
-            :key="product.name"
-            class="catalog-item glass-card reveal"
-            :class="`reveal-delay-${(i % 3) + 1}`"
-          >
-            <div class="catalog-item__visual">
-              <NuxtImg
-                :src="product.image"
-                :alt="`Produk ${product.name} CleaniqueMart`"
-                class="catalog-item__img"
-                loading="lazy"
-                width="400"
-                height="400"
-              />
-              <div class="catalog-item__overlay">
-                <span class="catalog-item__size">Ukuran: 25L</span>
-              </div>
-            </div>
-            
-            <div class="catalog-item__content">
-              <div class="catalog-item__header">
-                <h2 class="catalog-item__title">{{ product.name }}</h2>
-                <div class="catalog-item__tag" :class="`tag--${product.category.toLowerCase().replace(' ', '-')}`">
-                  {{ product.category }}
-                </div>
-              </div>
-              
-              <p class="catalog-item__desc">{{ product.desc }}</p>
-              
-              <ul class="catalog-item__features">
-                <li v-for="feat in product.features" :key="feat">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                  {{ feat }}
-                </li>
-              </ul>
-              
-              <div class="catalog-item__actor">
-                <a
-                  :href="getWhatsAppLink(product.name)"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-primary w-full"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11.9a16 16 0 0 0 6.06 6.06l1.27-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 19.24z"/></svg>
-                  Order Varian Ini
-                </a>
-              </div>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-  </div>
-</template>
-
 <script setup lang="ts">
 useSeoMeta({
   title: 'Katalog Produk — CleaniqueMart',
   description: 'Jelajahi berbagai produk pembersih dan deterjen premium ukuran 25 Liter dari CleaniqueMart. Formula berkualitas tinggi dengan harga mitra bersaing.',
 })
 
-const getWhatsAppLink = (productName: string) => {
-  const text = encodeURIComponent(`Halo Tim CleaniqueMart, saya tertarik untuk memesan produk varian *${productName}* ukuran 25L. Boleh minta informasi harga dan pengirimannya?`)
-  return `https://wa.me/6287885590088?text=${text}`
-}
+const sliderRef = ref<HTMLElement | null>(null)
+const activeGroup = ref(0)
+const isSliderViewport = ref(false)
+
+const cardsPerGroup = 2
 
 const products = [
   {
@@ -143,6 +69,95 @@ const products = [
   },
 ]
 
+const sliderDots = computed(() => {
+  return Array.from({ length: Math.ceil(products.length / cardsPerGroup) })
+})
+
+let mediaQuery: MediaQueryList | null = null
+
+function getSlides() {
+  if (!sliderRef.value) {
+    return [] as HTMLElement[]
+  }
+  return Array.from(sliderRef.value.querySelectorAll('.catalog-item')) as HTMLElement[]
+}
+
+function onSliderScroll() {
+  if (!isSliderViewport.value || !sliderRef.value) {
+    return
+  }
+
+  const slides = getSlides()
+  if (!slides.length) {
+    return
+  }
+
+  const scrollLeft = sliderRef.value.scrollLeft
+  let nearestGroup = 0
+  let smallestDistance = Number.POSITIVE_INFINITY
+
+  sliderDots.value.forEach((_, groupIndex) => {
+    const slideIndex = Math.min(groupIndex * cardsPerGroup, slides.length - 1)
+    const groupOffset = slides[slideIndex]?.offsetLeft ?? 0
+    const distance = Math.abs(groupOffset - scrollLeft)
+
+    if (distance < smallestDistance) {
+      smallestDistance = distance
+      nearestGroup = groupIndex
+    }
+  })
+
+  activeGroup.value = nearestGroup
+}
+
+function goToGroup(index: number) {
+  if (!sliderRef.value) {
+    return
+  }
+
+  const slides = getSlides()
+  if (!slides.length) {
+    return
+  }
+
+  const targetIndex = Math.min(index * cardsPerGroup, slides.length - 1)
+  const targetSlide = slides[targetIndex]
+  if (!targetSlide) {
+    return
+  }
+
+  sliderRef.value.scrollTo({
+    left: targetSlide.offsetLeft,
+    behavior: 'smooth',
+  })
+
+  activeGroup.value = index
+}
+
+function getDotOpacity(index: number) {
+  const distance = Math.abs(activeGroup.value - index)
+  if (distance === 0) {
+    return 1
+  }
+  if (distance === 1) {
+    return 0.56
+  }
+  return 0.3
+}
+
+function handleMediaChange(event: MediaQueryListEvent) {
+  isSliderViewport.value = event.matches
+
+  if (!event.matches) {
+    activeGroup.value = 0
+    return
+  }
+
+  nextTick(() => {
+    onSliderScroll()
+  })
+}
+
 onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -150,54 +165,112 @@ onMounted(() => {
     })
   }, { threshold: 0.1 })
   
-  // Need timeout to catch newly mounted elements logic in some frameworks
   setTimeout(() => {
     document.querySelectorAll('.products-catalog .reveal').forEach((el) => observer.observe(el))
   }, 100)
+
+  mediaQuery = window.matchMedia('(max-width: 768px)')
+  isSliderViewport.value = mediaQuery.matches
+  mediaQuery.addEventListener('change', handleMediaChange)
+
+  nextTick(() => {
+    onSliderScroll()
+  })
+})
+
+onUnmounted(() => {
+  mediaQuery?.removeEventListener('change', handleMediaChange)
 })
 </script>
+
+<template>
+  <div>
+    <PageHero
+      title="Katalog <span class='accent'>Produk Premium</span>"
+      subtitle="Semua formulasi CleaniQue Mart diciptakan untuk performa tinggi, efisiensi maksimal, dan keamanan. Tersedia dalam ukuran jerigen 25 Liter untuk kebutuhan bisnis dan rumah tangga skala besar."
+      badge="Formulasi Profesional"
+    />
+
+    <section class="products-catalog section">
+      <div class="container">
+        <div class="catalog-grid" ref="sliderRef" @scroll.passive="onSliderScroll">
+          <article
+            v-for="(product, i) in products"
+            :key="product.name"
+            class="catalog-item glass-card reveal"
+            :class="`reveal-delay-${(i % 3) + 1}`"
+          >
+            <div class="catalog-item__visual">
+              <NuxtImg
+                :src="product.image"
+                :alt="`Produk ${product.name} CleaniqueMart`"
+                class="catalog-item__img"
+                loading="lazy"
+                width="400"
+                height="400"
+              />
+              <div class="catalog-item__overlay">
+                <span class="catalog-item__size">Ukuran: 25L</span>
+              </div>
+            </div>
+            
+            <div class="catalog-item__content">
+              <div class="catalog-item__header">
+                <h2 class="catalog-item__title">{{ product.name }}</h2>
+                <div class="catalog-item__tag" :class="`tag--${product.category.toLowerCase().replace(' ', '-')}`">
+                  {{ product.category }}
+                </div>
+              </div>
+              
+              <p class="catalog-item__desc">{{ product.desc }}</p>
+              
+              <ul class="catalog-item__features">
+                <li v-for="feat in product.features" :key="feat">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  {{ feat }}
+                </li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <div class="catalog__slider-dots" v-if="sliderDots.length > 1">
+          <button
+            v-for="(_, i) in sliderDots"
+            :key="`dot-${i}`"
+            type="button"
+            class="catalog__slider-dot"
+            :class="{ 'catalog__slider-dot--active': activeGroup === i }"
+            :style="{ opacity: getDotOpacity(i) }"
+            :aria-label="`Tampilkan grup produk ${i + 1}`"
+            :aria-pressed="activeGroup === i"
+            @click="goToGroup(i)"
+          ></button>
+        </div>
+      </div>
+    </section>
+
+    <ProductsReviews />
+  </div>
+</template>
 
 <style scoped>
 .products-catalog {
   background: var(--color-surface);
 }
 
-.catalog-filters {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-bottom: var(--space-12);
-}
-
-.filter-btn {
-  background: var(--color-white);
-  border: 1px solid rgba(21, 101, 192, 0.1);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.95rem;
-  padding: var(--space-2) var(--space-6);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.filter-btn:hover {
-  border-color: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.filter-btn.active {
-  background: var(--color-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
-}
-
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-8);
+}
+
+.catalog__slider-dots {
+  display: none;
+}
+
+.catalog__slider-dot {
+  display: block;
 }
 
 .catalog-item {
@@ -309,7 +382,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
+  margin-top: auto;
+  margin-bottom: 0;
   border-top: 1px dashed rgba(21, 101, 192, 0.15);
   padding-top: var(--space-4);
 }
@@ -329,24 +403,74 @@ onMounted(() => {
   margin-top: 2px;
 }
 
-.catalog-item__actor {
-  margin-top: auto;
-}
-
-.w-full {
-  width: 100%;
-  justify-content: center;
-}
-
 @media (max-width: 1024px) {
   .catalog-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .catalog__slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: var(--space-8);
+  }
+
+  .catalog__slider-dot {
+    width: 18px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    border: none;
+    padding: 0;
+    background: rgba(21, 101, 192, 0.18);
+    transition: width var(--transition-base), background var(--transition-base), transform var(--transition-base), opacity var(--transition-base);
+    cursor: pointer;
+  }
+
+  .catalog__slider-dot--active {
+    width: 38px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    transform: translateY(-1px);
+  }
+
+  .catalog__slider-dot:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
   .catalog-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    scrollbar-width: none;
+    align-items: stretch;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
+  }
+
+  .catalog-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .catalog-item {
+    flex: 0 0 min(78%, 280px);
+    scroll-snap-align: start;
+  }
+  
+  .catalog-item:hover {
+    transform: none;
+  }
+  
+  .catalog-item:hover .catalog-item__img {
+    transform: none;
   }
 }
 </style>

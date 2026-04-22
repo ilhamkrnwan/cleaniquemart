@@ -1,85 +1,73 @@
 <template>
-  <section class="testimonials section" id="testimoni">
+  <section class="reviews section" id="reviews">
     <!-- Background decoration -->
-    <div class="testimonials__bg" aria-hidden="true"></div>
+    <div class="reviews__bg" aria-hidden="true"></div>
 
     <div class="container">
       <!-- Header -->
-      <div class="testimonials__header">
+      <div class="reviews__header">
         <div class="section-badge reveal-blur">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Testimoni Mitra
+          Ulasan Produk
         </div>
-        <h2 class="testimonials__title reveal reveal-delay-1">
-          Apa Kata <span class="gradient-text">Mitra Kami?</span>
+        <h2 class="reviews__title reveal reveal-delay-1">
+          Apa Kata <span class="gradient-text">Pelanggan Kami?</span>
         </h2>
-        <p class="testimonials__subtitle reveal reveal-delay-2">
-          Sudah ratusan keluarga di seluruh Indonesia merasakan manfaat bergabung bersama CleaniQue Mart.
+        <p class="reviews__subtitle reveal reveal-delay-2">
+          Bukti nyata kepuasan pelanggan yang telah merasakan performa tinggi dari produk CleaniqueMart.
         </p>
       </div>
 
-      <!-- Testimonial Grid -->
-      <div class="testimonials__grid reveal-stagger" ref="sliderRef" @scroll.passive="onSliderScroll">
+      <!-- Reviews Grid -->
+      <div class="reviews__grid reveal-stagger" ref="sliderRef" @scroll.passive="onSliderScroll">
         <button
-          v-for="(item, i) in testimonials"
+          v-for="(item, i) in reviews"
           :key="i"
-          class="testimonial-card reveal"
+          class="review-card reveal"
           type="button"
-          :aria-label="`Buka testimoni ${i + 1} dalam ukuran besar`"
+          :aria-label="`Buka ulasan ${i + 1} dalam ukuran besar`"
           @click="openPreview(i)"
         >
           <NuxtImg
             :src="item.image"
-            :alt="`Testimoni mitra CleaniqueMart ke-${i + 1}`"
+            :alt="`Ulasan produk CleaniqueMart ke-${i + 1}`"
             width="400"
             height="400"
-            class="testimonial-card__img"
+            class="review-card__img"
             loading="lazy"
             sizes="(max-width: 600px) 50vw, (max-width: 1024px) 33vw, 300px"
           />
-          <div class="testimonial-card__overlay">
-            <div class="testimonial-card__stars" aria-label="Rating 5 bintang">
-              <svg v-for="s in 5" :key="s" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div class="review-card__overlay">
+            <div class="review-card__zoom-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
             </div>
           </div>
         </button>
       </div>
 
-      <div class="testimonials__slider-dots" aria-hidden="true">
+      <div class="reviews__slider-dots" aria-hidden="true">
         <span
-          v-for="(_, i) in testimonials"
+          v-for="(_, i) in reviews"
           :key="`dot-${i}`"
-          class="testimonials__slider-dot"
-          :class="{ 'testimonials__slider-dot--active': activeSlide === i }"
+          class="reviews__slider-dot"
+          :class="{ 'reviews__slider-dot--active': activeSlide === i }"
           :style="{ opacity: getDotOpacity(i) }"
         ></span>
-      </div>
-
-      <!-- Mitra Map Banner -->
-      <div class="testimonials__map-banner glass-card reveal-scale">
-        <div class="testimonials__map-text">
-          <h3 class="testimonials__map-title">Mitra kami tersebar dari Sabang hingga Merauke</h3>
-          <p class="testimonials__map-desc">Yogyakarta · Jakarta · Malang · Palembang · Jambi · Situbondo · Boyolali · Karanganyar · Demak · Temanggung · dan terus berkembang!</p>
-        </div>
-        <NuxtLink to="/mitra" class="btn btn-blue testimonials__map-cta">
-          Lihat Peta Mitra
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-        </NuxtLink>
       </div>
     </div>
 
     <Teleport to="body">
-      <Transition name="testimonial-preview-fade">
+      <Transition name="review-preview-fade">
         <div
           v-if="previewImage"
-          class="testimonial-preview"
+          class="review-preview"
           role="dialog"
           aria-modal="true"
-          aria-label="Pratinjau gambar testimoni"
+          aria-label="Pratinjau gambar ulasan"
           @click.self="closePreview"
         >
           <button
-            class="testimonial-preview__close"
+            class="review-preview__close"
             type="button"
             aria-label="Tutup pratinjau"
             @click="closePreview"
@@ -88,11 +76,11 @@
           </button>
           <NuxtImg
             :src="previewImage"
-            alt="Pratinjau testimoni mitra CleaniqueMart"
+            alt="Pratinjau ulasan pelanggan CleaniqueMart"
             width="1200"
             height="1200"
             fit="contain"
-            class="testimonial-preview__img"
+            class="review-preview__img"
             loading="eager"
           />
         </div>
@@ -107,22 +95,23 @@ const activeSlide = ref(0)
 const previewIndex = ref<number | null>(null)
 const isMobile = ref(false)
 
-const testimonials = [
-  { image: '/testimoni/Testimoni-1.webp' },
-  { image: '/testimoni/Testimoni-2.webp' },
-  { image: '/testimoni/Testimoni-3.webp' },
-  { image: '/testimoni/Testimoni-4.webp' },
-  { image: '/testimoni/Testimoni-5.webp' },
-  { image: '/testimoni/Testimoni-6.webp' },
-  { image: '/testimoni/Testimoni-7.webp' },
+const reviews = [
+  { image: '/reviews/review-arai.webp' },
+  { image: '/reviews/review-athari.webp' },
+  { image: '/reviews/review-determart.webp' },
+  { image: '/reviews/review-essenz.webp' },
+  { image: '/reviews/review-malabeez.webp' },
+  { image: '/reviews/review-oclean.webp' },
+  { image: '/reviews/review-pel-lantai.webp' },
+  { image: '/reviews/review-pelicin-setrika.webp' },
+  { image: '/reviews/review-soft-sense.webp' },
 ]
 
 const previewImage = computed(() => {
   if (previewIndex.value === null) {
     return null
   }
-
-  return testimonials[previewIndex.value]?.image ?? null
+  return reviews[previewIndex.value]?.image ?? null
 })
 
 let mediaQuery: MediaQueryList | null = null
@@ -131,8 +120,7 @@ function getSlides() {
   if (!sliderRef.value) {
     return [] as HTMLElement[]
   }
-
-  return Array.from(sliderRef.value.querySelectorAll('.testimonial-card')) as HTMLElement[]
+  return Array.from(sliderRef.value.querySelectorAll('.review-card')) as HTMLElement[]
 }
 
 function openPreview(index: number) {
@@ -211,13 +199,14 @@ useScrollReveal('.reveal', 0.08)
 </script>
 
 <style scoped>
-.testimonials {
+.reviews {
   background: var(--color-white);
   position: relative;
   overflow: hidden;
+  padding-bottom: var(--space-16);
 }
 
-.testimonials__bg {
+.reviews__bg {
   position: absolute;
   top: -100px;
   left: -100px;
@@ -229,7 +218,7 @@ useScrollReveal('.reveal', 0.08)
 }
 
 /* Header */
-.testimonials__header {
+.reviews__header {
   text-align: center;
   max-width: 600px;
   margin: 0 auto var(--space-12);
@@ -238,36 +227,36 @@ useScrollReveal('.reveal', 0.08)
   align-items: center;
 }
 
-.testimonials__title {
+.reviews__title {
   font-size: clamp(1.75rem, 3.5vw, 2.75rem);
   font-weight: 800;
   margin-bottom: var(--space-4);
 }
 
-.testimonials__subtitle {
+.reviews__subtitle {
   font-size: 1rem;
   line-height: 1.75;
   color: var(--color-text-light);
 }
 
 /* Grid */
-.testimonials__grid {
+.reviews__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
   margin-bottom: var(--space-8);
 }
 
-.testimonials__slider-dots {
+.reviews__slider-dots {
   display: none;
 }
 
-.testimonials__slider-dot {
+.reviews__slider-dot {
   display: block;
 }
 
-/* Testimonial Card */
-.testimonial-card {
+/* Review Card */
+.review-card {
   border: none;
   background: transparent;
   padding: 0;
@@ -282,89 +271,57 @@ useScrollReveal('.reveal', 0.08)
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
-.testimonial-card:focus-visible {
+.review-card:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
 
-/* Last row - center the 3rd item */
-.testimonials__grid .testimonial-card:nth-child(5),
-.testimonials__grid .testimonial-card:nth-child(6),
-.testimonials__grid .testimonial-card:nth-child(7) {
-  /* naturally spans */
-}
-
-.testimonial-card:hover {
+.review-card:hover {
   transform: translateY(-6px) scale(1.02);
   box-shadow: var(--shadow-blue);
 }
 
-.testimonial-card__img {
+.review-card__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
 }
 
-.testimonial-card:hover .testimonial-card__img {
+.review-card:hover .review-card__img {
   transform: scale(1.05);
 }
 
-.testimonial-card__overlay {
+.review-card__overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: var(--space-3);
-  background: linear-gradient(to top, rgba(13, 43, 107, 0.7), transparent);
+  inset: 0;
+  background: rgba(13, 43, 107, 0.4);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
   transition: opacity var(--transition-base);
 }
 
-.testimonial-card:hover .testimonial-card__overlay {
+.review-card:hover .review-card__overlay {
   opacity: 1;
 }
 
-.testimonial-card__stars {
-  display: flex;
-  gap: 2px;
-  color: #FFD600;
+.review-card__zoom-icon {
+  color: var(--color-white);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  padding: var(--space-3);
+  border-radius: var(--radius-full);
+  transform: scale(0.8);
+  transition: transform var(--transition-base);
 }
 
-/* Map Banner */
-.testimonials__map-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-  padding: var(--space-8) var(--space-8);
-  background: linear-gradient(135deg, var(--color-sky), rgba(165, 214, 167, 0.2));
-  border: 1px solid rgba(21, 101, 192, 0.1);
-  flex-wrap: wrap;
+.review-card:hover .review-card__zoom-icon {
+  transform: scale(1);
 }
 
-.testimonials__map-title {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--color-primary-dark);
-  margin-bottom: var(--space-2);
-}
-
-.testimonials__map-desc {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  line-height: 1.6;
-}
-
-.testimonials__map-cta {
-  flex-shrink: 0;
-  font-size: 0.9rem;
-}
-
-.testimonial-preview {
+.review-preview {
   position: fixed;
   inset: 0;
   z-index: calc(var(--z-modal) + 20);
@@ -377,7 +334,7 @@ useScrollReveal('.reveal', 0.08)
   padding: clamp(16px, 3vw, 32px);
 }
 
-.testimonial-preview__img {
+.review-preview__img {
   width: min(920px, 92vw);
   max-height: 88dvh;
   height: auto;
@@ -387,7 +344,7 @@ useScrollReveal('.reveal', 0.08)
   background: rgba(255, 255, 255, 0.05);
 }
 
-.testimonial-preview__close {
+.review-preview__close {
   position: absolute;
   top: clamp(12px, 2vw, 24px);
   right: clamp(12px, 2vw, 24px);
@@ -404,37 +361,37 @@ useScrollReveal('.reveal', 0.08)
   transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
-.testimonial-preview__close:hover {
+.review-preview__close:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: scale(1.04);
 }
 
-.testimonial-preview-fade-enter-active,
-.testimonial-preview-fade-leave-active {
+.review-preview-fade-enter-active,
+.review-preview-fade-leave-active {
   transition: opacity var(--transition-base), transform var(--transition-base);
 }
 
-.testimonial-preview-fade-enter-from,
-.testimonial-preview-fade-leave-to {
+.review-preview-fade-enter-from,
+.review-preview-fade-leave-to {
   opacity: 0;
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .testimonials__grid {
+  .reviews__grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 640px) {
-  .testimonials__slider-dots {
+  .reviews__slider-dots {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: var(--space-6);
   }
 
-  .testimonials__slider-dot {
+  .reviews__slider-dot {
     width: 18px;
     height: 6px;
     border-radius: var(--radius-full);
@@ -442,13 +399,13 @@ useScrollReveal('.reveal', 0.08)
     transition: width var(--transition-base), background var(--transition-base), transform var(--transition-base), opacity var(--transition-base);
   }
 
-  .testimonials__slider-dot--active {
+  .reviews__slider-dot--active {
     width: 38px;
     background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
     transform: translateY(-1px);
   }
 
-  .testimonials__grid {
+  .reviews__grid {
     display: flex;
     grid-template-columns: none;
     overflow-x: auto;
@@ -464,23 +421,18 @@ useScrollReveal('.reveal', 0.08)
     padding-bottom: 0;
   }
 
-  .testimonials__grid::-webkit-scrollbar {
+  .reviews__grid::-webkit-scrollbar {
     display: none;
   }
 
-  .testimonial-card {
+  .review-card {
     flex: 0 0 min(78%, 280px);
     scroll-snap-align: start;
   }
 
-  .testimonial-card:hover {
+  .review-card:hover {
     transform: none;
     box-shadow: var(--shadow-sm);
-  }
-
-  .testimonials__map-banner {
-    flex-direction: column;
-    text-align: center;
   }
 }
 </style>

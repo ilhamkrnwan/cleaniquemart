@@ -12,4 +12,20 @@ export const collections = {
       category: z.string().optional(),
     }),
   }),
+  mitra: defineCollection({
+    type: 'page',
+    source: 'mitra/*.md',
+    schema: z.object({
+      title: z.string(),
+      description: z.string(),
+      location: z.string(),
+      address: z.string(),
+      phone: z.string(),
+      image: z.string(),
+      imageAlt: z.string(),
+      sourceUrl: z.string(),
+      order: z.number(),
+      marketplaces: z.array(z.string()),
+    }),
+  }),
 }

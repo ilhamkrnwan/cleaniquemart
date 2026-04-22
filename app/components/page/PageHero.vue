@@ -5,6 +5,13 @@
     <!-- Subtle dot pattern -->
     <div class="page-hero__dots" aria-hidden="true"></div>
 
+    <!-- Decorative bubbles -->
+    <div class="page-hero__deco" aria-hidden="true">
+      <span class="page-hero__deco-circle page-hero__deco-circle--1"></span>
+      <span class="page-hero__deco-circle page-hero__deco-circle--2"></span>
+      <span class="page-hero__deco-circle page-hero__deco-circle--3"></span>
+    </div>
+
     <div class="container page-hero__inner">
       <!-- Badge -->
       <div v-if="badge" class="page-hero__badge">
@@ -50,7 +57,7 @@ defineProps<{
 .page-hero {
   position: relative;
   background: linear-gradient(135deg, #091E45 0%, #0D2B6B 40%, #1565C0 80%, #1976D2 100%);
-  padding: calc(72px + var(--space-16)) 0 var(--space-24);
+  padding: calc(72px + var(--space-6)) 0 var(--space-24);
   overflow: hidden;
   text-align: center;
 }
@@ -72,6 +79,46 @@ defineProps<{
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 28px 28px;
   pointer-events: none;
+}
+
+/* Decorative Circles */
+.page-hero__deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.page-hero__deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+}
+
+.page-hero__deco-circle--1 {
+  width: 500px;
+  height: 500px;
+  top: -150px;
+  right: -100px;
+  animation: spin-slow 40s linear infinite;
+}
+
+.page-hero__deco-circle--2 {
+  width: 350px;
+  height: 350px;
+  bottom: -100px;
+  left: -80px;
+  border-color: rgba(67, 160, 71, 0.1);
+  animation: spin-slow 30s linear infinite reverse;
+}
+
+.page-hero__deco-circle--3 {
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-color: rgba(255, 255, 255, 0.03);
+  animation: spin-slow 20s linear infinite;
 }
 
 .page-hero__inner {
@@ -195,7 +242,7 @@ defineProps<{
 /* Responsive */
 @media (max-width: 768px) {
   .page-hero {
-    padding: calc(64px + var(--space-12)) 0 var(--space-16);
+    padding: calc(64px + var(--space-4)) 0 var(--space-16);
   }
 
   .page-hero__title {

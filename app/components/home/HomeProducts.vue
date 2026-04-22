@@ -23,7 +23,7 @@
       </div>
 
       <!-- Products Grid -->
-      <div class="products__grid reveal-stagger">
+      <div class="products__grid reveal-stagger" ref="sliderRef" @scroll.passive="onSliderScroll">
         <article
           v-for="(product, i) in products"
           :key="product.name"
@@ -42,14 +42,29 @@
             <div class="product-card__badge">25 L</div>
           </div>
           <div class="product-card__body">
-            <h3 class="product-card__name">{{ product.name }}</h3>
+            <div class="product-card__header">
+              <h3 class="product-card__name">{{ product.name }}</h3>
+              <div class="product-card__tag" :class="`tag--${product.category.toLowerCase().replace(' ', '-')}`">
+                {{ product.category }}
+              </div>
+            </div>
             <p class="product-card__desc">{{ product.desc }}</p>
-            <NuxtLink to="/products" class="product-card__link">
-              Lihat Detail
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </NuxtLink>
           </div>
         </article>
+      </div>
+
+      <div class="products__slider-dots" v-if="sliderDots.length > 1">
+        <button
+          v-for="(_, i) in sliderDots"
+          :key="`dot-${i}`"
+          type="button"
+          class="products__slider-dot"
+          :class="{ 'products__slider-dot--active': activeGroup === i }"
+          :style="{ opacity: getDotOpacity(i) }"
+          :aria-label="`Tampilkan grup produk ${i + 1}`"
+          :aria-pressed="activeGroup === i"
+          @click="goToGroup(i)"
+        ></button>
       </div>
 
       <!-- View All CTA -->
@@ -71,48 +86,169 @@
 </template>
 
 <script setup lang="ts">
+const sliderRef = ref<HTMLElement | null>(null)
+const activeGroup = ref(0)
+const isSliderViewport = ref(false)
+
+const cardsPerGroup = 2
+
 const products = [
   {
     name: 'Hand Washing',
+    category: 'Pembersih',
     desc: 'Sabun cuci tangan anti bakteri dengan formula pelembab. Merawat kulit tetap lembut.',
     image: '/products/Hand-Washing-25L.webp',
   },
   {
     name: 'Deterjen Busa',
+    category: 'Deterjen',
     desc: 'Deterjen busa tinggi dengan wangi tahan lama. Mengangkat noda membandel efektif.',
     image: '/products/Deterjen-Busa-25L.webp',
   },
   {
     name: 'Deterjen Matic',
+    category: 'Deterjen',
     desc: 'Formula khusus mesin cuci matic, busa rendah, daya angkat noda optimal.',
     image: '/products/Deterjen-Matic-25L.webp',
   },
   {
     name: 'Dish Washing',
+    category: 'Pembersih',
     desc: 'Sabun cuci piring pembersih lemak kuat, aman di tangan, harum segar.',
     image: '/products/Dish-Washing-25L.webp',
   },
   {
     name: 'Softener',
+    category: 'Perawatan Pakaian',
     desc: 'Pelembut pakaian dengan aroma bunga yang tahan lama. Menjaga serat kain tetap lembut.',
     image: '/products/Softener-25L.webp',
   },
   {
     name: 'Pelicin Setrika',
+    category: 'Perawatan Pakaian',
     desc: 'Pelicin setrika dengan formula anti lengket. Pakaian lebih rapi dan mudah disetrika.',
     image: '/products/Pelicin-Setrika-25L.webp',
   },
   {
     name: 'Pel Lantai',
+    category: 'Pembersih',
     desc: 'Cairan pel lantai dengan desinfektan alami. Bersih dari kuman, harum segar.',
     image: '/products/Pel-Lantai-25L.webp',
   },
   {
     name: 'Parfum Waterbase',
+    category: 'Perawatan Pakaian',
     desc: 'Parfum laundry berbasis air tahan lama. Memberikan keharuman pada pakaian bersih.',
     image: '/products/Parfum-Waterbase-25L.webp',
   },
 ]
+
+const sliderDots = computed(() => {
+  return Array.from({ length: Math.ceil(products.length / cardsPerGroup) })
+})
+
+let mediaQuery: MediaQueryList | null = null
+
+function getSlides() {
+  if (!sliderRef.value) {
+    return [] as HTMLElement[]
+  }
+
+  return Array.from(sliderRef.value.querySelectorAll('.product-card')) as HTMLElement[]
+}
+
+function onSliderScroll() {
+  if (!isSliderViewport.value || !sliderRef.value) {
+    return
+  }
+
+  const slides = getSlides()
+  if (!slides.length) {
+    return
+  }
+
+  const scrollLeft = sliderRef.value.scrollLeft
+  let nearestGroup = 0
+  let smallestDistance = Number.POSITIVE_INFINITY
+
+  sliderDots.value.forEach((_, groupIndex) => {
+    const slideIndex = Math.min(groupIndex * cardsPerGroup, slides.length - 1)
+    const groupOffset = slides[slideIndex]?.offsetLeft ?? 0
+    const distance = Math.abs(groupOffset - scrollLeft)
+
+    if (distance < smallestDistance) {
+      smallestDistance = distance
+      nearestGroup = groupIndex
+    }
+  })
+
+  activeGroup.value = nearestGroup
+}
+
+function goToGroup(index: number) {
+  if (!sliderRef.value) {
+    return
+  }
+
+  const slides = getSlides()
+  if (!slides.length) {
+    return
+  }
+
+  const targetIndex = Math.min(index * cardsPerGroup, slides.length - 1)
+  const targetSlide = slides[targetIndex]
+  if (!targetSlide) {
+    return
+  }
+
+  sliderRef.value.scrollTo({
+    left: targetSlide.offsetLeft,
+    behavior: 'smooth',
+  })
+
+  activeGroup.value = index
+}
+
+function getDotOpacity(index: number) {
+  const distance = Math.abs(activeGroup.value - index)
+
+  if (distance === 0) {
+    return 1
+  }
+
+  if (distance === 1) {
+    return 0.56
+  }
+
+  return 0.3
+}
+
+function handleMediaChange(event: MediaQueryListEvent) {
+  isSliderViewport.value = event.matches
+
+  if (!event.matches) {
+    activeGroup.value = 0
+    return
+  }
+
+  nextTick(() => {
+    onSliderScroll()
+  })
+}
+
+onMounted(() => {
+  mediaQuery = window.matchMedia('(max-width: 768px)')
+  isSliderViewport.value = mediaQuery.matches
+  mediaQuery.addEventListener('change', handleMediaChange)
+
+  nextTick(() => {
+    onSliderScroll()
+  })
+})
+
+onUnmounted(() => {
+  mediaQuery?.removeEventListener('change', handleMediaChange)
+})
 
 useScrollReveal('.reveal', 0.08)
 </script>
@@ -168,7 +304,15 @@ useScrollReveal('.reveal', 0.08)
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-5);
-  margin-bottom: var(--space-10);
+  margin-bottom: var(--space-8);
+}
+
+.products__slider-dots {
+  display: none;
+}
+
+.products__slider-dot {
+  display: block;
 }
 
 /* Product Card */
@@ -194,10 +338,6 @@ useScrollReveal('.reveal', 0.08)
   transition: transform 0.4s ease;
 }
 
-.product-card:hover .product-card__img {
-  transform: scale(1.06);
-}
-
 .product-card__badge {
   position: absolute;
   top: var(--space-3);
@@ -219,12 +359,42 @@ useScrollReveal('.reveal', 0.08)
   gap: var(--space-2);
 }
 
+.product-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
 .product-card__name {
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   color: var(--color-primary-dark);
   line-height: 1.3;
+}
+
+.product-card__tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.tag--deterjen {
+  background: rgba(30, 136, 229, 0.1);
+  color: #1E88E5;
+}
+
+.tag--pembersih {
+  background: rgba(67, 160, 71, 0.1);
+  color: #43A047;
+}
+
+.tag--perawatan-pakaian {
+  background: rgba(142, 36, 170, 0.1);
+  color: #8E24AA;
 }
 
 .product-card__desc {
@@ -234,27 +404,11 @@ useScrollReveal('.reveal', 0.08)
   flex: 1;
 }
 
-.product-card__link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin-top: auto;
-  transition: gap var(--transition-fast), color var(--transition-fast);
-}
-
-.product-card__link:hover {
-  gap: var(--space-2);
-  color: var(--color-accent);
-}
-
 /* More CTA */
 .products__more {
   display: flex;
   justify-content: center;
+  margin-top: var(--space-6);
 }
 
 /* Responsive */
@@ -265,15 +419,63 @@ useScrollReveal('.reveal', 0.08)
 }
 
 @media (max-width: 768px) {
-  .products__grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
+  .products__slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: var(--space-6);
   }
-}
 
-@media (max-width: 400px) {
+  .products__slider-dot {
+    width: 18px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    border: none;
+    padding: 0;
+    background: rgba(21, 101, 192, 0.18);
+    transition: width var(--transition-base), background var(--transition-base), transform var(--transition-base), opacity var(--transition-base);
+    cursor: pointer;
+  }
+
+  .products__slider-dot--active {
+    width: 38px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    transform: translateY(-1px);
+  }
+
+  .products__slider-dot:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
   .products__grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--space-2);
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    scrollbar-width: none;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
+  }
+
+  .products__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-card {
+    flex: 0 0 min(78%, 280px);
+    scroll-snap-align: start;
+  }
+
+  .product-card:hover .product-card__img {
+    transform: none;
   }
 }
 </style>
