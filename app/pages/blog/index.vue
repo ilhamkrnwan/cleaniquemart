@@ -10,7 +10,7 @@
       <div class="container">
 
         <!-- Featured Post -->
-        <template v-if="featured">
+        <template v-if="featured && safePage === 1">
           <div class="blog-featured reveal">
             <NuxtLink :to="`/blog/${featured.stem?.replace('blog/', '')}`" class="blog-featured__inner">
               <div class="blog-featured__img-wrap">
@@ -42,9 +42,9 @@
         </template>
 
         <!-- Rest Posts -->
-        <div v-if="rest.length" class="blog-grid">
+        <div v-if="paginatedRest.length" class="blog-grid">
           <NuxtLink
-            v-for="(post, i) in rest"
+            v-for="(post, i) in paginatedRest"
             :key="post.stem"
             :to="`/blog/${post.stem?.replace('blog/', '')}`"
             class="blog-card glass-card reveal"
@@ -76,8 +76,43 @@
           </NuxtLink>
         </div>
 
+        <nav v-if="totalPages > 1" class="blog-pagination" aria-label="Navigasi halaman blog">
+          <NuxtLink
+            v-if="safePage > 1"
+            :to="pageLink(safePage - 1)"
+            class="blog-pagination__btn"
+            aria-label="Halaman sebelumnya"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+            Sebelumnya
+          </NuxtLink>
+
+          <div class="blog-pagination__numbers">
+            <NuxtLink
+              v-for="page in pageNumbers"
+              :key="page"
+              :to="pageLink(page)"
+              class="blog-pagination__number"
+              :class="{ 'blog-pagination__number--active': page === safePage }"
+              :aria-current="page === safePage ? 'page' : undefined"
+            >
+              {{ page }}
+            </NuxtLink>
+          </div>
+
+          <NuxtLink
+            v-if="safePage < totalPages"
+            :to="pageLink(safePage + 1)"
+            class="blog-pagination__btn"
+            aria-label="Halaman berikutnya"
+          >
+            Berikutnya
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </NuxtLink>
+        </nav>
+
         <!-- Empty state -->
-        <div v-if="!featured && !rest.length" class="blog-empty">
+        <div v-if="!featured && !restAll.length" class="blog-empty">
           <p>Belum ada artikel yang dipublikasikan. Nantikan update kami!</p>
         </div>
 
@@ -99,8 +134,61 @@ const { data: posts } = await useAsyncData('blog-list', () =>
     .all()
 )
 
+const route = useRoute()
+const pageSize = 10
+
 const featured = computed(() => posts.value?.[0] ?? null)
-const rest = computed(() => posts.value?.slice(1) ?? [])
+const restAll = computed(() => posts.value?.slice(1) ?? [])
+
+const currentPage = computed(() => {
+  const page = Number(route.query.page ?? 1)
+  if (!Number.isFinite(page) || page < 1) {
+    return 1
+  }
+
+  return Math.floor(page)
+})
+
+const totalPages = computed(() => {
+  if (!restAll.value.length) {
+    return 1
+  }
+
+  return Math.ceil(restAll.value.length / pageSize)
+})
+
+const safePage = computed(() => Math.min(currentPage.value, totalPages.value))
+
+const paginatedRest = computed(() => {
+  const start = (safePage.value - 1) * pageSize
+  return restAll.value.slice(start, start + pageSize)
+})
+
+const pageNumbers = computed(() => {
+  const total = totalPages.value
+  const current = safePage.value
+  const min = Math.max(1, current - 2)
+  const max = Math.min(total, min + 4)
+  const adjustedMin = Math.max(1, max - 4)
+  const pages: number[] = []
+
+  for (let page = adjustedMin; page <= max; page += 1) {
+    pages.push(page)
+  }
+
+  return pages
+})
+
+function pageLink(page: number) {
+  if (page <= 1) {
+    return '/blog'
+  }
+
+  return {
+    path: '/blog',
+    query: { page: String(page) },
+  }
+}
 
 function formatDate(raw?: string) {
   if (!raw) return ''
@@ -200,6 +288,10 @@ onMounted(() => {
   font-size: 0.95rem;
   line-height: 1.75;
   color: var(--color-text-light);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ── Meta ────────────────────────────────────────── */
@@ -305,6 +397,11 @@ onMounted(() => {
   font-weight: 700;
   color: var(--color-primary-dark);
   line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: calc(1.35em * 2);
 }
 
 .blog-card__desc {
@@ -324,6 +421,60 @@ onMounted(() => {
   padding: var(--space-24) 0;
   color: var(--color-text-light);
   font-size: 1.05rem;
+}
+
+/* ── Pagination ──────────────────────────────────── */
+.blog-pagination {
+  margin-top: var(--space-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.blog-pagination__btn,
+.blog-pagination__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  border: 1px solid rgba(21, 101, 192, 0.16);
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  color: var(--color-primary-dark);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.blog-pagination__btn {
+  padding: 8px var(--space-4);
+}
+
+.blog-pagination__numbers {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.blog-pagination__number {
+  width: 36px;
+  height: 36px;
+}
+
+.blog-pagination__btn:hover,
+.blog-pagination__number:hover {
+  background: rgba(21, 101, 192, 0.08);
+  border-color: rgba(21, 101, 192, 0.24);
+}
+
+.blog-pagination__number--active {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
 }
 
 /* ── Responsive ──────────────────────────────────── */
@@ -348,6 +499,14 @@ onMounted(() => {
 @media (max-width: 520px) {
   .blog-grid {
     grid-template-columns: 1fr;
+  }
+
+  .blog-pagination {
+    gap: var(--space-3);
+  }
+
+  .blog-pagination__btn {
+    padding: 8px var(--space-3);
   }
 }
 </style>

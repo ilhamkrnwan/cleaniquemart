@@ -6,8 +6,7 @@
         <NuxtImg
           src="/cleanique-mart-logo-outline-scaled.webp"
           alt="CleaniqueMart Logo"
-          width="160"
-          height="56"
+          fit="contain"
           class="navbar__logo-img"
           loading="eager"
         />
@@ -74,8 +73,7 @@
           <NuxtImg
             src="/cleanique-mart-logo-outline-scaled.webp"
             alt="CleaniqueMart"
-            width="110"
-            height="40"
+            fit="contain"
             class="navbar__drawer-logo"
           />
           <button
@@ -235,13 +233,16 @@ watch(() => route.path, closeMenu)
 }
 
 .navbar__logo-img {
-  height: 44px;
-  width: auto;
+  display: block;
+  width: min(220px, 100%);
+  max-height: 44px;
+  height: auto;
   object-fit: contain;
+  object-position: left center;
   transition: height var(--transition-base), opacity var(--transition-fast);
 }
 
-.navbar--scrolled .navbar__logo-img { height: 38px; }
+.navbar--scrolled .navbar__logo-img { max-height: 38px; }
 .navbar__logo:hover .navbar__logo-img { opacity: 0.82; }
 
 /* ===========================
@@ -382,10 +383,12 @@ watch(() => route.path, closeMenu)
 }
 
 .navbar__drawer-logo {
-  height: 34px;
-  width: auto;
+  display: block;
+  width: min(170px, 62vw);
+  max-height: 38px;
+  height: auto;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  object-position: left center;
 }
 
 .navbar__drawer-close {
@@ -532,7 +535,14 @@ watch(() => route.path, closeMenu)
 @media (max-width: 480px) {
   .navbar__inner { height: 64px; }
   .navbar--scrolled .navbar__inner { height: 60px; }
-  .navbar__logo-img { height: 38px; }
-  .navbar--scrolled .navbar__logo-img { height: 34px; }
+  .navbar__logo-img {
+    max-height: 38px;
+    width: min(190px, 100%);
+  }
+  .navbar--scrolled .navbar__logo-img { max-height: 34px; }
+  .navbar__drawer-logo {
+    max-height: 34px;
+    width: min(150px, 58vw);
+  }
 }
 </style>

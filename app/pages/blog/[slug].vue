@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Back nav -->
-    <div class="post-back-bar">
+    <div ref="postBackBarRef" class="post-back-bar" :style="{ top: `${navbarOffset}px` }">
       <div class="container">
         <NuxtLink to="/blog" class="post-back-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
@@ -41,8 +41,8 @@
             </header>
 
             <!-- Body -->
-            <div class="post-body">
-              <ContentRenderer :value="post" />
+              <div class="post-body">
+                <ContentRenderer :value="sanitizedPost" />
             </div>
 
             <!-- Post Footer -->
@@ -63,10 +63,18 @@
           </main>
 
           <!-- Sidebar -->
-          <aside class="post-sidebar">
+          <aside class="post-sidebar" :style="{ top: `calc(${navbarOffset}px + ${postBackBarHeight}px + var(--space-6))` }">
             <!-- CTA Card -->
             <div class="sidebar-cta">
-              <div class="sidebar-cta__icon" aria-hidden="true">🤝</div>
+                <NuxtImg
+                  src="/cleanique-mart-logo-outline-scaled.webp"
+                  alt="Logo CleaniqueMart"
+                  fit="contain"
+                  width="200"
+                  height="70"
+                  class="sidebar-cta__logo"
+                  loading="lazy"
+                />
               <h3 class="sidebar-cta__title">Tertarik Jadi Mitra?</h3>
               <p class="sidebar-cta__body">Mulai bisnis sabun curah Anda bersama CleaniqueMart. Konsultasi pertama 100% gratis!</p>
               <a
@@ -115,6 +123,9 @@
 const route = useRoute()
 const slug = route.params.slug as string
 const siteUrl = 'https://cleaniquemart.com'
+const navbarOffset = ref(72)
+const postBackBarHeight = ref(48)
+const postBackBarRef = ref<HTMLElement | null>(null)
 
 // Fetch current post
 const { data: post } = await useAsyncData(`post-${slug}`, () =>
@@ -134,6 +145,65 @@ const { data: related } = await useAsyncData(`related-${slug}`, () =>
 if (!post.value) {
   throw createError({ statusCode: 404, statusMessage: 'Artikel tidak ditemukan' })
 }
+
+function sanitizeHeadingPrefix(text: string) {
+  return text
+    .replace(/^\s*#{1,6}\s+/, '')
+    .replace(/^\s*#(?=\d)/, '')
+}
+
+function sanitizeNode(node: any, parentTag = ''): any {
+  if (Array.isArray(node)) {
+    return node.map((item) => sanitizeNode(item, parentTag))
+  }
+
+  if (!node || typeof node !== 'object') {
+    return node
+  }
+
+  const cloned = { ...node }
+  const currentTag = typeof cloned.tag === 'string' ? cloned.tag : parentTag
+
+  if (typeof cloned.value === 'string' && ['p', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(parentTag)) {
+    cloned.value = sanitizeHeadingPrefix(cloned.value)
+  }
+
+  if (cloned.children) {
+    cloned.children = sanitizeNode(cloned.children, currentTag)
+  }
+
+  return cloned
+}
+
+const sanitizedPost = computed(() => {
+  if (!post.value) {
+    return null
+  }
+
+  const cloned = structuredClone(post.value) as any
+  if (cloned.body) {
+    cloned.body = sanitizeNode(cloned.body)
+  }
+
+  return cloned
+})
+
+function updateStickyOffsets() {
+  const navbarInner = document.querySelector('.navbar .navbar__inner') as HTMLElement | null
+  navbarOffset.value = navbarInner?.offsetHeight ?? 72
+  postBackBarHeight.value = postBackBarRef.value?.offsetHeight ?? 48
+}
+
+onMounted(() => {
+  updateStickyOffsets()
+  window.addEventListener('scroll', updateStickyOffsets, { passive: true })
+  window.addEventListener('resize', updateStickyOffsets)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateStickyOffsets)
+  window.removeEventListener('resize', updateStickyOffsets)
+})
 
 // SEO
 useSeoMeta({
@@ -283,10 +353,19 @@ time {
 .post-body :deep(h1) { font-size: 2rem; }
 .post-body :deep(h2) {
   font-size: 1.5rem;
-  padding-bottom: var(--space-2);
-  border-bottom: 2px solid rgba(21, 101, 192, 0.08);
+  padding-bottom: 0;
+  border-bottom: none;
 }
 .post-body :deep(h3) { font-size: 1.2rem; color: var(--color-primary); }
+
+.post-body :deep(h1 a),
+.post-body :deep(h2 a),
+.post-body :deep(h3 a),
+.post-body :deep(h4 a) {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
 
 .post-body :deep(p) {
   font-size: 1.05rem;
@@ -298,8 +377,7 @@ time {
 .post-body :deep(a) {
   color: var(--color-primary);
   font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  text-decoration: none;
   transition: color var(--transition-fast);
 }
 
@@ -426,9 +504,10 @@ time {
   box-shadow: var(--shadow-blue);
 }
 
-.sidebar-cta__icon {
-  font-size: 2.5rem;
-  line-height: 1;
+.sidebar-cta__logo {
+  width: min(180px, 92%);
+  height: auto;
+  object-fit: contain;
 }
 
 .sidebar-cta__title {

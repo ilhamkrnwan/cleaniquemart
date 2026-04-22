@@ -64,17 +64,31 @@
           <div class="contact-map glass-card reveal reveal-delay-2">
             <h3 class="font-display font-bold text-xl text-primary-dark mb-4">Lokasi Kami</h3>
             <div class="map-container">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d3953.3082539198642!2d110.36015527589505!3d-7.756534592261972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a58f4a13d7ce5%3A0xe54fbddf45dc26f5!2sJl.%20Jongke%20Tengah%20No.30%2C%20Jongke%20Tengah%2C%20Sendangadi%2C%20Kec.%20Mlati%2C%20Kabupaten%20Sleman%2C%20Daerah%20Istimewa%20Yogyakarta%2055285!5e0!3m2!1sen!2sid!4v1713580543242!5m2!1sen!2sid" 
-                width="100%" 
-                height="100%" 
-                style="border:0;" 
-                allowfullscreen="false" 
-                loading="lazy" 
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Peta Lokasi Produk CleaniqueMart"
-              ></iframe>
+              <ClientOnly>
+                <iframe
+                  :src="mapsEmbedUrl"
+                  class="map-embed"
+                  width="100%"
+                  height="100%"
+                  style="border:0;"
+                  allowfullscreen
+                  loading="eager"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  title="Peta Lokasi Produk CleaniqueMart"
+                ></iframe>
+                <template #fallback>
+                  <div class="map-fallback" aria-live="polite">Memuat peta lokasi...</div>
+                </template>
+              </ClientOnly>
             </div>
+            <a
+              :href="mapsDirectUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline-white contact-map__open"
+            >
+              Buka di Google Maps
+            </a>
             
             <!-- Quick Form CTA instead of native form (diverts to WA) -->
             <div class="quick-cta mt-6 text-center">
@@ -91,6 +105,9 @@
 </template>
 
 <script setup lang="ts">
+const mapsEmbedUrl = 'https://maps.google.com/maps?q=-7.756534592261972,110.36015527589505&z=16&output=embed'
+const mapsDirectUrl = 'https://maps.google.com/?q=Jongke%20Tengah%20No.30%2C%20Mlati%2C%20Sleman%2C%20Yogyakarta'
+
 useSeoMeta({
   title: 'Hubungi Kami — CleaniqueMart',
   description: 'Kontak WhatsApp, Email, dan Lokasi Gudang Pusat CleaniqueMart. Kami siap melayani permintaan pengiriman ke seluruh wilayah Indonesia.',
@@ -236,6 +253,34 @@ onMounted(() => {
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--color-surface);
+}
+
+.map-embed {
+  display: block;
+}
+
+.map-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 0.92rem;
+  color: var(--color-text-light);
+}
+
+.contact-map__open {
+  margin-top: var(--space-4);
+  width: 100%;
+  justify-content: center;
+  color: var(--color-primary);
+  border-color: rgba(21, 101, 192, 0.28);
+  background: rgba(21, 101, 192, 0.04);
+}
+
+.contact-map__open:hover {
+  color: var(--color-white);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 @media (max-width: 960px) {

@@ -1,7 +1,14 @@
 <template>
   <footer class="footer">
-    <!-- Gradient Transition (replaces hard wave) -->
-    <div class="footer__gradient-top" aria-hidden="true"></div>
+    <!-- Layered Wave Top -->
+    <div class="footer__wave-top" aria-hidden="true">
+      <svg class="footer__wave-top-back" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,45 C210,92 430,14 720,58 C990,98 1210,20 1440,52 L1440,120 L0,120 Z" fill="#8E9BB2"/>
+      </svg>
+      <svg class="footer__wave-top-front" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,62 C320,16 610,102 920,52 C1160,16 1320,78 1440,56 L1440,120 L0,120 Z" fill="#0A2553"/>
+      </svg>
+    </div>
 
     <div class="footer__body">
       <!-- Decorative background -->
@@ -15,8 +22,7 @@
               <NuxtImg
                 src="/cleanique-mart-logo-scaled.webp"
                 alt="CleaniqueMart"
-                width="160"
-                height="56"
+                fit="contain"
                 class="footer__logo"
               />
             </NuxtLink>
@@ -66,7 +72,7 @@
           </div>
 
           <!-- Navigation -->
-          <div class="footer__col">
+          <div class="footer__col footer__col--pages">
             <h3 class="footer__col-title">
               <span class="footer__col-title-bar" aria-hidden="true"></span>
               Halaman
@@ -82,7 +88,7 @@
           </div>
 
           <!-- Products -->
-          <div class="footer__col">
+          <div class="footer__col footer__col--products">
             <h3 class="footer__col-title">
               <span class="footer__col-title-bar" aria-hidden="true"></span>
               Produk
@@ -98,7 +104,7 @@
           </div>
 
           <!-- Contact -->
-          <div class="footer__col">
+          <div class="footer__col footer__col--contact">
             <h3 class="footer__col-title">
               <span class="footer__col-title-bar" aria-hidden="true"></span>
               Kontak
@@ -151,6 +157,7 @@ const pageLinks = [
   { label: 'Tentang Kami', href: '/about' },
   { label: 'Program Mitra', href: '/mitra' },
   { label: 'Produk', href: '/products' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Kontak', href: '/contact' },
 ]
 
@@ -172,16 +179,40 @@ const productLinks = [
   font-family: var(--font-body);
 }
 
-/* Gradient transition top (replaces hard wave edge) */
-.footer__gradient-top {
+.footer .container {
+  padding-inline: var(--space-6);
+}
+
+/* Wave divider from previous section into footer */
+.footer__wave-top {
+  position: relative;
   height: 120px;
-  background: linear-gradient(to bottom, transparent 0%, #091E45 100%);
+  margin-bottom: -1px;
+  background: linear-gradient(180deg, #F8FBFF 0%, #E4EBF7 48%, #0A2553 100%);
+}
+
+.footer__wave-top-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.footer__wave-top-front {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.footer__wave-top-back,
+.footer__wave-top-front {
   pointer-events: none;
 }
 
 .footer__body {
   position: relative;
-  background: linear-gradient(180deg, #091E45 0%, #0D2B6B 40%, #0A1D3D 100%);
+  background: linear-gradient(180deg, #0A2553 0%, #0D2B6B 40%, #0A1D3D 100%);
   padding: var(--space-16) 0 var(--space-8);
   overflow: hidden;
 }
@@ -199,19 +230,26 @@ const productLinks = [
 .footer__grid {
   display: grid;
   grid-template-columns: 1.8fr 1fr 1fr 1.4fr;
+  grid-template-areas: 'brand pages products contact';
   gap: var(--space-12);
   position: relative;
   z-index: 1;
 }
 
 /* Brand */
+.footer__brand {
+  grid-area: brand;
+}
+
 .footer__logo {
-  height: 44px;
-  width: auto;
+  display: block;
+  width: min(220px, 100%);
+  height: auto;
   object-fit: contain;
+  object-position: left center;
   margin-bottom: var(--space-5);
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
+  filter: none;
+  opacity: 1;
 }
 
 .footer__tagline {
@@ -269,6 +307,18 @@ const productLinks = [
   color: var(--color-white);
   border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
+}
+
+.footer__col--pages {
+  grid-area: pages;
+}
+
+.footer__col--products {
+  grid-area: products;
+}
+
+.footer__col--contact {
+  grid-area: contact;
 }
 
 /* Columns */
@@ -353,9 +403,11 @@ const productLinks = [
 
 /* Bottom Bar */
 .footer__bottom {
-  background: rgba(0, 0, 0, 0.15);
-  padding: var(--space-4) 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  background: linear-gradient(180deg, #0A1D3D 0%, #081B39 58%, #071833 100%);
+  padding: var(--space-5) 0;
+  border-top: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 .footer__bottom-inner {
@@ -367,8 +419,9 @@ const productLinks = [
 }
 
 .footer__copyright {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .footer__badges {
@@ -380,11 +433,11 @@ const productLinks = [
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px var(--space-3);
+  padding: 4px var(--space-3);
   border-radius: var(--radius-full);
-  border: 1px solid rgba(67, 160, 71, 0.25);
-  background: rgba(67, 160, 71, 0.08);
-  color: var(--color-accent-light);
+  border: 1px solid rgba(165, 214, 167, 0.35);
+  background: rgba(67, 160, 71, 0.14);
+  color: rgba(236, 248, 236, 0.96);
   font-size: 0.72rem;
   font-weight: 600;
 }
@@ -397,23 +450,61 @@ const productLinks = [
 @media (max-width: 1024px) {
   .footer__grid {
     grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'brand contact'
+      'pages products';
     gap: var(--space-8);
   }
 }
 
 @media (max-width: 600px) {
-  .footer__gradient-top {
-    height: 80px;
+  .footer .container {
+    padding-inline: var(--space-5);
+  }
+
+  .footer__wave-top {
+    height: 88px;
+  }
+
+  .footer__body {
+    padding: var(--space-12) 0 var(--space-8);
   }
 
   .footer__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'brand brand'
+      'pages products'
+      'contact contact';
     gap: var(--space-6);
+  }
+
+  .footer__tagline {
+    max-width: 100%;
+  }
+
+  .footer__col-title {
+    margin-bottom: var(--space-4);
   }
 
   .footer__bottom-inner {
     flex-direction: column;
+    align-items: center;
     text-align: center;
+    padding-right: 0;
+  }
+
+  .footer__bottom {
+    padding-bottom: calc(var(--space-6) + 72px);
+  }
+
+  .footer__copyright {
+    max-width: 34ch;
+  }
+
+  .footer__badges {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 </style>
