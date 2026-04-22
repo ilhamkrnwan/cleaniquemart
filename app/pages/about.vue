@@ -14,8 +14,6 @@
               <NuxtImg
                 src="/about/hero-section.webp"
                 alt="Fasilitas produksi Cleanique Mart"
-                src="/about/hero-section.webp"
-                alt="Fasilitas produksi Cleanique Mart"
                 class="story-img"
                 width="600"
                 height="700"
@@ -29,10 +27,8 @@
             <h2 class="text-title mb-6">Dedikasi Untuk <br /><span class="gradient-text">Kualitas Tanpa Kompromi</span></h2>
             <p class="mb-4 text-light leading-relaxed">
               CleaniQue Mart bukan sekadar pabrik sabun. Kami berawal dari sebuah tekad: bagaimana menciptakan produk kebersihan rumah tangga dan industri yang secara performa setara dengan merek nasional, namun dengan harga yang tetap ramah bagi keluarga, pelaku UMKM, dan calon mitra di berbagai kota.
-              CleaniQue Mart bukan sekadar pabrik sabun. Kami berawal dari sebuah tekad: bagaimana menciptakan produk kebersihan rumah tangga dan industri yang secara performa setara dengan merek nasional, namun dengan harga yang tetap ramah bagi keluarga, pelaku UMKM, dan calon mitra di berbagai kota.
             </p>
             <p class="mb-8 text-light leading-relaxed">
-              Tim riset dan pengembangan kami menghabiskan banyak waktu untuk menyempurnakan formula, menjaga kestabilan kualitas, dan memastikan produk siap dipasarkan secara profesional. Hasilnya, Cleanique Mart hadir dengan lini produk yang telah tersertifikasi Halal dan terdaftar resmi, sehingga memberi rasa aman bagi konsumen sekaligus kepastian usaha bagi para mitra.
               Tim riset dan pengembangan kami menghabiskan banyak waktu untuk menyempurnakan formula, menjaga kestabilan kualitas, dan memastikan produk siap dipasarkan secara profesional. Hasilnya, Cleanique Mart hadir dengan lini produk yang telah tersertifikasi Halal dan terdaftar resmi, sehingga memberi rasa aman bagi konsumen sekaligus kepastian usaha bagi para mitra.
             </p>
 
@@ -43,14 +39,12 @@
                 </div>
                 <h3>Visi Kami</h3>
                 <p>Menjadi produsen dan mitra distribusi produk kebersihan yang dipercaya masyarakat Indonesia karena kualitas, legalitas, dan dampak bisnisnya.</p>
-                <p>Menjadi produsen dan mitra distribusi produk kebersihan yang dipercaya masyarakat Indonesia karena kualitas, legalitas, dan dampak bisnisnya.</p>
               </div>
               <div class="vm-card">
                 <div class="vm-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                 </div>
                 <h3>Misi Kami</h3>
-                <p>Menghadirkan produk sabun curah dan kebutuhan PKRT yang berkualitas, mudah diakses, ramah lingkungan, dan siap menjadi fondasi usaha mitra.</p>
                 <p>Menghadirkan produk sabun curah dan kebutuhan PKRT yang berkualitas, mudah diakses, ramah lingkungan, dan siap menjadi fondasi usaha mitra.</p>
               </div>
             </div>
@@ -740,7 +734,6 @@ useScrollReveal(0.08)
   }
 }
 
-@media (max-width: 768px) {
 @media (max-width: 768px) {
   .vision-mission {
     flex-direction: column;
