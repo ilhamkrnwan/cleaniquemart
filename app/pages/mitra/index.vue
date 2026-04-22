@@ -10,6 +10,8 @@ const tierMobileScroller = ref<HTMLElement | null>(null)
 let partnerCarouselInterval: ReturnType<typeof setInterval> | null = null
 let tierTouchStartX = 0
 let tierTouchDeltaX = 0
+let tierTouchStartY = 0
+let tierTouchDeltaY = 0
 let isTierSwiping = false
 let tierBreakpointQuery: MediaQueryList | null = null
 
@@ -341,7 +343,9 @@ function onTierMobileScroll() {
 
 function onTierStackTouchStart(event: TouchEvent) {
   tierTouchStartX = event.touches[0]?.clientX ?? 0
+  tierTouchStartY = event.touches[0]?.clientY ?? 0
   tierTouchDeltaX = 0
+  tierTouchDeltaY = 0
   isTierSwiping = true
 }
 
@@ -351,6 +355,7 @@ function onTierStackTouchMove(event: TouchEvent) {
   }
 
   tierTouchDeltaX = (event.touches[0]?.clientX ?? 0) - tierTouchStartX
+  tierTouchDeltaY = (event.touches[0]?.clientY ?? 0) - tierTouchStartY
 }
 
 function onTierStackTouchEnd() {
@@ -359,6 +364,11 @@ function onTierStackTouchEnd() {
   }
 
   isTierSwiping = false
+
+  // Keep vertical gestures for page scrolling; only switch card on dominant horizontal swipe.
+  if (Math.abs(tierTouchDeltaX) <= Math.abs(tierTouchDeltaY)) {
+    return
+  }
 
   if (tierTouchDeltaX <= -56) {
     nextTierSlide()
@@ -389,7 +399,13 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 
     <!-- Mitra Tiers -->
     <section class="mitra-tiers section">
-      <div class="container">
+      <div class="mitra-tiers__wave-top" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,0 L0,0 Z" fill="#F8FBFF" />
+        </svg>
+      </div>
+
+      <div class="container mitra-tiers__container">
         <div class="section-badge reveal mx-auto">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           Pilihan Paket
@@ -439,9 +455,9 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
         <div class="tiers-stack">
           <div
             class="tiers-stack__viewport"
-            @touchstart="onTierStackTouchStart"
-            @touchmove="onTierStackTouchMove"
-            @touchend="onTierStackTouchEnd"
+            @touchstart.passive="onTierStackTouchStart"
+            @touchmove.passive="onTierStackTouchMove"
+            @touchend.passive="onTierStackTouchEnd"
           >
             <div
               v-for="(tier, i) in tiers"
@@ -554,6 +570,12 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
           </div>
         </div>
       </div>
+
+      <div class="mitra-tiers__wave-bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FFFFFF" />
+        </svg>
+      </div>
     </section>
 
     <!-- ROI / Margin Section -->
@@ -615,7 +637,13 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 
     <!-- Mitra Locations Section -->
     <section class="partners-section section">
-      <div class="container">
+      <div class="partners-section__wave-top" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,0 L0,0 Z" fill="#FFFFFF" />
+        </svg>
+      </div>
+
+      <div class="container partners-section__container">
         <div class="partners-section__header reveal">
           <div class="section-badge mx-auto">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -724,6 +752,12 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
           </div>
         </div>
       </div>
+
+      <div class="partners-section__wave-bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,50 1440,40 L1440,80 L0,80 Z" fill="#F8FBFF" />
+        </svg>
+      </div>
     </section>
 
     <!-- FAQ Section -->
@@ -784,10 +818,39 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 .leading-relaxed { line-height: 1.75; }
 .w-full { width: 100%; justify-content: center; }
 .text-xs { font-size: 0.8rem; }
+.section-badge {
+  width: fit-content;
+  margin-inline: auto;
+}
 
 /* Tiers Grid */
 .mitra-tiers {
+  position: relative;
+  overflow: hidden;
   background: var(--color-surface);
+  padding: 0;
+}
+
+.mitra-tiers__wave-top,
+.mitra-tiers__wave-bottom,
+.partners-section__wave-top,
+.partners-section__wave-bottom {
+  overflow: hidden;
+  line-height: 0;
+}
+
+.mitra-tiers__wave-top svg,
+.mitra-tiers__wave-bottom svg,
+.partners-section__wave-top svg,
+.partners-section__wave-bottom svg {
+  width: 100%;
+  height: 80px;
+}
+
+.mitra-tiers__container,
+.partners-section__container {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
 }
 
 /* Desktop grid - hidden on mobile */
@@ -1063,7 +1126,7 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
 }
 
 .tiers-mobile__track::-webkit-scrollbar {
@@ -1085,8 +1148,6 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 /* ROI Section */
 .roi-section {
   background: var(--color-white);
-  border-top: 1px solid rgba(21, 101, 192, 0.06);
-  border-bottom: 1px solid rgba(21, 101, 192, 0.06);
 }
 
 .roi-grid {
@@ -1191,11 +1252,12 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 
 /* Partner Locations */
 .partners-section {
+  position: relative;
+  overflow: hidden;
   background:
     radial-gradient(circle at top left, rgba(67, 160, 71, 0.08), transparent 26%),
     linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  border-top: 1px solid rgba(21, 101, 192, 0.06);
-  border-bottom: 1px solid rgba(21, 101, 192, 0.06);
+  padding: 0;
 }
 
 .partners-section__header {
@@ -1458,6 +1520,13 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 }
 
 @media (max-width: 767px) {
+  .mitra-tiers__wave-top svg,
+  .mitra-tiers__wave-bottom svg,
+  .partners-section__wave-top svg,
+  .partners-section__wave-bottom svg {
+    height: 64px;
+  }
+
   .tiers-stack {
     display: none;
   }

@@ -162,7 +162,51 @@ const { data: related } = await useAsyncData(`mitra-related-${slug}`, () =>
 )
 
 const relatedPartners = computed(() => related.value ?? [])
-const currentPartner = computed<Record<string, any> | null>(() => partner.value ?? null)
+
+function stripHeadingIdsFromBody(body: Record<string, any> | null | undefined) {
+  if (!body || typeof body !== 'object') {
+    return body
+  }
+
+  const clonedBody = structuredClone(body)
+
+  if (!Array.isArray(clonedBody.value)) {
+    return clonedBody
+  }
+
+  clonedBody.value = clonedBody.value.map((node: any) => {
+    if (!Array.isArray(node) || typeof node[0] !== 'string') {
+      return node
+    }
+
+    if (!/^h[1-6]$/.test(node[0])) {
+      return node
+    }
+
+    const nextNode = [...node]
+    const props = nextNode[1]
+
+    if (props && typeof props === 'object' && !Array.isArray(props)) {
+      const { id, ...restProps } = props
+      nextNode[1] = restProps
+    }
+
+    return nextNode
+  })
+
+  return clonedBody
+}
+
+const currentPartner = computed<Record<string, any> | null>(() => {
+  if (!partner.value) {
+    return null
+  }
+
+  return {
+    ...partner.value,
+    body: stripHeadingIdsFromBody(partner.value.body),
+  }
+})
 
 function normalizePhoneNumber(phone?: string) {
   const digits = phone?.replace(/\D/g, '') ?? ''
@@ -355,11 +399,46 @@ useScrollReveal()
   border: 1px solid rgba(21, 101, 192, 0.08);
 }
 
+.partner-detail__content :deep(h1),
 .partner-detail__content :deep(h2) {
-  font-size: 1.35rem;
+  font-family: var(--font-display);
   font-weight: 800;
-  margin: var(--space-8) 0 var(--space-3);
   color: var(--color-primary-dark);
+  line-height: 1.3;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.partner-detail__content :deep(h3),
+.partner-detail__content :deep(h4) {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  line-height: 1.3;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.partner-detail__content :deep(h1) { font-size: 1.8rem; }
+.partner-detail__content :deep(h2) { font-size: 1.35rem; }
+.partner-detail__content :deep(h3) {
+  font-size: 1.15rem;
+  color: var(--color-primary);
+}
+.partner-detail__content :deep(h4) { font-size: 1.05rem; }
+
+.partner-detail__content :deep(h1 a),
+.partner-detail__content :deep(h2 a),
+.partner-detail__content :deep(h3 a),
+.partner-detail__content :deep(h4 a) {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.partner-detail__content :deep(.header-anchor),
+.partner-detail__content :deep(a[aria-hidden="true"][href^="#"]) {
+  display: none;
 }
 
 .partner-detail__content :deep(p) {
@@ -367,6 +446,52 @@ useScrollReveal()
   line-height: 1.85;
   color: var(--color-text-light);
   margin-bottom: var(--space-4);
+}
+
+.partner-detail__content :deep(a) {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.partner-detail__content :deep(a:hover) {
+  color: var(--color-accent);
+}
+
+.partner-detail__content :deep(ul),
+.partner-detail__content :deep(ol) {
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.partner-detail__content :deep(li) {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text-light);
+}
+
+.partner-detail__content :deep(blockquote) {
+  border-left: 4px solid var(--color-primary);
+  background: rgba(21, 101, 192, 0.04);
+  padding: var(--space-4) var(--space-6);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: var(--space-6) 0;
+}
+
+.partner-detail__content :deep(blockquote p) {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--color-primary-dark);
+  margin-bottom: 0;
+}
+
+.partner-detail__content :deep(strong) {
+  font-weight: 700;
+  color: var(--color-primary-dark);
 }
 
 .partner-detail__aside {

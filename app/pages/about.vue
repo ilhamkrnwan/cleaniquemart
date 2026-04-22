@@ -53,71 +53,113 @@
       </div>
     </section>
 
-    <section class="brand-section section">
-      <div class="container">
-        <div class="brand-header text-center mb-12 reveal">
-          <h2 class="brand-header__title">Cleanique Mart: Solusi Bisnis PKRT dari PT. Indotech Berkah Abadi</h2>
-          <p class="text-light mt-4 mx-auto max-w-3xl leading-relaxed">
+    <section class="brand-section" aria-labelledby="brand-section-title">
+      <div class="brand-section__wave-top" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,0 L0,0 Z" fill="#F8FBFF" />
+        </svg>
+      </div>
+
+      <div class="container brand-section__container">
+        <div class="brand-header text-center mb-12">
+          <div class="section-badge reveal-blur">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h18"/><path d="M6 3h12"/><path d="M5 11h14"/><path d="M7 15h10"/><path d="M10 19h4"/></svg>
+            Ekosistem Brand
+          </div>
+          <h2 id="brand-section-title" class="brand-header__title reveal reveal-delay-1">
+            Cleanique Mart: <span class="gradient-text">Solusi Bisnis PKRT</span> dari PT. Indotech Berkah Abadi
+          </h2>
+          <p class="brand-header__subtitle text-light mt-4 mx-auto max-w-3xl leading-relaxed reveal reveal-delay-2">
             Ekosistem kami mempertemukan produk kebersihan berkualitas, konsep refill yang relevan, dan sistem kemitraan yang membantu bisnis berkembang lebih terarah.
           </p>
         </div>
 
-        <div class="brand-showcase reveal reveal-delay-1">
-          <div class="brand-gallery">
-            <figure
-              v-for="image in galleryImages"
-              :key="image.src"
-              class="brand-gallery__card glass-card"
-            >
+        <div class="brand-story">
+          <div class="brand-story__copy reveal">
+            <p class="brand-story__lead">
+              <strong>PT. Indotech Berkah Abadi</strong>, perusahaan yang berbasis di Yogyakarta, menghadirkan merek produk <strong>Cleanique Lab</strong> serta kemitraan <strong>Cleanique Mart</strong> sebagai solusi bisnis Perbekalan Kesehatan Rumah Tangga yang lebih modern, aman, dan mudah dijalankan.
+            </p>
+
+            <div class="brand-story__columns">
+              <p>
+                Melalui Cleanique Lab, kami mengembangkan produk kebersihan yang dirancang untuk kebutuhan rumah tangga, usaha refill, laundry, dan sektor komersial. Fokus kami bukan hanya pada kualitas formula, tetapi juga pada legalitas produk, kestabilan mutu, dan kesiapan pasar agar mitra dapat tumbuh dengan fondasi yang lebih kuat.
+              </p>
+              <p>
+                Sementara itu, Cleanique Mart dibangun untuk membantu masyarakat membuka peluang usaha sabun curah dan produk isi ulang dengan sistem yang lebih praktis. Kami percaya konsep refill tidak hanya memberi nilai ekonomi, tetapi juga menjadi langkah nyata menuju kebiasaan belanja yang lebih hemat dan lebih bertanggung jawab terhadap lingkungan.
+              </p>
+            </div>
+
+            <div class="brand-focus reveal reveal-delay-2">
+              <div
+                v-for="item in brandFocus"
+                :key="item"
+                class="brand-focus__item"
+              >
+                {{ item }}
+              </div>
+            </div>
+          </div>
+
+          <aside class="brand-story__aside reveal reveal-delay-2">
+            <div class="brand-logo-panel">
               <NuxtImg
-                :src="image.src"
-                :alt="image.alt"
-                class="brand-gallery__img"
-                width="640"
-                height="480"
+                src="/indotech-full-1536x438.webp"
+                alt="Logo PT. Indotech Berkah Abadi"
+                class="brand-logo-panel__img"
+                width="1536"
+                height="438"
                 loading="lazy"
                 placeholder
               />
-              <figcaption class="brand-gallery__caption">{{ image.caption }}</figcaption>
-            </figure>
-          </div>
+            </div>
+            <p class="brand-story__note">
+              Fondasi bisnis kami dibangun dari kombinasi riset formula, legalitas produk, dan kesiapan sistem kemitraan yang bisa dijalankan secara realistis di banyak kota.
+            </p>
+          </aside>
+        </div>
 
-          <div class="brand-logo-panel glass-card">
+        <div
+          class="brand-gallery reveal-stagger"
+          ref="gallerySliderRef"
+          @scroll.passive="onGallerySliderScroll"
+        >
+          <figure
+            v-for="image in galleryImages"
+            :key="image.src"
+            class="brand-gallery__card reveal"
+          >
             <NuxtImg
-              src="/indotech-full-1536x438.webp"
-              alt="Logo PT. Indotech Berkah Abadi"
-              class="brand-logo-panel__img"
-              width="1536"
-              height="438"
+              :src="image.src"
+              :alt="image.alt"
+              class="brand-gallery__img"
+              width="640"
+              height="480"
               loading="lazy"
               placeholder
             />
-          </div>
+            <figcaption class="brand-gallery__caption">{{ image.caption }}</figcaption>
+          </figure>
         </div>
 
-        <div class="brand-copy-panel glass-card reveal reveal-delay-2">
-          <div class="brand-copy-panel__body">
-            <p>
-              <strong>PT. Indotech Berkah Abadi</strong>, perusahaan yang berbasis di Yogyakarta, menghadirkan merek produk <strong>Cleanique Lab</strong> serta kemitraan <strong>Cleanique Mart</strong> sebagai solusi bisnis Perbekalan Kesehatan Rumah Tangga yang lebih modern, aman, dan mudah dijalankan.
-            </p>
-            <p>
-              Melalui Cleanique Lab, kami mengembangkan produk kebersihan yang dirancang untuk kebutuhan rumah tangga, usaha refill, laundry, dan sektor komersial. Fokus kami bukan hanya pada kualitas formula, tetapi juga pada legalitas produk, kestabilan mutu, dan kesiapan pasar agar mitra dapat tumbuh dengan fondasi yang lebih kuat.
-            </p>
-            <p>
-              Sementara itu, Cleanique Mart dibangun untuk membantu masyarakat membuka peluang usaha sabun curah dan produk isi ulang dengan sistem yang lebih praktis. Kami percaya konsep refill tidak hanya memberi nilai ekonomi, tetapi juga menjadi langkah nyata menuju kebiasaan belanja yang lebih hemat dan lebih bertanggung jawab terhadap lingkungan.
-            </p>
-          </div>
-
-          <div class="brand-focus">
-            <div
-              v-for="item in brandFocus"
-              :key="item"
-              class="brand-focus__item"
-            >
-              {{ item }}
-            </div>
-          </div>
+        <div class="brand-gallery__dots" v-if="isGallerySliderViewport && galleryDotIndexes.length > 1">
+          <button
+            v-for="(_, i) in galleryDotIndexes"
+            :key="`gallery-dot-${i}`"
+            type="button"
+            class="brand-gallery__dot"
+            :class="{ 'brand-gallery__dot--active': activeGallerySlide === i }"
+            :style="{ opacity: getGalleryDotOpacity(i) }"
+            :aria-label="`Tampilkan galeri gambar ${i + 1}`"
+            :aria-pressed="activeGallerySlide === i"
+            @click="goToGallerySlide(i)"
+          ></button>
         </div>
+      </div>
+
+      <div class="brand-section__wave-bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FFFFFF" />
+        </svg>
       </div>
     </section>
 
@@ -125,25 +167,27 @@
       <div class="container">
         <div class="proof-grid">
           <div class="proof-copy reveal">
-            <span class="proof-label">Bukti Kredibilitas</span>
-            <h2 class="text-title proof-title">Penghargaan dan pencapaian yang memperkuat kepercayaan.</h2>
+            <h2 class="text-title proof-title">Penghargaan dan <span class="gradient-text">pencapaian</span> yang memperkuat kepercayaan.</h2>
             <p class="text-light leading-relaxed">
               Perjalanan Cleanique Mart dibangun melalui proses yang serius, kolaborasi yang panjang, dan standar kerja yang terus ditingkatkan. Dokumentasi penghargaan ini menjadi bagian dari cerita pertumbuhan kami sebagai brand produk kebersihan dan kemitraan sabun curah di Indonesia.
             </p>
 
             <div class="proof-points">
               <div
-                v-for="point in proofPoints"
+                v-for="(point, index) in proofPoints"
                 :key="point.title"
-                class="proof-point glass-card"
+                class="proof-point"
               >
-                <h3>{{ point.title }}</h3>
-                <p>{{ point.description }}</p>
+                <span class="proof-point__index">{{ String(index + 1).padStart(2, '0') }}</span>
+                <div>
+                  <h3>{{ point.title }}</h3>
+                  <p>{{ point.description }}</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="proof-awards glass-card reveal reveal-delay-2">
+          <div class="proof-awards reveal reveal-delay-2">
             <NuxtImg
               src="/photo-collage.webp"
               alt="Kolase penghargaan Cleanique Mart"
@@ -163,6 +207,10 @@
 </template>
 
 <script setup lang="ts">
+const gallerySliderRef = ref<HTMLElement | null>(null)
+const activeGallerySlide = ref(0)
+const isGallerySliderViewport = ref(false)
+
 const brandFocus = [
   'Cleanique Lab',
   'Kemitraan Cleanique Mart',
@@ -203,6 +251,108 @@ const galleryImages = [
     caption: 'Kehadiran brand di berbagai kota berkembang',
   },
 ]
+
+const galleryDotIndexes = computed(() => Array.from({ length: galleryImages.length }))
+
+let galleryMediaQuery: MediaQueryList | null = null
+
+function getGallerySlides() {
+  if (!gallerySliderRef.value) {
+    return [] as HTMLElement[]
+  }
+
+  return Array.from(gallerySliderRef.value.querySelectorAll('.brand-gallery__card')) as HTMLElement[]
+}
+
+function onGallerySliderScroll() {
+  if (!isGallerySliderViewport.value || !gallerySliderRef.value) {
+    return
+  }
+
+  const slides = getGallerySlides()
+  if (!slides.length) {
+    return
+  }
+
+  const scrollLeft = gallerySliderRef.value.scrollLeft
+  let nearestIndex = 0
+  let smallestDistance = Number.POSITIVE_INFINITY
+
+  slides.forEach((slide, index) => {
+    const distance = Math.abs(slide.offsetLeft - scrollLeft)
+    if (distance < smallestDistance) {
+      smallestDistance = distance
+      nearestIndex = index
+    }
+  })
+
+  activeGallerySlide.value = nearestIndex
+}
+
+function goToGallerySlide(index: number) {
+  if (!gallerySliderRef.value) {
+    return
+  }
+
+  const slides = getGallerySlides()
+  if (!slides.length) {
+    return
+  }
+
+  const targetIndex = Math.max(0, Math.min(index, slides.length - 1))
+  const targetSlide = slides[targetIndex]
+  if (!targetSlide) {
+    return
+  }
+
+  gallerySliderRef.value.scrollTo({
+    left: targetSlide.offsetLeft,
+    behavior: 'smooth',
+  })
+
+  activeGallerySlide.value = targetIndex
+}
+
+function getGalleryDotOpacity(index: number) {
+  const distance = Math.abs(activeGallerySlide.value - index)
+
+  if (distance === 0) {
+    return 1
+  }
+
+  if (distance === 1) {
+    return 0.56
+  }
+
+  return 0.3
+}
+
+function handleGalleryMediaChange(event: MediaQueryListEvent) {
+  isGallerySliderViewport.value = event.matches
+
+  if (!event.matches) {
+    activeGallerySlide.value = 0
+    return
+  }
+
+  nextTick(() => {
+    onGallerySliderScroll()
+  })
+}
+
+onMounted(() => {
+  galleryMediaQuery = window.matchMedia('(max-width: 768px)')
+  isGallerySliderViewport.value = galleryMediaQuery.matches
+  galleryMediaQuery.addEventListener('change', handleGalleryMediaChange)
+
+  nextTick(() => {
+    onGallerySliderScroll()
+  })
+})
+
+onUnmounted(() => {
+  galleryMediaQuery?.removeEventListener('change', handleGalleryMediaChange)
+})
 
 useSeoMeta({
   title: 'Tentang Kami - CleaniqueMart',
@@ -317,16 +467,38 @@ useScrollReveal(0.08)
 }
 
 .brand-section {
+  position: relative;
+  overflow: hidden;
   background:
-    radial-gradient(circle at top right, rgba(67, 160, 71, 0.08), transparent 26%),
-    linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
-  border-top: 1px solid rgba(21, 101, 192, 0.06);
-  border-bottom: 1px solid rgba(21, 101, 192, 0.06);
+    radial-gradient(circle at top right, rgba(67, 160, 71, 0.08), transparent 28%),
+    radial-gradient(circle at 0% 55%, rgba(21, 101, 192, 0.06), transparent 32%),
+    linear-gradient(180deg, #f8fbff 0%, #edf6ff 48%, #ffffff 100%);
+  padding: 0;
+}
+
+.brand-section__wave-top,
+.brand-section__wave-bottom {
+  overflow: hidden;
+  line-height: 0;
+}
+
+.brand-section__wave-top svg,
+.brand-section__wave-bottom svg {
+  width: 100%;
+  height: 84px;
+}
+
+.brand-section__container {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
 }
 
 .brand-header {
   max-width: 980px;
   margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .brand-header__title {
@@ -338,17 +510,64 @@ useScrollReveal(0.08)
   color: var(--color-primary-dark);
 }
 
-.brand-showcase {
-  max-width: 1020px;
-  margin: 0 auto;
+.brand-header__subtitle {
+  max-width: 48rem;
+}
+
+.brand-story {
   display: grid;
-  gap: var(--space-8);
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: var(--space-8) var(--space-12);
+  align-items: start;
+  margin-bottom: var(--space-12);
+}
+
+.brand-story__copy {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.brand-story__lead {
+  font-size: 1.08rem;
+  line-height: 1.95;
+  color: var(--color-primary-dark);
+}
+
+.brand-story__columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.brand-story__columns p {
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.brand-story__aside {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.brand-story__note {
+  padding-left: var(--space-5);
+  border-left: 3px solid rgba(21, 101, 192, 0.16);
+  font-size: 0.96rem;
+  line-height: 1.85;
 }
 
 .brand-gallery {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-5);
+}
+
+.brand-gallery__dots {
+  display: none;
+}
+
+.brand-gallery__dot {
+  display: block;
 }
 
 .brand-gallery__card {
@@ -387,12 +606,10 @@ useScrollReveal(0.08)
 }
 
 .brand-logo-panel {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: var(--space-5);
+  padding: var(--space-6);
   border-radius: var(--radius-2xl);
   border: 1px solid rgba(21, 101, 192, 0.08);
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, #f8fbff 100%);
   box-shadow: var(--shadow-sm);
 }
 
@@ -402,35 +619,10 @@ useScrollReveal(0.08)
   display: block;
 }
 
-.brand-copy-panel {
-  max-width: 1020px;
-  margin: var(--space-12) auto 0;
-  border: 1px solid rgba(21, 101, 192, 0.08);
-  border-radius: var(--radius-2xl);
-  background: var(--color-white);
-  box-shadow: var(--shadow-sm);
-}
-
-.brand-copy-panel__body {
-  padding: var(--space-8);
-  padding-bottom: var(--space-5);
-}
-
-.brand-copy-panel__body p {
-  font-size: 1.02rem;
-  line-height: 1.9;
-  color: var(--color-text-light);
-}
-
-.brand-copy-panel__body p + p {
-  margin-top: var(--space-4);
-}
-
 .brand-focus {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  padding: 0 var(--space-8) var(--space-8);
 }
 
 .brand-focus__item {
@@ -439,11 +631,12 @@ useScrollReveal(0.08)
   min-height: 42px;
   padding: 0 var(--space-4);
   border-radius: var(--radius-full);
-  background: rgba(21, 101, 192, 0.06);
-  border: 1px solid rgba(21, 101, 192, 0.1);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(21, 101, 192, 0.12);
   color: var(--color-primary-dark);
   font-size: 0.9rem;
   font-weight: 700;
+  box-shadow: 0 10px 24px rgba(21, 101, 192, 0.08);
 }
 
 .proof-section {
@@ -474,13 +667,24 @@ useScrollReveal(0.08)
 .proof-points {
   display: grid;
   gap: var(--space-4);
+  margin-top: var(--space-2);
 }
 
 .proof-point {
-  padding: var(--space-5);
-  border-radius: var(--radius-xl);
-  border: 1px solid rgba(21, 101, 192, 0.08);
-  background: rgba(255, 255, 255, 0.88);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  align-items: start;
+  padding: var(--space-5) 0;
+  border-top: 1px solid rgba(21, 101, 192, 0.1);
+}
+
+.proof-point__index {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  color: rgba(21, 101, 192, 0.28);
 }
 
 .proof-point h3 {
@@ -497,20 +701,6 @@ useScrollReveal(0.08)
   color: var(--color-text-light);
 }
 
-.proof-label {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: var(--space-4);
-  padding: 6px var(--space-3);
-  border-radius: var(--radius-full);
-  background: rgba(67, 160, 71, 0.12);
-  color: #2e7d32;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
 .proof-title {
   margin-bottom: var(--space-4);
 }
@@ -523,13 +713,22 @@ useScrollReveal(0.08)
 
 @media (max-width: 1100px) {
   .story-grid,
-  .proof-grid {
+  .proof-grid,
+  .brand-story {
     grid-template-columns: 1fr;
   }
 
   .story-visual {
     max-width: 500px;
     margin: 0 auto;
+  }
+
+  .brand-story__aside {
+    max-width: 640px;
+  }
+
+  .brand-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -538,19 +737,63 @@ useScrollReveal(0.08)
     flex-direction: column;
   }
 
+  .brand-story__columns {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
   .brand-gallery {
     grid-auto-flow: column;
     grid-auto-columns: minmax(84%, 1fr);
     overflow-x: auto;
+    overflow-y: hidden;
     gap: var(--space-4);
-    padding-bottom: var(--space-3);
+    scroll-padding-inline: var(--space-2);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    scrollbar-width: none;
+    margin-bottom: var(--space-5);
+  }
+
+  .brand-gallery::-webkit-scrollbar {
+    display: none;
   }
 
   .brand-gallery__card {
     scroll-snap-align: start;
+  }
+
+  .brand-gallery__dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: var(--space-6);
+  }
+
+  .brand-gallery__dot {
+    width: 18px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    border: none;
+    padding: 0;
+    background: rgba(21, 101, 192, 0.18);
+    transition: width var(--transition-base), background var(--transition-base), transform var(--transition-base), opacity var(--transition-base);
+    cursor: pointer;
+  }
+
+  .brand-gallery__dot--active {
+    width: 38px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    transform: translateY(-1px);
+  }
+
+  .brand-gallery__dot:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
   }
 
   .brand-logo-panel {
@@ -558,13 +801,13 @@ useScrollReveal(0.08)
     padding: var(--space-4);
   }
 
-  .brand-copy-panel__body,
   .proof-awards {
     padding: var(--space-6);
   }
 
-  .brand-focus {
-    padding: 0 var(--space-6) var(--space-6);
+  .proof-point {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
   }
 }
 
@@ -573,9 +816,9 @@ useScrollReveal(0.08)
     font-size: clamp(1.8rem, 8vw, 2.6rem);
   }
 
-  .brand-copy-panel__body,
-  .brand-focus {
-    padding: var(--space-5);
+  .brand-story__lead,
+  .brand-story__columns p {
+    font-size: 0.98rem;
   }
 }
 </style>

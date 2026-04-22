@@ -13,7 +13,12 @@
         </h2>
       </div>
 
-      <div class="opportunity__pain-grid mb-24">
+      <div class="opportunity__pain-slider mb-24">
+        <div
+          class="opportunity__pain-grid"
+          ref="painSliderRef"
+          @scroll.passive="onPainSliderScroll"
+        >
         <!-- Card 1: Problem -->
         <div class="pain-card glass-card reveal reveal-delay-1">
           <div class="pain-card__header">
@@ -73,6 +78,20 @@
             </li>
           </ul>
         </div>
+        </div>
+        <div class="opportunity-slider-dots" v-if="painDotIndexes.length > 1">
+          <button
+            v-for="(_, i) in painDotIndexes"
+            :key="`pain-dot-${i}`"
+            type="button"
+            class="opportunity-slider-dot"
+            :class="{ 'opportunity-slider-dot--active': activePainSlide === i }"
+            :style="{ opacity: getDotOpacity(activePainSlide, i) }"
+            :aria-label="`Tampilkan slide masalah ${i + 1}`"
+            :aria-pressed="activePainSlide === i"
+            @click="goToPainSlide(i)"
+          ></button>
+        </div>
       </div>
 
       <!-- Section 2: Solution (Zig-Zag 1) -->
@@ -120,30 +139,49 @@
           <p class="split-desc mb-8">
             Apakah Anda termasuk dalam salah satu kriteria ini? Jika iya, maka Anda sangat cocok bergabung menjadi Mitra CleaniqueMart.
           </p>
-          <div class="target-grid mb-4">
-            <div class="target-card">
-              <div class="target-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <div class="target-slider mb-4">
+            <div
+              class="target-grid"
+              ref="targetSliderRef"
+              @scroll.passive="onTargetSliderScroll"
+            >
+              <div class="target-card">
+                <div class="target-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div class="target-text">Punya toko kosong</div>
               </div>
-              <div class="target-text">Punya toko kosong</div>
+              <div class="target-card">
+                <div class="target-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="target-text">Bosan berpenghasilan pas-pasan</div>
+              </div>
+              <div class="target-card">
+                <div class="target-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <div class="target-text">Mau bisnis yang pasti laku & untung</div>
+              </div>
+              <div class="target-card">
+                <div class="target-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="target-text">Modal kecil, bebas repot</div>
+              </div>
             </div>
-            <div class="target-card">
-              <div class="target-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <div class="target-text">Bosan berpenghasilan pas-pasan</div>
-            </div>
-            <div class="target-card">
-              <div class="target-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              </div>
-              <div class="target-text">Mau bisnis yang pasti laku & untung</div>
-            </div>
-            <div class="target-card">
-              <div class="target-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <div class="target-text">Modal kecil, bebas repot</div>
+            <div class="opportunity-slider-dots" v-if="targetDotIndexes.length > 1">
+              <button
+                v-for="(_, i) in targetDotIndexes"
+                :key="`target-dot-${i}`"
+                type="button"
+                class="opportunity-slider-dot"
+                :class="{ 'opportunity-slider-dot--active': activeTargetSlide === i }"
+                :style="{ opacity: getDotOpacity(activeTargetSlide, i) }"
+                :aria-label="`Tampilkan slide target ${i + 1}`"
+                :aria-pressed="activeTargetSlide === i"
+                @click="goToTargetSlide(i)"
+              ></button>
             </div>
           </div>
         </div>
@@ -169,30 +207,49 @@
           <p class="split-desc mb-8">
             Inilah alasan mengapa ratusan mitra kami sukses membangun bisnis mereka sendiri dari nol bersama CleaniqueMart.
           </p>
-          <div class="benefit-grid">
-            <div class="benefit-item">
-              <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <span>Produk Gampang Laku</span>
+          <div class="benefit-slider">
+            <div
+              class="benefit-grid"
+              ref="benefitSliderRef"
+              @scroll.passive="onBenefitSliderScroll"
+            >
+              <div class="benefit-item">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Produk Gampang Laku</span>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Sangat Cocok Pemula</span>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Minim Resiko Rugi</span>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Pasti Balik Modal</span>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Pasti Untung Besar</span>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                <span>Dibutuhkan Semua Kalangan</span>
+              </div>
             </div>
-            <div class="benefit-item">
-              <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <span>Sangat Cocok Pemula</span>
-            </div>
-            <div class="benefit-item">
-              <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <span>Minim Resiko Rugi</span>
-            </div>
-            <div class="benefit-item">
-              <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <span>Pasti Balik Modal</span>
-            </div>
-            <div class="benefit-item">
-              <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <span>Pasti Untung Besar</span>
-            </div>
-            <div class="benefit-item">
-              <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <span>Dibutuhkan Semua Kalangan</span>
+            <div class="opportunity-slider-dots" v-if="benefitDotIndexes.length > 1">
+              <button
+                v-for="(_, i) in benefitDotIndexes"
+                :key="`benefit-dot-${i}`"
+                type="button"
+                class="opportunity-slider-dot"
+                :class="{ 'opportunity-slider-dot--active': activeBenefitSlide === i }"
+                :style="{ opacity: getDotOpacity(activeBenefitSlide, i) }"
+                :aria-label="`Tampilkan slide keuntungan ${i + 1}`"
+                :aria-pressed="activeBenefitSlide === i"
+                @click="goToBenefitSlide(i)"
+              ></button>
             </div>
           </div>
         </div>
@@ -208,12 +265,294 @@
           />
         </div>
       </div>
+
+      <!-- Section 5: Business Segments -->
+      <div class="opportunity-market reveal-stagger">
+        <div class="opportunity-market__header text-center mb-10">
+          <h3 class="market-title reveal reveal-delay-1">
+            Sabun curah sangat dibutuhkan oleh pemilik usaha:
+          </h3>
+        </div>
+        <div class="market-slider">
+          <ul
+            class="market-grid"
+            ref="marketSliderRef"
+            aria-label="Segmen usaha yang membutuhkan sabun curah"
+            @scroll.passive="onMarketSliderScroll"
+          >
+            <li
+              v-for="segment in businessSegments"
+              :key="segment.name"
+              class="market-card reveal"
+              :style="{ '--segment-color': segment.color }"
+            >
+              <div class="market-card__icon" aria-hidden="true" v-html="segment.icon"></div>
+              <span class="market-card__text">{{ segment.name }}</span>
+            </li>
+          </ul>
+          <div class="opportunity-slider-dots" v-if="marketDotIndexes.length > 1">
+            <button
+              v-for="(_, i) in marketDotIndexes"
+              :key="`market-dot-${i}`"
+              type="button"
+              class="opportunity-slider-dot"
+              :class="{ 'opportunity-slider-dot--active': activeMarketSlide === i }"
+              :style="{ opacity: getDotOpacity(activeMarketSlide, i) }"
+              :aria-label="`Tampilkan slide segmen usaha ${i + 1}`"
+              :aria-pressed="activeMarketSlide === i"
+              @click="goToMarketSlide(i)"
+            ></button>
+          </div>
+        </div>
+      </div>
       
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+const painSliderRef = ref<HTMLElement | null>(null)
+const targetSliderRef = ref<HTMLElement | null>(null)
+const benefitSliderRef = ref<HTMLElement | null>(null)
+const marketSliderRef = ref<HTMLElement | null>(null)
+
+const activePainSlide = ref(0)
+const activeTargetSlide = ref(0)
+const activeBenefitSlide = ref(0)
+const activeMarketSlide = ref(0)
+
+const painSlideCount = ref(0)
+const targetSlideCount = ref(0)
+const benefitSlideCount = ref(0)
+const marketSlideCount = ref(0)
+
+const isSliderViewport = ref(false)
+
+const painDotIndexes = computed(() => Array.from({ length: painSlideCount.value }))
+const targetDotIndexes = computed(() => Array.from({ length: targetSlideCount.value }))
+const benefitDotIndexes = computed(() => Array.from({ length: benefitSlideCount.value }))
+const marketDotIndexes = computed(() => Array.from({ length: marketSlideCount.value }))
+
+const businessSegments = [
+  {
+    name: 'Laundry',
+    color: '#1565C0',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l8-4 8 4"/><path d="M8 11v9"/><path d="M16 11v9"/><path d="M4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7"/></svg>`,
+  },
+  {
+    name: 'Rumah Makan/Restoran',
+    color: '#1E88E5',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v8"/><path d="M7 3v8"/><path d="M4 7h3"/><path d="M7 11v10"/><path d="M13 3c2.2 0 4 1.8 4 4v14"/><path d="M13 11h4"/></svg>`,
+  },
+  {
+    name: 'Rumah Tangga',
+    color: '#2E7D32',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg>`,
+  },
+  {
+    name: 'Industri Gedung',
+    color: '#0D47A1',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V5l6-2v18"/><path d="M18 21V9l-6-2"/><path d="M9 7h.01"/><path d="M9 11h.01"/><path d="M9 15h.01"/><path d="M15 11h.01"/><path d="M15 15h.01"/></svg>`,
+  },
+  {
+    name: 'Hotel/Penginapan',
+    color: '#00838F',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l7-3 11 5-7 3-11-5z"/><path d="M3 12l7 3 11-5"/><path d="M3 18l7 3 11-5"/></svg>`,
+  },
+  {
+    name: 'Salon',
+    color: '#26A69A',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12l1 4H5l1-4z"/><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/><path d="M9 12l6 6"/><path d="M15 12l-6 6"/></svg>`,
+  },
+  {
+    name: 'Klinik dan Rumah Sakit',
+    color: '#00695C',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-2 4-4-8-2 4H2"/><path d="M6.6 18.4a5 5 0 0 1 0-7.1 5 5 0 0 1 7.1 0l.3.3.3-.3a5 5 0 0 1 7.1 7.1L14 21.5z"/></svg>`,
+  },
+  {
+    name: 'Cuci Mobil/Motor',
+    color: '#1976D2',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l2-5h10l2 5"/><path d="M4 12h16v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5z"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/></svg>`,
+  },
+  {
+    name: 'Tempat Ibadah',
+    color: '#2E7D32',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14.5A8.5 8.5 0 1 1 10 3a7.2 7.2 0 0 0 11 11.5z"/></svg>`,
+  },
+]
+
+let mediaQuery: MediaQueryList | null = null
+
+function getSliderItems(slider: HTMLElement | null) {
+  if (!slider) {
+    return [] as HTMLElement[]
+  }
+
+  return Array.from(slider.children) as HTMLElement[]
+}
+
+function updateSliderCount(
+  sliderRef: typeof painSliderRef,
+  countRef: typeof painSlideCount,
+  activeRef: typeof activePainSlide,
+) {
+  const slides = getSliderItems(sliderRef.value)
+  countRef.value = slides.length
+
+  if (!slides.length) {
+    activeRef.value = 0
+    return
+  }
+
+  if (activeRef.value > slides.length - 1) {
+    activeRef.value = slides.length - 1
+  }
+}
+
+function syncActiveSlide(
+  sliderRef: typeof painSliderRef,
+  activeRef: typeof activePainSlide,
+) {
+  if (!isSliderViewport.value || !sliderRef.value) {
+    return
+  }
+
+  const slides = getSliderItems(sliderRef.value)
+  if (!slides.length) {
+    return
+  }
+
+  const scrollLeft = sliderRef.value.scrollLeft
+  let nearestIndex = 0
+  let smallestDistance = Number.POSITIVE_INFINITY
+
+  slides.forEach((slide, index) => {
+    const distance = Math.abs((slide as HTMLElement).offsetLeft - scrollLeft)
+    if (distance < smallestDistance) {
+      smallestDistance = distance
+      nearestIndex = index
+    }
+  })
+
+  activeRef.value = nearestIndex
+}
+
+function goToSlide(
+  sliderRef: typeof painSliderRef,
+  activeRef: typeof activePainSlide,
+  index: number,
+) {
+  if (!sliderRef.value) {
+    return
+  }
+
+  const slides = getSliderItems(sliderRef.value)
+  if (!slides.length) {
+    return
+  }
+
+  const targetIndex = Math.max(0, Math.min(index, slides.length - 1))
+  const targetSlide = slides[targetIndex]
+  if (!targetSlide) {
+    return
+  }
+
+  sliderRef.value.scrollTo({
+    left: targetSlide.offsetLeft,
+    behavior: 'smooth',
+  })
+
+  activeRef.value = targetIndex
+}
+
+function refreshSliderState() {
+  updateSliderCount(painSliderRef, painSlideCount, activePainSlide)
+  updateSliderCount(targetSliderRef, targetSlideCount, activeTargetSlide)
+  updateSliderCount(benefitSliderRef, benefitSlideCount, activeBenefitSlide)
+  updateSliderCount(marketSliderRef, marketSlideCount, activeMarketSlide)
+
+  syncActiveSlide(painSliderRef, activePainSlide)
+  syncActiveSlide(targetSliderRef, activeTargetSlide)
+  syncActiveSlide(benefitSliderRef, activeBenefitSlide)
+  syncActiveSlide(marketSliderRef, activeMarketSlide)
+}
+
+function onPainSliderScroll() {
+  syncActiveSlide(painSliderRef, activePainSlide)
+}
+
+function onTargetSliderScroll() {
+  syncActiveSlide(targetSliderRef, activeTargetSlide)
+}
+
+function onBenefitSliderScroll() {
+  syncActiveSlide(benefitSliderRef, activeBenefitSlide)
+}
+
+function onMarketSliderScroll() {
+  syncActiveSlide(marketSliderRef, activeMarketSlide)
+}
+
+function goToPainSlide(index: number) {
+  goToSlide(painSliderRef, activePainSlide, index)
+}
+
+function goToTargetSlide(index: number) {
+  goToSlide(targetSliderRef, activeTargetSlide, index)
+}
+
+function goToBenefitSlide(index: number) {
+  goToSlide(benefitSliderRef, activeBenefitSlide, index)
+}
+
+function goToMarketSlide(index: number) {
+  goToSlide(marketSliderRef, activeMarketSlide, index)
+}
+
+function getDotOpacity(activeIndex: number, index: number) {
+  const distance = Math.abs(activeIndex - index)
+
+  if (distance === 0) {
+    return 1
+  }
+
+  if (distance === 1) {
+    return 0.56
+  }
+
+  return 0.3
+}
+
+function handleMediaChange(event: MediaQueryListEvent) {
+  isSliderViewport.value = event.matches
+
+  if (!event.matches) {
+    activePainSlide.value = 0
+    activeTargetSlide.value = 0
+    activeBenefitSlide.value = 0
+    activeMarketSlide.value = 0
+    return
+  }
+
+  nextTick(() => {
+    refreshSliderState()
+  })
+}
+
+onMounted(() => {
+  mediaQuery = window.matchMedia('(max-width: 768px)')
+  isSliderViewport.value = mediaQuery.matches
+  mediaQuery.addEventListener('change', handleMediaChange)
+
+  nextTick(() => {
+    refreshSliderState()
+  })
+})
+
+onUnmounted(() => {
+  mediaQuery?.removeEventListener('change', handleMediaChange)
+})
+
 useScrollReveal('.reveal', 0.08)
 </script>
 
@@ -254,6 +593,14 @@ useScrollReveal('.reveal', 0.08)
   gap: var(--space-8);
   max-width: 1080px;
   margin-inline: auto;
+}
+
+.opportunity-slider-dots {
+  display: none;
+}
+
+.opportunity-slider-dot {
+  display: block;
 }
 
 .pain-card {
@@ -534,6 +881,69 @@ useScrollReveal('.reveal', 0.08)
   height: 14px;
 }
 
+/* Market Segments */
+.opportunity-market {
+  max-width: 1080px;
+  margin: var(--space-24) auto 0;
+}
+
+.market-title {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-primary-dark);
+}
+
+.market-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.market-card {
+  --segment-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 92px;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--segment-color);
+  background: var(--color-white);
+  box-shadow: 0 6px 18px rgba(13, 43, 107, 0.05);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.market-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(13, 43, 107, 0.1);
+}
+
+.market-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-white);
+  background: var(--segment-color);
+}
+
+.market-card__icon :deep(svg) {
+  width: 30px;
+  height: 30px;
+}
+
+.market-card__text {
+  color: var(--segment-color);
+  font-weight: 700;
+  font-size: clamp(0.98rem, 1.3vw, 1.1rem);
+  line-height: 1.35;
+}
+
 /* Visual Assets */
 .visual-img {
   width: 100%;
@@ -574,6 +984,10 @@ useScrollReveal('.reveal', 0.08)
     flex-direction: column;
     gap: var(--space-12);
   }
+
+  .market-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   
   .opportunity-split--reverse {
     flex-direction: column;
@@ -597,39 +1011,144 @@ useScrollReveal('.reveal', 0.08)
 }
 
 @media (max-width: 768px) {
+  .opportunity-slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: var(--space-4);
+  }
+
+  .opportunity-slider-dot {
+    width: 18px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    border: none;
+    padding: 0;
+    background: rgba(21, 101, 192, 0.18);
+    transition: width var(--transition-base), background var(--transition-base), transform var(--transition-base), opacity var(--transition-base);
+    cursor: pointer;
+  }
+
+  .opportunity-slider-dot--active {
+    width: 38px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    transform: translateY(-1px);
+  }
+
+  .opportunity-slider-dot:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
   .opportunity__pain-grid {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(86%, 1fr);
+    display: flex;
+    grid-template-columns: none;
     overflow-x: auto;
+    overflow-y: hidden;
+    scroll-padding-inline: var(--space-2);
+    scrollbar-width: none;
     gap: var(--space-4);
-    padding-bottom: var(--space-3);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    margin-bottom: var(--space-5);
+  }
+
+  .opportunity__pain-grid::-webkit-scrollbar {
+    display: none;
   }
   
   .target-grid {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(82%, 1fr);
+    display: flex;
+    grid-template-columns: none;
     overflow-x: auto;
+    overflow-y: hidden;
+    scroll-padding-inline: var(--space-2);
+    scrollbar-width: none;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    gap: var(--space-4);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
+    margin-bottom: var(--space-5);
+  }
+
+  .target-grid::-webkit-scrollbar {
+    display: none;
   }
   
   .benefit-grid {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(74%, 1fr);
+    display: flex;
+    grid-template-columns: none;
     overflow-x: auto;
+    overflow-y: hidden;
+    scroll-padding-inline: var(--space-2);
+    scrollbar-width: none;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    gap: var(--space-4);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
+    margin-bottom: var(--space-5);
   }
 
-  .opportunity__pain-grid > *,
-  .target-grid > *,
-  .benefit-grid > * {
+  .benefit-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .market-grid {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-padding-inline: var(--space-2);
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--space-4);
+    padding-inline: var(--space-2);
+    padding-bottom: 0;
+    touch-action: pan-x pan-y;
+    margin-bottom: var(--space-5);
+  }
+
+  .market-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pain-card,
+  .target-card,
+  .benefit-item,
+  .market-card {
     scroll-snap-align: start;
+  }
+
+  .pain-card {
+    flex: 0 0 min(86%, 520px);
+  }
+
+  .target-card {
+    flex: 0 0 min(82%, 360px);
+  }
+
+  .benefit-item {
+    flex: 0 0 min(74%, 290px);
+  }
+
+  .market-card {
+    flex: 0 0 min(86%, 420px);
+  }
+
+  .market-card {
+    min-height: 88px;
+  }
+
+  .market-card__text {
+    font-size: 1.05rem;
   }
   
   .visual-img {

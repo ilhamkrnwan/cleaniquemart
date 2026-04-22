@@ -413,7 +413,7 @@ useScrollReveal('.reveal', 0.08)
     scroll-snap-type: x mandatory;
     scroll-padding-inline: var(--space-2);
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     scrollbar-width: none;
     align-items: center;
     margin-bottom: var(--space-5);

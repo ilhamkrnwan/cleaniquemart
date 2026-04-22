@@ -28,6 +28,19 @@
     </a>
   </div>
 
+  <button
+    type="button"
+    class="floating-scroll-top"
+    :class="{ 'is-visible': showScrollTop }"
+    aria-label="Scroll to top"
+    @click="scrollToTop"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m18 15-6-6-6 6"/>
+    </svg>
+    <span class="floating-sidebar__tooltip">Scroll to top</span>
+  </button>
+
   <!-- Floating WhatsApp Bubble (bottom right) -->
   <a
     href="https://wa.me/6287885590088?text=Halo%2C%20saya%20ingin%20konsultasi%20menjadi%20mitra%20CleaniqueMart"
@@ -44,6 +57,37 @@
     <span class="floating-wa-bubble__pulse" aria-hidden="true"></span>
   </a>
 </template>
+
+<script setup lang="ts">
+const props = withDefaults(defineProps<{
+  scrollTopThreshold?: number
+}>(), {
+  scrollTopThreshold: 240
+})
+
+const showScrollTop = ref(false)
+
+const onWindowScroll = () => {
+  showScrollTop.value = window.scrollY > props.scrollTopThreshold
+}
+
+const scrollToTop = () => {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  window.scrollTo({
+    top: 0,
+    behavior: prefersReducedMotion ? 'auto' : 'smooth'
+  })
+}
+
+onMounted(() => {
+  onWindowScroll()
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onWindowScroll)
+})
+</script>
 
 <style scoped>
 /* ===========================
@@ -133,6 +177,59 @@
 }
 
 /* ===========================
+   FLOATING SCROLL TOP
+   =========================== */
+.floating-scroll-top {
+  position: fixed;
+  right: 28px;
+  bottom: calc(28px + 54px + 12px);
+  z-index: var(--z-overlay);
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(21, 101, 192, 0.2);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.18);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.94);
+  transition:
+    opacity 0.24s ease-out,
+    transform 0.24s ease-out,
+    box-shadow var(--transition-base),
+    color var(--transition-fast);
+}
+
+.floating-scroll-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.floating-scroll-top:hover,
+.floating-scroll-top:focus-visible {
+  color: var(--color-primary-dark);
+  box-shadow: 0 12px 30px rgba(21, 101, 192, 0.24);
+  transform: translateY(-2px);
+}
+
+.floating-scroll-top:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.floating-scroll-top:hover .floating-sidebar__tooltip,
+.floating-scroll-top:focus-visible .floating-sidebar__tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ===========================
    FLOATING WA BUBBLE
    =========================== */
 .floating-wa-bubble {
@@ -200,12 +297,23 @@
     bottom: 20px;
     right: 16px;
   }
+
+  .floating-scroll-top {
+    right: 16px;
+    bottom: calc(20px + 50px + 10px);
+    width: 50px;
+    height: 50px;
+  }
 }
 
 /* ===========================
    REDUCED MOTION
    =========================== */
 @media (prefers-reduced-motion: reduce) {
+  .floating-scroll-top {
+    transition: none;
+  }
+
   .floating-wa-bubble__pulse {
     animation: none;
   }

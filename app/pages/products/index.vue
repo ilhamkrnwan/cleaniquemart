@@ -192,7 +192,13 @@ onUnmounted(() => {
     />
 
     <section class="products-catalog section">
-      <div class="container">
+      <div class="products-catalog__wave-top" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,0 L0,0 Z" fill="#F8FBFF" />
+        </svg>
+      </div>
+
+      <div class="container products-catalog__container">
         <div class="catalog-grid" ref="sliderRef" @scroll.passive="onSliderScroll">
           <article
             v-for="(product, i) in products"
@@ -248,6 +254,12 @@ onUnmounted(() => {
           ></button>
         </div>
       </div>
+
+      <div class="products-catalog__wave-bottom" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FFFFFF" />
+        </svg>
+      </div>
     </section>
 
     <ProductsReviews />
@@ -256,7 +268,27 @@ onUnmounted(() => {
 
 <style scoped>
 .products-catalog {
+  position: relative;
+  overflow: hidden;
   background: var(--color-surface);
+  padding: 0;
+}
+
+.products-catalog__wave-top,
+.products-catalog__wave-bottom {
+  overflow: hidden;
+  line-height: 0;
+}
+
+.products-catalog__wave-top svg,
+.products-catalog__wave-bottom svg {
+  width: 100%;
+  height: 80px;
+}
+
+.products-catalog__container {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
 }
 
 .catalog-grid {
@@ -410,6 +442,11 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .products-catalog__wave-top svg,
+  .products-catalog__wave-bottom svg {
+    height: 64px;
+  }
+
   .catalog__slider-dots {
     display: flex;
     justify-content: center;
@@ -447,7 +484,7 @@ onUnmounted(() => {
     scroll-snap-type: x mandatory;
     scroll-padding-inline: var(--space-2);
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     scrollbar-width: none;
     align-items: stretch;
     gap: var(--space-4);

@@ -6,6 +6,8 @@ const trackRef = ref<HTMLElement | null>(null)
 // Touch/swipe tracking
 let touchStartX = 0
 let touchDeltaX = 0
+let touchStartY = 0
+let touchDeltaY = 0
 let isSwiping = false
 
 // Autoplay timing
@@ -44,19 +46,28 @@ function goToStep(index: number) {
 }
 
 function onTouchStart(e: TouchEvent) {
-  touchStartX = e.touches[0].clientX
+  touchStartX = e.touches[0]?.clientX ?? 0
+  touchStartY = e.touches[0]?.clientY ?? 0
   touchDeltaX = 0
+  touchDeltaY = 0
   isSwiping = true
 }
 
 function onTouchMove(e: TouchEvent) {
   if (!isSwiping) return
-  touchDeltaX = e.touches[0].clientX - touchStartX
+  touchDeltaX = (e.touches[0]?.clientX ?? 0) - touchStartX
+  touchDeltaY = (e.touches[0]?.clientY ?? 0) - touchStartY
 }
 
 function onTouchEnd() {
   if (!isSwiping) return
   isSwiping = false
+
+  // Let vertical swipes scroll the page; only react to dominant horizontal gestures.
+  if (Math.abs(touchDeltaX) <= Math.abs(touchDeltaY)) {
+    return
+  }
+
   const threshold = 50
   if (touchDeltaX < -threshold && activeStep.value < steps.length - 1) {
     activeStep.value++
@@ -162,9 +173,9 @@ onUnmounted(() => {
           class="join__carousel-track"
           ref="trackRef"
           :style="{ transform: `translateX(-${activeStep * 100}%)` }"
-          @touchstart="onTouchStart"
-          @touchmove="onTouchMove"
-          @touchend="onTouchEnd"
+          @touchstart.passive="onTouchStart"
+          @touchmove.passive="onTouchMove"
+          @touchend.passive="onTouchEnd"
         >
           <div
             v-for="(step, i) in steps"
