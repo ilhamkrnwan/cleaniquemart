@@ -1,12 +1,15 @@
 <template>
   <section class="hero" aria-label="Hero Section">
-    <!-- Animated Bubbles Background -->
-    <div class="hero__bubbles" aria-hidden="true">
-      <span v-for="i in 12" :key="i" class="hero__bubble" :class="`hero__bubble--${i}`"></span>
-    </div>
+    <!-- Subtle dot pattern -->
+    <div class="hero__dots" aria-hidden="true"></div>
 
     <!-- Gradient Mesh Background -->
     <div class="hero__bg-mesh" aria-hidden="true"></div>
+
+    <!-- Animated Bubbles — reduced to 6 -->
+    <div class="hero__bubbles" aria-hidden="true">
+      <span v-for="i in 6" :key="i" class="hero__bubble" :class="`hero__bubble--${i}`"></span>
+    </div>
 
     <div class="container">
       <div class="hero__content">
@@ -62,27 +65,36 @@
           </div>
         </div>
 
-        <!-- Right: Visual -->
+        <!-- Right: Blob Visual -->
         <div class="hero__visual reveal reveal-delay-2">
-          <div class="hero__visual-ring hero__visual-ring--outer" aria-hidden="true"></div>
-          <div class="hero__visual-ring hero__visual-ring--middle" aria-hidden="true"></div>
-          <div class="hero__visual-card glass-card">
-            <NuxtImg
-              src="/photo-collage.webp"
-              alt="Koleksi produk CleaniqueMart — sabun curah premium berkualitas"
-              width="480"
-              height="480"
-              class="hero__visual-img"
-              loading="eager"
-              sizes="(max-width: 768px) 100vw, 480px"
-            />
+          <!-- Decorative rings -->
+          <div class="hero__blob-ring hero__blob-ring--outer" aria-hidden="true"></div>
+          <div class="hero__blob-ring hero__blob-ring--inner" aria-hidden="true"></div>
+
+          <!-- Blob card -->
+          <div class="hero__blob-card">
+            <div class="hero__blob-gradient" aria-hidden="true"></div>
+            <div class="hero__blob-img-wrap">
+              <NuxtImg
+                src="/photo-collage.webp"
+                alt="Koleksi produk CleaniqueMart — sabun curah premium berkualitas"
+                width="480"
+                height="480"
+                class="hero__blob-img"
+                loading="eager"
+                sizes="(max-width: 768px) 100vw, 480px"
+              />
+            </div>
+
             <!-- Floating Badges -->
             <div class="hero__float-badge hero__float-badge--top">
               <span class="hero__float-dot"></span>
               Halal MUI Certified
             </div>
             <div class="hero__float-badge hero__float-badge--bottom">
-              <span class="hero__float-icon">🏆</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hero__float-trophy" aria-hidden="true">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+              </svg>
               #1 Sabun Curah Pilihan Mitra
             </div>
           </div>
@@ -90,9 +102,12 @@
       </div>
     </div>
 
-    <!-- Wave Bottom -->
+    <!-- Layered Wave Bottom -->
     <div class="hero__wave" aria-hidden="true">
-      <svg viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <svg class="hero__wave-back" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,80 C240,120 480,40 720,80 C960,120 1200,40 1440,80 L1440,120 L0,120 Z" fill="rgba(248,251,255,0.5)"/>
+      </svg>
+      <svg class="hero__wave-front" viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,60 C360,100 720,20 1080,60 C1260,80 1380,50 1440,60 L1440,100 L0,100 Z" fill="#F8FBFF"/>
       </svg>
     </div>
@@ -107,33 +122,29 @@ const trustBadges = [
   { text: 'Harga Kompetitif' },
 ]
 
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-        }
-      })
-    },
-    { threshold: 0.1 }
-  )
-
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-})
+useScrollReveal()
 </script>
 
 <style scoped>
 .hero {
   position: relative;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #0D2B6B 0%, #1565C0 45%, #1976D2 70%, #1E88E5 100%);
+  background: linear-gradient(145deg, #091E45 0%, #0D2B6B 25%, #1565C0 55%, #1976D2 75%, #1E88E5 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* === Bubbles === */
+/* === Dot Pattern === */
+.hero__dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* === Bubbles (reduced) === */
 .hero__bubbles {
   position: absolute;
   inset: 0;
@@ -143,30 +154,25 @@ onMounted(() => {
 .hero__bubble {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   animation: bubble-rise linear infinite;
 }
 
-.hero__bubble--1  { width: 20px; height: 20px; left: 10%; animation-duration: 8s; animation-delay: 0s; }
-.hero__bubble--2  { width: 12px; height: 12px; left: 20%; animation-duration: 10s; animation-delay: 1s; }
-.hero__bubble--3  { width: 28px; height: 28px; left: 35%; animation-duration: 7s; animation-delay: 2s; }
-.hero__bubble--4  { width: 16px; height: 16px; left: 50%; animation-duration: 12s; animation-delay: 0.5s; }
-.hero__bubble--5  { width: 24px; height: 24px; left: 65%; animation-duration: 9s; animation-delay: 3s; }
-.hero__bubble--6  { width: 10px; height: 10px; left: 75%; animation-duration: 11s; animation-delay: 1.5s; }
-.hero__bubble--7  { width: 32px; height: 32px; left: 85%; animation-duration: 8s; animation-delay: 2.5s; }
-.hero__bubble--8  { width: 18px; height: 18px; left: 5%; animation-duration: 14s; animation-delay: 4s; }
-.hero__bubble--9  { width: 14px; height: 14px; left: 45%; animation-duration: 6s; animation-delay: 1s; }
-.hero__bubble--10 { width: 22px; height: 22px; left: 90%; animation-duration: 13s; animation-delay: 0s; }
-.hero__bubble--11 { width: 8px;  height: 8px;  left: 28%; animation-duration: 9s; animation-delay: 3.5s; }
-.hero__bubble--12 { width: 26px; height: 26px; left: 58%; animation-duration: 10s; animation-delay: 2s; }
+.hero__bubble--1 { width: 24px; height: 24px; left: 8%;  animation-duration: 10s; animation-delay: 0s; }
+.hero__bubble--2 { width: 16px; height: 16px; left: 25%; animation-duration: 12s; animation-delay: 2s; }
+.hero__bubble--3 { width: 32px; height: 32px; left: 45%; animation-duration: 14s; animation-delay: 1s; }
+.hero__bubble--4 { width: 12px; height: 12px; left: 65%; animation-duration: 11s; animation-delay: 3s; }
+.hero__bubble--5 { width: 20px; height: 20px; left: 80%; animation-duration: 13s; animation-delay: 0.5s; }
+.hero__bubble--6 { width: 28px; height: 28px; left: 92%; animation-duration: 9s;  animation-delay: 4s; }
 
 /* === Background mesh === */
 .hero__bg-mesh {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 80% 20%, rgba(67, 160, 71, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 10% 80%, rgba(66, 165, 245, 0.12) 0%, transparent 50%);
+    radial-gradient(ellipse at 75% 15%, rgba(67, 160, 71, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 15% 75%, rgba(66, 165, 245, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -196,15 +202,17 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px var(--space-4);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-full);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.88);
   margin-bottom: var(--space-6);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  letter-spacing: 0.01em;
 }
 
 .hero__trust-dot {
@@ -218,16 +226,17 @@ onMounted(() => {
 
 .hero__headline {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.12;
   color: var(--color-white);
   margin-bottom: var(--space-6);
+  letter-spacing: -0.02em;
 }
 
 .hero__headline-accent {
   display: block;
-  background: linear-gradient(135deg, #A5D6A7, #43A047, #69F0AE);
+  background: linear-gradient(135deg, #A5D6A7 0%, #43A047 40%, #69F0AE 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -236,8 +245,8 @@ onMounted(() => {
 .hero__sub {
   font-size: 1.05rem;
   line-height: 1.75;
-  color: rgba(255, 255, 255, 0.78);
-  max-width: 500px;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 480px;
   margin-bottom: var(--space-8);
 }
 
@@ -265,7 +274,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .hero__badge {
@@ -274,14 +283,14 @@ onMounted(() => {
   gap: 6px;
   font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .hero__badge-icon {
   color: var(--color-accent);
 }
 
-/* === Visual === */
+/* === Blob Visual === */
 .hero__visual {
   position: relative;
   display: flex;
@@ -289,41 +298,54 @@ onMounted(() => {
   justify-content: center;
 }
 
-.hero__visual-ring {
+/* Decorative rings */
+.hero__blob-ring {
   position: absolute;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.08);
-  animation: spin-slow linear infinite;
+  border: 1.5px solid rgba(255, 255, 255, 0.06);
 }
 
-.hero__visual-ring--outer {
-  width: 520px;
-  height: 520px;
-  animation-duration: 30s;
+.hero__blob-ring--outer {
+  width: 500px;
+  height: 500px;
+  animation: spin-slow 35s linear infinite;
 }
 
-.hero__visual-ring--middle {
+.hero__blob-ring--inner {
   width: 420px;
   height: 420px;
-  animation-duration: 20s;
-  animation-direction: reverse;
-  border-color: rgba(67, 160, 71, 0.12);
+  animation: spin-slow 25s linear infinite reverse;
+  border-color: rgba(67, 160, 71, 0.08);
 }
 
-.hero__visual-card {
+/* Blob card */
+.hero__blob-card {
   position: relative;
-  width: 380px;
-  height: 380px;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  animation: float-slow 6s ease-in-out infinite;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 20px 60px rgba(13, 43, 107, 0.5),
-    0 0 0 1px rgba(255,255,255,0.1) inset;
+  width: 400px;
+  height: 400px;
+  animation: float-gentle 8s ease-in-out infinite;
 }
 
-.hero__visual-img {
+.hero__blob-gradient {
+  position: absolute;
+  inset: -4px;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: linear-gradient(135deg, #43A047 0%, #26C6DA 40%, #1E88E5 70%, #0D2B6B 100%);
+  animation: blob-morph 12s ease-in-out infinite;
+  z-index: 0;
+}
+
+.hero__blob-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  overflow: hidden;
+  animation: blob-morph 12s ease-in-out infinite;
+  z-index: 1;
+}
+
+.hero__blob-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -335,30 +357,30 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
+  padding: 8px var(--space-3);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: var(--radius-md);
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--color-primary-dark);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 20px rgba(13, 43, 107, 0.15);
   white-space: nowrap;
+  z-index: 2;
 }
 
 .hero__float-badge--top {
   top: var(--space-4);
-  left: -var(--space-4);
-  transform: translateX(-20px);
-  animation: float 4s ease-in-out infinite;
+  left: -20px;
+  animation: float-gentle 5s ease-in-out infinite;
 }
 
 .hero__float-badge--bottom {
   bottom: var(--space-6);
-  right: -var(--space-4);
-  transform: translateX(20px);
-  animation: float 5s ease-in-out infinite;
-  animation-delay: 1s;
+  right: -20px;
+  animation: float-gentle 6s ease-in-out infinite;
+  animation-delay: 1.5s;
 }
 
 .hero__float-dot {
@@ -369,8 +391,9 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.hero__float-icon {
-  font-size: 1rem;
+.hero__float-trophy {
+  color: #F59E0B;
+  flex-shrink: 0;
 }
 
 /* === Wave === */
@@ -382,7 +405,16 @@ onMounted(() => {
   z-index: 1;
 }
 
-.hero__wave svg {
+.hero__wave-back {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 80px;
+}
+
+.hero__wave-front {
+  position: relative;
   width: 100%;
   height: 100px;
 }
@@ -411,19 +443,29 @@ onMounted(() => {
     order: -1;
   }
 
-  .hero__visual-card {
+  .hero__blob-card {
     width: 300px;
     height: 300px;
   }
 
-  .hero__visual-ring--outer {
+  .hero__blob-ring--outer {
     width: 380px;
     height: 380px;
   }
 
-  .hero__visual-ring--middle {
+  .hero__blob-ring--inner {
     width: 320px;
     height: 320px;
+  }
+
+  .hero__float-badge--top {
+    left: -10px;
+    font-size: 0.72rem;
+  }
+
+  .hero__float-badge--bottom {
+    right: -10px;
+    font-size: 0.72rem;
   }
 }
 
@@ -432,13 +474,13 @@ onMounted(() => {
     padding-top: var(--space-12);
   }
 
-  .hero__visual-card {
+  .hero__blob-card {
     width: 260px;
     height: 260px;
   }
 
-  .hero__visual-ring--outer,
-  .hero__visual-ring--middle {
+  .hero__blob-ring--outer,
+  .hero__blob-ring--inner {
     display: none;
   }
 
@@ -451,6 +493,16 @@ onMounted(() => {
   .hero__btn-sec {
     text-align: center;
     justify-content: center;
+  }
+
+  .hero__float-badge--top {
+    left: -8px;
+    top: 0;
+  }
+
+  .hero__float-badge--bottom {
+    right: -8px;
+    bottom: var(--space-3);
   }
 }
 </style>

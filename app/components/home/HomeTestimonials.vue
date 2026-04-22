@@ -6,7 +6,7 @@
     <div class="container">
       <!-- Header -->
       <div class="testimonials__header">
-        <div class="section-badge reveal">
+        <div class="section-badge reveal-blur">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Testimoni Mitra
         </div>
@@ -19,12 +19,11 @@
       </div>
 
       <!-- Testimonial Grid -->
-      <div class="testimonials__grid">
+      <div class="testimonials__grid reveal-stagger">
         <div
           v-for="(item, i) in testimonials"
           :key="i"
           class="testimonial-card reveal"
-          :class="`reveal-delay-${(i % 4) + 1}`"
         >
           <NuxtImg
             :src="item.image"
@@ -44,7 +43,7 @@
       </div>
 
       <!-- Mitra Map Banner -->
-      <div class="testimonials__map-banner glass-card reveal">
+      <div class="testimonials__map-banner glass-card reveal-scale">
         <div class="testimonials__map-text">
           <h3 class="testimonials__map-title">Mitra kami tersebar dari Sabang hingga Merauke</h3>
           <p class="testimonials__map-desc">Yogyakarta · Jakarta · Malang · Palembang · Jambi · Situbondo · Boyolali · Karanganyar · Demak · Temanggung · dan terus berkembang!</p>
@@ -69,17 +68,7 @@ const testimonials = [
   { image: '/testimoni/Testimoni-7.webp' },
 ]
 
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('is-visible')
-      })
-    },
-    { threshold: 0.08 }
-  )
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-})
+useScrollReveal('.reveal', 0.08)
 </script>
 
 <style scoped>

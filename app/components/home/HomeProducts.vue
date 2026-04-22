@@ -10,7 +10,7 @@
     <div class="container">
       <!-- Header -->
       <div class="products__header">
-        <div class="section-badge reveal">
+        <div class="section-badge reveal-blur">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           Varian Produk
         </div>
@@ -23,12 +23,11 @@
       </div>
 
       <!-- Products Grid -->
-      <div class="products__grid">
+      <div class="products__grid reveal-stagger">
         <article
           v-for="(product, i) in products"
           :key="product.name"
           class="product-card glass-card reveal"
-          :class="`reveal-delay-${(i % 4) + 1}`"
         >
           <div class="product-card__img-wrap">
             <NuxtImg
@@ -54,7 +53,7 @@
       </div>
 
       <!-- View All CTA -->
-      <div class="products__more reveal">
+      <div class="products__more reveal-scale">
         <NuxtLink to="/products" class="btn btn-blue">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           Lihat Semua Produk
@@ -115,19 +114,7 @@ const products = [
   },
 ]
 
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-        }
-      })
-    },
-    { threshold: 0.08 }
-  )
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-})
+useScrollReveal('.reveal', 0.08)
 </script>
 
 <style scoped>

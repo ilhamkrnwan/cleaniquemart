@@ -10,7 +10,7 @@
     <div class="container">
       <div class="cta-section__inner">
         <!-- Label -->
-        <div class="cta-section__label reveal">
+        <div class="cta-section__label reveal-blur">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           Bergabung Sekarang
         </div>
@@ -28,7 +28,7 @@
         </p>
 
         <!-- CTA Buttons -->
-        <div class="cta-section__buttons reveal reveal-delay-3">
+        <div class="cta-section__buttons reveal-scale reveal-delay-3">
           <a
             href="https://wa.me/6287885590088?text=Halo%2C%20saya%20ingin%20bergabung%20sebagai%20mitra%20CleaniqueMart"
             target="_blank"
@@ -65,17 +65,7 @@ const trustItems = [
   'Produk Halal & Legal',
 ]
 
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('is-visible')
-      })
-    },
-    { threshold: 0.1 }
-  )
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-})
+useScrollReveal()
 </script>
 
 <style scoped>

@@ -34,7 +34,7 @@ export default defineNuxtConfig({
   // Nuxt Fonts
   fonts: {
     families: [
-      { name: 'Nunito', provider: 'google', weights: [400, 600, 700, 800] },
+      { name: 'Outfit', provider: 'google', weights: [400, 500, 600, 700, 800] },
       { name: 'DM Sans', provider: 'google', weights: [400, 500, 600] },
     ],
   },

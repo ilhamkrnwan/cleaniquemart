@@ -1,12 +1,11 @@
 <template>
   <section class="stats section-sm">
     <div class="container">
-      <div class="stats__grid">
+      <div class="stats__grid reveal-stagger">
         <div
           v-for="(stat, i) in stats"
           :key="stat.label"
-          class="stats__item reveal"
-          :class="`reveal-delay-${i + 1}`"
+          class="stats__item reveal-scale"
         >
           <div class="stats__icon" aria-hidden="true" v-html="stat.icon"></div>
           <div class="stats__number">{{ stat.number }}</div>
@@ -41,19 +40,7 @@ const stats = [
   },
 ]
 
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-        }
-      })
-    },
-    { threshold: 0.15 }
-  )
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-})
+useScrollReveal('.reveal', 0.15)
 </script>
 
 <style scoped>
