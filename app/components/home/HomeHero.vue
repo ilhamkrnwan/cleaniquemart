@@ -65,25 +65,41 @@
           </div>
         </div>
 
-        <!-- Right: Blob Visual -->
+        <!-- Right: Image Visual (Fixed Shape) -->
         <div class="hero__visual reveal reveal-delay-2">
-          <!-- Decorative rings -->
-          <div class="hero__blob-ring hero__blob-ring--outer" aria-hidden="true"></div>
-          <div class="hero__blob-ring hero__blob-ring--inner" aria-hidden="true"></div>
+          <!-- Decorative spinning rings -->
+          <div class="hero__ring hero__ring--outer" aria-hidden="true"></div>
+          <div class="hero__ring hero__ring--inner" aria-hidden="true"></div>
 
-          <!-- Blob card -->
-          <div class="hero__blob-card">
-            <div class="hero__blob-gradient" aria-hidden="true"></div>
-            <div class="hero__blob-img-wrap">
+          <!-- Orbiting color accent dots -->
+          <div class="hero__orbit hero__orbit--1" aria-hidden="true">
+            <span class="hero__orbit-dot hero__orbit-dot--green"></span>
+          </div>
+          <div class="hero__orbit hero__orbit--2" aria-hidden="true">
+            <span class="hero__orbit-dot hero__orbit-dot--teal"></span>
+          </div>
+          <div class="hero__orbit hero__orbit--3" aria-hidden="true">
+            <span class="hero__orbit-dot hero__orbit-dot--sky"></span>
+          </div>
+
+          <!-- Main image card — fixed shape, no morphing -->
+          <div class="hero__img-card" data-mask-style="soft">
+            <!-- Animated gradient border layer (color drifts, shape stays fixed) -->
+            <div class="hero__img-border" aria-hidden="true"></div>
+
+            <!-- Image wrapper (fixed shape) -->
+            <div class="hero__img-wrap">
               <NuxtImg
                 src="/photo-collage.webp"
                 alt="Koleksi produk CleaniqueMart — sabun curah premium berkualitas"
                 width="480"
                 height="480"
-                class="hero__blob-img"
+                class="hero__img"
                 loading="eager"
                 sizes="(max-width: 768px) 100vw, 480px"
               />
+              <!-- Inner brand gradient overlay -->
+              <div class="hero__img-overlay" aria-hidden="true"></div>
             </div>
 
             <!-- Floating Badges -->
@@ -102,7 +118,7 @@
       </div>
     </div>
 
-    <!-- Layered Wave Bottom -->
+    <!-- Layered Wave Bottom — flush to bottom, no gap -->
     <div class="hero__wave" aria-hidden="true">
       <svg class="hero__wave-back" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,80 C240,120 480,40 720,80 C960,120 1200,40 1440,80 L1440,120 L0,120 Z" fill="rgba(248,251,255,0.5)"/>
@@ -144,7 +160,7 @@ useScrollReveal()
   pointer-events: none;
 }
 
-/* === Bubbles (reduced) === */
+/* === Bubbles === */
 .hero__bubbles {
   position: absolute;
   inset: 0;
@@ -176,7 +192,7 @@ useScrollReveal()
   pointer-events: none;
 }
 
-/* === Content === */
+/* === Content Layout === */
 .hero .container {
   flex: 1;
   display: flex;
@@ -193,7 +209,7 @@ useScrollReveal()
   width: 100%;
 }
 
-/* === Text === */
+/* === Text Side === */
 .hero__text {
   color: var(--color-white);
 }
@@ -220,8 +236,14 @@ useScrollReveal()
   height: 8px;
   background: var(--color-accent);
   border-radius: 50%;
-  animation: pulse-glow 2.5s infinite;
   flex-shrink: 0;
+  /* Subtle opacity breath — no shape change, only opacity/transform */
+  animation: dot-breath 3s ease-in-out infinite;
+}
+
+@keyframes dot-breath {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
 }
 
 .hero__headline {
@@ -250,7 +272,6 @@ useScrollReveal()
   margin-bottom: var(--space-8);
 }
 
-/* CTA Group */
 .hero__cta-group {
   display: flex;
   align-items: center;
@@ -269,7 +290,6 @@ useScrollReveal()
   padding: var(--space-4) var(--space-6);
 }
 
-/* Trust badges row */
 .hero__badges {
   display: flex;
   align-items: center;
@@ -290,7 +310,9 @@ useScrollReveal()
   color: var(--color-accent);
 }
 
-/* === Blob Visual === */
+/* ============================================================
+   IMAGE VISUAL — Fixed shape, animated gradient border
+   ============================================================ */
 .hero__visual {
   position: relative;
   display: flex;
@@ -298,60 +320,182 @@ useScrollReveal()
   justify-content: center;
 }
 
-/* Decorative rings */
-.hero__blob-ring {
+/* Decorative spinning rings (outline only, no fill) */
+.hero__ring {
   position: absolute;
   border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  pointer-events: none;
 }
 
-.hero__blob-ring--outer {
+.hero__ring--outer {
   width: 500px;
   height: 500px;
-  animation: spin-slow 35s linear infinite;
+  animation: spin-slow 40s linear infinite;
+  border-color: rgba(255, 255, 255, 0.07);
 }
 
-.hero__blob-ring--inner {
+.hero__ring--inner {
   width: 420px;
   height: 420px;
-  animation: spin-slow 25s linear infinite reverse;
-  border-color: rgba(67, 160, 71, 0.08);
+  animation: spin-slow 28s linear infinite reverse;
+  border-color: rgba(67, 160, 71, 0.1);
 }
 
-/* Blob card */
-.hero__blob-card {
+/* Orbiting accent dots — rotate only (transform: translate) */
+.hero__orbit {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hero__orbit--1 {
+  width: 460px;
+  height: 460px;
+  animation: spin-slow 14s linear infinite;
+}
+
+.hero__orbit--2 {
+  width: 380px;
+  height: 380px;
+  animation: spin-slow 20s linear infinite reverse;
+}
+
+.hero__orbit--3 {
+  width: 520px;
+  height: 520px;
+  animation: spin-slow 32s linear infinite;
+  transform-origin: center;
+}
+
+.hero__orbit-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.hero__orbit-dot--green {
+  background: #69F0AE;
+  box-shadow: 0 0 14px 4px rgba(105, 240, 174, 0.55);
+}
+
+.hero__orbit-dot--teal {
+  background: #4DD0E1;
+  box-shadow: 0 0 14px 4px rgba(77, 208, 225, 0.55);
+}
+
+.hero__orbit-dot--sky {
+  background: #90CAF9;
+  box-shadow: 0 0 14px 4px rgba(144, 202, 249, 0.5);
+}
+
+/* Main image card — FIXED shape, gentle float only */
+.hero__img-card {
   position: relative;
   width: 400px;
   height: 400px;
   animation: float-gentle 8s ease-in-out infinite;
+  --hero-photo-mask: var(--hero-photo-mask-soft);
+  --hero-photo-mask-smooth: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='72%2058%20282%20292'%20preserveAspectRatio='none'%20shape-rendering='geometricPrecision'%3E%3Cpath%20fill='black'%20d='M150.5%2064.9C188.4%2060.4%20261.2%2060.6%20296.0%2084.4C330.8%20108.2%20352.0%20157.6%20349.0%20199.8C346.0%20242.0%20309.6%20300.8%20278.8%20324.2C248.0%20347.6%20199.8%20344.8%20173.0%20332.2C146.2%20319.6%20129.8%20281.8%20127.4%20253.0C125.0%20224.2%20162.2%20188.0%20155.8%20169.4C149.4%20150.8%20104.2%20159.2%2090.6%20147.6C77.0%20136.0%2073.2%20117.8%2083.8%20102.2C94.4%2086.6%20112.6%2069.4%20150.5%2064.9Z'/%3E%3C/svg%3E");
+  --hero-photo-mask-soft: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='72%2058%20282%20292'%20preserveAspectRatio='none'%20shape-rendering='geometricPrecision'%3E%3Cpath%20fill='black'%20d='M150.5%2064.9C188.8%2060.7%20261.0%2061.6%20295.4%2085.6C329.8%20109.6%20350.0%20157.8%20346.8%20198.8C343.6%20239.8%20307.8%20297.8%20277.8%20321.6C247.8%20345.4%20201.4%20343.8%20175.2%20331.0C149.0%20318.2%20132.4%20282.8%20129.8%20255.2C127.2%20227.6%20162.2%20191.6%20157.2%20173.4C152.2%20155.2%20111.8%20160.8%2098.6%20151.6C85.4%20142.4%2080.6%20123.8%2089.6%20108.2C98.6%2092.6%20112.2%2069.6%20150.5%2064.9Z'/%3E%3C/svg%3E");
+  --hero-photo-mask-sharp: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='72%2058%20282%20292'%20preserveAspectRatio='none'%20shape-rendering='geometricPrecision'%3E%3Cpath%20fill='black'%20d='M150.5%2064.9C187.6%2060.2%20262.0%2059.6%20297.6%2082.8C333.2%20106.0%20355.2%20157.4%20352.0%20200.8C348.8%20244.2%20311.2%20304.4%20279.8%20327.6C248.4%20350.8%20198.6%20346.0%20171.6%20333.2C144.6%20320.4%20127.4%20281.0%20124.8%20251.8C122.2%20222.6%20163.8%20184.6%20157.0%20166.6C150.2%20148.6%20101.0%20164.6%2087.8%20153.6C74.6%20142.6%2070.8%20121.4%2081.8%20104.8C92.8%2088.2%20113.4%2069.0%20150.5%2064.9Z'/%3E%3C/svg%3E");
 }
 
-.hero__blob-gradient {
+.hero__img-card[data-mask-style='smooth'] {
+  --hero-photo-mask: var(--hero-photo-mask-smooth);
+}
+
+.hero__img-card[data-mask-style='soft'] {
+  --hero-photo-mask: var(--hero-photo-mask-soft);
+}
+
+.hero__img-card[data-mask-style='sharp'] {
+  --hero-photo-mask: var(--hero-photo-mask-sharp);
+}
+
+/* 
+  Gradient border layer:
+  - Fixed border-radius (shape never changes)
+  - background-position animates to create color drift effect
+  - Uses transform/opacity-safe properties: background-size + background-position
+*/
+.hero__img-border {
   position: absolute;
-  inset: -4px;
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  background: linear-gradient(135deg, #43A047 0%, #26C6DA 40%, #1E88E5 70%, #0D2B6B 100%);
-  animation: blob-morph 12s ease-in-out infinite;
+  inset: -5px;
+  border-radius: 55% 45% 48% 52% / 52% 48% 55% 45%;
+  background: linear-gradient(
+    135deg,
+    #43A047 0%,
+    #26C6DA 25%,
+    #1E88E5 50%,
+    #0D47A1 75%,
+    #43A047 100%
+  );
+  background-size: 300% 300%;
+  animation: gradient-drift 6s ease-in-out infinite;
+  -webkit-mask-image: var(--hero-photo-mask);
+  mask-image: var(--hero-photo-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
   z-index: 0;
 }
 
-.hero__blob-img-wrap {
+@keyframes gradient-drift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Image wrapper — SAME fixed border-radius as border layer */
+.hero__img-wrap {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  border-radius: 55% 45% 48% 52% / 52% 48% 55% 45%;
+  -webkit-mask-image: var(--hero-photo-mask);
+  mask-image: var(--hero-photo-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
   overflow: hidden;
-  animation: blob-morph 12s ease-in-out infinite;
   z-index: 1;
 }
 
-.hero__blob-img {
+.hero__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Floating badges on card */
+/* Inner brand gradient overlay on the image */
+.hero__img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(67, 160, 71, 0.14) 0%,
+    rgba(38, 198, 218, 0.04) 35%,
+    transparent 55%,
+    rgba(21, 101, 192, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Floating Badges */
 .hero__float-badge {
   position: absolute;
   display: flex;
@@ -367,7 +511,7 @@ useScrollReveal()
   color: var(--color-primary-dark);
   box-shadow: 0 4px 20px rgba(13, 43, 107, 0.15);
   white-space: nowrap;
-  z-index: 2;
+  z-index: 3;
 }
 
 .hero__float-badge--top {
@@ -396,18 +540,22 @@ useScrollReveal()
   flex-shrink: 0;
 }
 
-/* === Wave === */
+/* ============================================================
+   WAVE — Flush to bottom, no gap
+   ============================================================ */
 .hero__wave {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 1;
+  line-height: 0;
+  overflow: hidden;
 }
 
 .hero__wave-back {
   position: absolute;
-  bottom: 20px;
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 80px;
@@ -417,9 +565,12 @@ useScrollReveal()
   position: relative;
   width: 100%;
   height: 100px;
+  display: block;
 }
 
-/* === Responsive === */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 960px) {
   .hero__content {
     grid-template-columns: 1fr;
@@ -443,20 +594,24 @@ useScrollReveal()
     order: -1;
   }
 
-  .hero__blob-card {
+  .hero__img-card {
     width: 300px;
     height: 300px;
   }
 
-  .hero__blob-ring--outer {
+  .hero__ring--outer {
     width: 380px;
     height: 380px;
   }
 
-  .hero__blob-ring--inner {
+  .hero__ring--inner {
     width: 320px;
     height: 320px;
   }
+
+  .hero__orbit--1 { width: 360px; height: 360px; }
+  .hero__orbit--2 { width: 290px; height: 290px; }
+  .hero__orbit--3 { width: 410px; height: 410px; }
 
   .hero__float-badge--top {
     left: -10px;
@@ -474,15 +629,19 @@ useScrollReveal()
     padding-top: var(--space-12);
   }
 
-  .hero__blob-card {
+  .hero__img-card {
     width: 260px;
     height: 260px;
   }
 
-  .hero__blob-ring--outer,
-  .hero__blob-ring--inner {
+  .hero__ring--outer,
+  .hero__ring--inner {
     display: none;
   }
+
+  .hero__orbit--1 { width: 300px; height: 300px; }
+  .hero__orbit--2 { width: 240px; height: 240px; }
+  .hero__orbit--3 { display: none; }
 
   .hero__cta-group {
     flex-direction: column;

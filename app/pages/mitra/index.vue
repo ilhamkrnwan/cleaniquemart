@@ -6,7 +6,12 @@ useSeoMeta({
 
 const carouselIndex = ref(0)
 const partnerCarouselIndex = ref(0)
+const tierMobileScroller = ref<HTMLElement | null>(null)
 let partnerCarouselInterval: ReturnType<typeof setInterval> | null = null
+let tierTouchStartX = 0
+let tierTouchDeltaX = 0
+let isTierSwiping = false
+let tierBreakpointQuery: MediaQueryList | null = null
 
 const { data: mitraEntries } = await useAsyncData('mitra-list', () =>
   queryCollection('mitra')
@@ -217,14 +222,160 @@ onMounted(() => {
   }, 100)
 
   startPartnerAutoplay()
+
+  tierBreakpointQuery = window.matchMedia('(max-width: 767px)')
+  tierBreakpointQuery.addEventListener('change', handleTierBreakpointChange)
+
+  if (tierBreakpointQuery.matches) {
+    nextTick(() => {
+      scrollToTierCard(carouselIndex.value, 'auto')
+    })
+  }
 })
 
 onUnmounted(() => {
   clearPartnerAutoplay()
+  tierBreakpointQuery?.removeEventListener('change', handleTierBreakpointChange)
 })
 
 const goToTierSlide = (index: number) => {
-  carouselIndex.value = index
+  if (!tiers.length) {
+    return
+  }
+
+  carouselIndex.value = (index + tiers.length) % tiers.length
+
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    nextTick(() => {
+      scrollToTierCard(carouselIndex.value)
+    })
+  }
+}
+
+const nextTierSlide = () => {
+  goToTierSlide(carouselIndex.value + 1)
+}
+
+const prevTierSlide = () => {
+  goToTierSlide(carouselIndex.value - 1)
+}
+
+const getTierStackState = (index: number) => {
+  const total = tiers.length
+  const offset = (index - carouselIndex.value + total) % total
+
+  if (offset === 0) {
+    return 'active'
+  }
+
+  if (offset === 1) {
+    return 'next'
+  }
+
+  if (offset === total - 1) {
+    return 'prev'
+  }
+
+  return 'hidden'
+}
+
+function getTierCards() {
+  if (!tierMobileScroller.value) {
+    return [] as HTMLElement[]
+  }
+
+  return Array.from(tierMobileScroller.value.querySelectorAll('.tier-mobile-card')) as HTMLElement[]
+}
+
+function scrollToTierCard(index: number, behavior: ScrollBehavior = 'smooth') {
+  if (!tierMobileScroller.value) {
+    return
+  }
+
+  const cards = getTierCards()
+  const targetCard = cards[index]
+
+  if (!targetCard) {
+    return
+  }
+
+  const centeredOffset = targetCard.offsetLeft - Math.max((tierMobileScroller.value.clientWidth - targetCard.clientWidth) / 2, 0)
+
+  tierMobileScroller.value.scrollTo({
+    left: centeredOffset,
+    behavior,
+  })
+}
+
+function syncTierIndexFromScroll() {
+  if (!tierMobileScroller.value) {
+    return
+  }
+
+  const cards = getTierCards()
+
+  if (!cards.length) {
+    return
+  }
+
+  const viewportCenter = tierMobileScroller.value.scrollLeft + (tierMobileScroller.value.clientWidth / 2)
+  let closestIndex = carouselIndex.value
+  let closestDistance = Number.POSITIVE_INFINITY
+
+  cards.forEach((card, index) => {
+    const cardCenter = card.offsetLeft + (card.clientWidth / 2)
+    const distance = Math.abs(cardCenter - viewportCenter)
+
+    if (distance < closestDistance) {
+      closestDistance = distance
+      closestIndex = index
+    }
+  })
+
+  carouselIndex.value = closestIndex
+}
+
+function onTierMobileScroll() {
+  syncTierIndexFromScroll()
+}
+
+function onTierStackTouchStart(event: TouchEvent) {
+  tierTouchStartX = event.touches[0]?.clientX ?? 0
+  tierTouchDeltaX = 0
+  isTierSwiping = true
+}
+
+function onTierStackTouchMove(event: TouchEvent) {
+  if (!isTierSwiping) {
+    return
+  }
+
+  tierTouchDeltaX = (event.touches[0]?.clientX ?? 0) - tierTouchStartX
+}
+
+function onTierStackTouchEnd() {
+  if (!isTierSwiping) {
+    return
+  }
+
+  isTierSwiping = false
+
+  if (tierTouchDeltaX <= -56) {
+    nextTierSlide()
+  }
+  else if (tierTouchDeltaX >= 56) {
+    prevTierSlide()
+  }
+}
+
+function handleTierBreakpointChange(event: MediaQueryListEvent) {
+  if (!event.matches) {
+    return
+  }
+
+  nextTick(() => {
+    scrollToTierCard(carouselIndex.value, 'auto')
+  })
 }
 </script>
 
@@ -284,18 +435,25 @@ const goToTierSlide = (index: number) => {
           </div>
         </div>
 
-        <!-- Mobile Carousel -->
-        <div class="tiers-carousel">
-          <div class="carousel-track">
+        <!-- Tablet Focus Stack -->
+        <div class="tiers-stack">
+          <div
+            class="tiers-stack__viewport"
+            @touchstart="onTierStackTouchStart"
+            @touchmove="onTierStackTouchMove"
+            @touchend="onTierStackTouchEnd"
+          >
             <div
               v-for="(tier, i) in tiers"
-              :key="tier.name"
-              class="tier-card glass-card carousel-slide"
+              :key="`stack-${tier.name}`"
+              class="tier-card glass-card tier-stack-card"
               :class="[
-                { 'tier-card--popular': tier.isPopular, 'tier-card--consultation': tier.isConsultation, 'carousel-slide--active': carouselIndex === i }
+                `tier-stack-card--${getTierStackState(i)}`,
+                { 'tier-card--popular': tier.isPopular, 'tier-card--consultation': tier.isConsultation }
               ]"
+              :aria-hidden="carouselIndex !== i"
             >
-              <img v-if="tier.isLimited" src="/Hanya-untuk-10-orang-pertama.svg" alt="Limited Offer" class="tier-card__limited-img" />
+              <img v-if="tier.isLimited" src="/Hanya-untuk-10-orang-pertama.svg" alt="Limited Offer - Hanya untuk 10 orang pertama di bulan ini" class="tier-card__limited-img" />
               <div v-if="tier.isPopular" class="tier-card__badge">Paling Diminati</div>
               <div class="tier-card__header">
                 <h3 class="tier-card__name">{{ tier.name }}</h3>
@@ -320,10 +478,74 @@ const goToTierSlide = (index: number) => {
               </div>
             </div>
           </div>
-          <div class="carousel-dots">
+
+          <div class="tiers-stack__controls">
+            <button type="button" class="tiers-stack__nav" aria-label="Paket sebelumnya" @click="prevTierSlide()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="carousel-dots carousel-dots--stack">
+              <button
+                v-for="(tier, i) in tiers"
+                :key="`stack-dot-${tier.name}`"
+                type="button"
+                class="carousel-dot"
+                :class="{ 'carousel-dot--active': carouselIndex === i }"
+                :aria-label="`Lihat ${tier.name}`"
+                @click="goToTierSlide(i)"
+              />
+            </div>
+            <button type="button" class="tiers-stack__nav" aria-label="Paket berikutnya" @click="nextTierSlide()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Scroll -->
+        <div class="tiers-mobile">
+          <div
+            ref="tierMobileScroller"
+            class="tiers-mobile__track"
+            @scroll.passive="onTierMobileScroll"
+          >
+            <div
+              v-for="(tier, i) in tiers"
+              :key="`mobile-${tier.name}`"
+              class="tier-card glass-card tier-mobile-card"
+              :class="[
+                { 'tier-card--popular': tier.isPopular, 'tier-card--consultation': tier.isConsultation, 'tier-mobile-card--active': carouselIndex === i }
+              ]"
+            >
+              <img v-if="tier.isLimited" src="/Hanya-untuk-10-orang-pertama.svg" alt="Limited Offer - Hanya untuk 10 orang pertama di bulan ini" class="tier-card__limited-img" />
+              <div v-if="tier.isPopular" class="tier-card__badge">Paling Diminati</div>
+              <div class="tier-card__header">
+                <h3 class="tier-card__name">{{ tier.name }}</h3>
+                <p class="tier-card__desc">{{ tier.desc }}</p>
+              </div>
+              <div class="tier-card__price">
+                <span class="tier-card__price-label">{{ tier.isConsultation ? 'Biaya Konsultasi' : 'Investasi' }}</span>
+                <div v-if="tier.originalPrice" class="tier-card__price-original">{{ tier.originalPrice }}</div>
+                <div class="tier-card__price-amount" :class="{ 'tier-card__price-amount--free': tier.isConsultation }">{{ tier.price }}</div>
+              </div>
+              <ul class="tier-card__features">
+                <li v-for="feature in tier.features" :key="feature.label" :class="{ 'feature--excluded': !feature.included }">
+                  <span class="feature-icon" :class="feature.included ? 'feature-icon--yes' : 'feature-icon--no'">
+                    <svg v-if="feature.included" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </span>
+                  {{ feature.label }}
+                </li>
+              </ul>
+              <div class="tier-card__footer">
+                <a :href="getWhatsAppLink(tier.name)" target="_blank" rel="noopener noreferrer" class="btn w-full" :class="tier.isConsultation ? 'btn-outline-blue' : tier.isPopular ? 'btn-primary' : 'btn-blue'">{{ tier.ctaLabel }}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-dots carousel-dots--mobile">
             <button
               v-for="(tier, i) in tiers"
-              :key="i"
+              :key="`mobile-dot-${tier.name}`"
+              type="button"
               class="carousel-dot"
               :class="{ 'carousel-dot--active': carouselIndex === i }"
               :aria-label="`Lihat ${tier.name}`"
@@ -577,8 +799,10 @@ const goToTierSlide = (index: number) => {
   margin: 0 auto;
 }
 
-/* Mobile carousel - hidden on desktop */
-.tiers-carousel { display: none; }
+.tiers-stack,
+.tiers-mobile {
+  display: none;
+}
 
 .tier-card {
   position: relative;
@@ -742,6 +966,120 @@ const goToTierSlide = (index: number) => {
   background: var(--color-primary);
   color: var(--color-white);
   transform: translateY(-2px);
+}
+
+/* Tablet Focus Stack */
+.tiers-stack {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.tiers-stack__viewport {
+  display: grid;
+  place-items: start center;
+  padding: var(--space-8) 0 var(--space-5);
+  isolation: isolate;
+}
+
+.tier-stack-card {
+  grid-area: 1 / 1;
+  width: min(100%, 720px);
+  transform-origin: center top;
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.35s ease,
+    filter 0.35s ease,
+    box-shadow var(--transition-base);
+}
+
+.tier-stack-card--active {
+  z-index: 3;
+  opacity: 1;
+}
+
+.tier-stack-card--prev,
+.tier-stack-card--next {
+  z-index: 1;
+  opacity: 0.36;
+  filter: saturate(0.82);
+  pointer-events: none;
+}
+
+.tier-stack-card--prev {
+  transform: translateX(-12%) translateY(38px) scale(0.92) rotate(-1.5deg);
+}
+
+.tier-stack-card--next {
+  transform: translateX(12%) translateY(38px) scale(0.92) rotate(1.5deg);
+}
+
+.tier-stack-card--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tiers-stack__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.tiers-stack__nav {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(21, 101, 192, 0.18);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-primary-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.tiers-stack__nav:hover {
+  transform: translateY(-2px);
+  border-color: rgba(21, 101, 192, 0.3);
+  box-shadow: var(--shadow-md);
+}
+
+/* Mobile Snap Scroll */
+.tiers-mobile {
+  margin-inline: calc(var(--space-4) * -1);
+}
+
+.tiers-mobile__track {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-4);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+}
+
+.tiers-mobile__track::-webkit-scrollbar {
+  display: none;
+}
+
+.tier-mobile-card {
+  flex: 0 0 min(85vw, 380px);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  min-width: 0;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), opacity var(--transition-base);
+}
+
+.tier-mobile-card--active {
+  box-shadow: var(--shadow-blue);
 }
 
 /* ROI Section */
@@ -1056,21 +1394,6 @@ const goToTierSlide = (index: number) => {
 
 .faq-item--open .faq-answer p { padding: 0 var(--space-6) var(--space-5); }
 
-/* Carousel styles */
-.carousel-track {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-
-.carousel-slide { display: none; width: 100%; animation: fadeSlide 0.35s ease-out; }
-.carousel-slide--active { display: flex; }
-
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .carousel-dots {
   display: flex;
   justify-content: center;
@@ -1095,14 +1418,6 @@ const goToTierSlide = (index: number) => {
 }
 
 @media (max-width: 1024px) {
-  .tiers-desktop {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .tiers-desktop .tier-card--popular {
-    grid-column: 1 / -1;
-    max-width: 500px;
-    margin: 0 auto;
-  }
   .roi-grid {
     grid-template-columns: 1fr;
     gap: var(--space-10);
@@ -1112,14 +1427,118 @@ const goToTierSlide = (index: number) => {
   }
 }
 
+@media (max-width: 1100px) {
+  .tiers-desktop {
+    display: none;
+  }
+
+  .tiers-stack {
+    display: block;
+  }
+
+  .tier-card {
+    padding: var(--space-6);
+  }
+
+  .tier-card__header {
+    padding-top: 38px;
+  }
+
+  .tier-card__limited-img {
+    top: 14px;
+    right: 14px;
+    width: 108px;
+  }
+
+  .tier-card__badge {
+    top: 16px;
+    left: var(--space-6);
+    transform: none;
+  }
+}
+
 @media (max-width: 767px) {
-  .tiers-desktop { display: none; }
-  .tiers-carousel { display: block; }
+  .tiers-stack {
+    display: none;
+  }
+
+  .tiers-mobile {
+    display: block;
+  }
+
+  .tiers-mobile .glass-card:hover,
+  .tiers-mobile .tier-card:hover,
+  .tiers-mobile .tier-card--popular:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+
+  .tiers-mobile .tier-mobile-card--active:hover {
+    box-shadow: var(--shadow-blue);
+  }
+
   .partners-grid { display: none; }
   .partners-carousel { display: block; }
 }
 
 @media (max-width: 640px) {
+  .tier-card {
+    padding: var(--space-6);
+    border-radius: 28px;
+  }
+
+  .tier-card__header {
+    margin-bottom: var(--space-5);
+    padding-top: 34px;
+  }
+
+  .tier-card__name {
+    font-size: 1.35rem;
+  }
+
+  .tier-card__desc,
+  .tier-card__features li {
+    font-size: 0.95rem;
+  }
+
+  .tier-card__price {
+    margin-bottom: var(--space-6);
+  }
+
+  .tier-card__price-amount {
+    font-size: 1.4rem;
+  }
+
+  .tier-card__limited-img {
+    top: 12px;
+    right: 10px;
+    width: 92px;
+  }
+
+  .tier-card__badge {
+    top: 12px;
+    left: var(--space-5);
+    font-size: 0.78rem;
+    padding: 4px var(--space-3);
+  }
+
+  .tiers-mobile {
+    margin-inline: calc(var(--space-4) * -1);
+  }
+
+  .tiers-mobile__track {
+    gap: var(--space-3);
+    padding-inline: var(--space-4);
+  }
+
+  .tier-mobile-card {
+    flex-basis: calc(100vw - 2.75rem);
+  }
+
+  .carousel-dots--mobile {
+    margin-top: var(--space-4);
+  }
+
   .calc-row {
     flex-direction: column;
     align-items: flex-start;
@@ -1187,5 +1606,10 @@ const goToTierSlide = (index: number) => {
   .partners-carousel__dot--active {
     width: 38px;
   }
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 </style>
