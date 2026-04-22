@@ -1,6 +1,7 @@
 <template>
   <div>
     <HomeHero />
+    <HomeOpportunity />
     <HomeStats />
     <HomeWhyUs />
     <HomeProducts />
