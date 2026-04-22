@@ -10,8 +10,6 @@ const tierMobileScroller = ref<HTMLElement | null>(null)
 let partnerCarouselInterval: ReturnType<typeof setInterval> | null = null
 let tierTouchStartX = 0
 let tierTouchDeltaX = 0
-let tierTouchStartY = 0
-let tierTouchDeltaY = 0
 let isTierSwiping = false
 let tierBreakpointQuery: MediaQueryList | null = null
 
@@ -343,9 +341,7 @@ function onTierMobileScroll() {
 
 function onTierStackTouchStart(event: TouchEvent) {
   tierTouchStartX = event.touches[0]?.clientX ?? 0
-  tierTouchStartY = event.touches[0]?.clientY ?? 0
   tierTouchDeltaX = 0
-  tierTouchDeltaY = 0
   isTierSwiping = true
 }
 
@@ -355,7 +351,6 @@ function onTierStackTouchMove(event: TouchEvent) {
   }
 
   tierTouchDeltaX = (event.touches[0]?.clientX ?? 0) - tierTouchStartX
-  tierTouchDeltaY = (event.touches[0]?.clientY ?? 0) - tierTouchStartY
 }
 
 function onTierStackTouchEnd() {
@@ -364,11 +359,6 @@ function onTierStackTouchEnd() {
   }
 
   isTierSwiping = false
-
-  // Keep vertical gestures for page scrolling; only switch card on dominant horizontal swipe.
-  if (Math.abs(tierTouchDeltaX) <= Math.abs(tierTouchDeltaY)) {
-    return
-  }
 
   if (tierTouchDeltaX <= -56) {
     nextTierSlide()
@@ -455,9 +445,9 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
         <div class="tiers-stack">
           <div
             class="tiers-stack__viewport"
-            @touchstart.passive="onTierStackTouchStart"
-            @touchmove.passive="onTierStackTouchMove"
-            @touchend.passive="onTierStackTouchEnd"
+            @touchstart="onTierStackTouchStart"
+            @touchmove="onTierStackTouchMove"
+            @touchend="onTierStackTouchEnd"
           >
             <div
               v-for="(tier, i) in tiers"
@@ -569,12 +559,6 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
             />
           </div>
         </div>
-      </div>
-
-      <div class="mitra-tiers__wave-bottom" aria-hidden="true">
-        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,40 C360,0 720,80 1080,40 C1260,20 1380,50 1440,40 L1440,80 L0,80 Z" fill="#FFFFFF" />
-        </svg>
       </div>
     </section>
 
@@ -1126,7 +1110,7 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  touch-action: pan-x pan-y;
+  touch-action: pan-x;
 }
 
 .tiers-mobile__track::-webkit-scrollbar {
@@ -1520,13 +1504,6 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 }
 
 @media (max-width: 767px) {
-  .mitra-tiers__wave-top svg,
-  .mitra-tiers__wave-bottom svg,
-  .partners-section__wave-top svg,
-  .partners-section__wave-bottom svg {
-    height: 64px;
-  }
-
   .tiers-stack {
     display: none;
   }
