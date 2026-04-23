@@ -6,7 +6,7 @@ address: "Jalan Jinten No. 10, Pulisen, Boyolali, Jawa Tengah 57316"
 phone: "0817850613"
 image: "/mitra/Thumbnail-Mitra-Cleanique-Mart-Boyolali.webp"
 imageAlt: "Cleanique Mart Boyolali"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-boyolali/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-boyolali/"
 order: 10
 marketplaces:
   - "Shopee"

@@ -6,7 +6,7 @@ address: "Jl. Kutilang IV No.29, RT.9, Tambak Sari, Kec. Jambi Sel., Kota Jambi,
 phone: "082384748877"
 image: "/mitra/Thumbnail-Mitra-Cleanique-Mart-Jambi.webp"
 imageAlt: "Cleanique Mart Jambi"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-jambi/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-jambi/"
 order: 11
 marketplaces:
   - "Shopee"

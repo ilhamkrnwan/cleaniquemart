@@ -6,7 +6,7 @@ address: "Jl. WR. Supratman No.34, Dongkelan Utara, Jampiroso, Kec. Temanggung, 
 phone: "082322271124"
 image: "/mitra/Thumbnail-Mitra-Cleanique-Mart-Temanggung-1.webp"
 imageAlt: "Cleanique Mart Temanggung 1"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-temanggung-1/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-temanggung-1/"
 order: 7
 marketplaces:
   - "Shopee"

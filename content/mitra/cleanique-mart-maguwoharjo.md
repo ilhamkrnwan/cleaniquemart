@@ -6,7 +6,7 @@ address: "Jl. Raya Tajem No. 6, RT/RW 02/30, Maguwoharjo, Depok, Sleman"
 phone: "0811251212"
 image: "/mitra/Mitra-Cleanique-Mart-Tajem.webp"
 imageAlt: "Cleanique Mart Maguwoharjo"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-tajem-maguwoharjo/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-tajem-maguwoharjo/"
 order: 6
 marketplaces:
   - "Shopee"

@@ -6,7 +6,7 @@ address: "Batursari, Mranggen, Demak, Jawa Tengah 59567"
 phone: "0895334751395"
 image: "/mitra/Mitra-Cleanique-Mart-Demak.webp"
 imageAlt: "Cleanique Mart Demak"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-demak-2/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-demak-2/"
 order: 5
 marketplaces:
   - "Shopee"

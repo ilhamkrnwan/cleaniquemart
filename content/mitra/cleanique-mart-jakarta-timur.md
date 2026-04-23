@@ -6,7 +6,7 @@ address: "Jl. Cipinang Kebembem I No.24, RT.007/RW.7, Cipinang, Kec. Pulo Gadung
 phone: "085285776043"
 image: "/mitra/cleanique-mart-jakarta-timur-thumbnail.webp"
 imageAlt: "Cleanique Mart Jakarta Timur"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-jakarta-timur/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-jakarta-timur/"
 order: 12
 marketplaces:
   - "Shopee"

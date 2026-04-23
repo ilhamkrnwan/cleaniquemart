@@ -6,7 +6,7 @@ address: "Jl. Pipa Reja No.31C, Pipa Jaya, Kec. Kemuning, Kota Palembang, Sumate
 phone: "082260602772"
 image: "/mitra/cleanique_mart_palembang.webp"
 imageAlt: "Cleanique Mart Palembang"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-palembang/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-palembang/"
 order: 2
 marketplaces:
   - "Shopee"

@@ -133,7 +133,7 @@ withDefaults(defineProps<{
           Cleanique Mart by PT Indotech Berkah Abadi
         </div>
         <div style="font-size: 18px; color: rgba(204, 239, 211, 0.95);">
-          cleaniquemart.com
+          cleaniquemart.vercel.app
         </div>
       </div>
       <div

@@ -6,7 +6,7 @@ address: "Jln Cempaka II Gg Nusa Indah No. 1, sekitar 100 m barat pabrik es, Ds 
 phone: "085231309626"
 image: "/mitra/Cleanique-Mart-Situbondo-1.webp"
 imageAlt: "Cleanique Mart Situbondo"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-situbondo-3/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-situbondo-3/"
 order: 4
 marketplaces:
   - "Shopee"

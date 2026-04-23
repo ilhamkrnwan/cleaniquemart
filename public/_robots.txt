@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cleaniquemart.com/sitemap.xml
+Sitemap: https://cleaniquemart.vercel.app/sitemap.xml

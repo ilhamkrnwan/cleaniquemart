@@ -6,7 +6,7 @@ address: "Jl. Mayjen Sungkono A11, Malang Kel. Bumiayu, Kec. Kedung Kandang, Kot
 phone: "08179191074"
 image: "/mitra/Cleanique-Mart-Malang-Depan-Toko.webp"
 imageAlt: "Cleanique Mart Malang"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-malang/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-malang/"
 order: 3
 marketplaces:
   - "Shopee"

@@ -6,7 +6,7 @@ address: "Jl. Megatan No. 4, Dusun Nglarangan RT 02, RW 04, Candi Mulyo, Kedu, T
 phone: "085799086701"
 image: "/mitra/Thumbnail-Mitra-Cleanique-Mart-Temanggung-2.webp"
 imageAlt: "Cleanique Mart Temanggung 2"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-temanggung-2/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-temanggung-2/"
 order: 8
 marketplaces:
   - "Shopee"

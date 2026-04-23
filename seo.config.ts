@@ -2,7 +2,7 @@ export const seoConfig = {
   siteName: 'Cleanique Mart',
   brandName: 'CleaniqueMart',
   companyName: 'PT Indotech Berkah Abadi',
-  siteUrl: 'https://cleaniquemart.com',
+  siteUrl: 'https://cleaniquemart.vercel.app',
   siteLocale: 'id_ID',
   language: 'id-ID',
   defaultAuthor: 'Tim CleaniqueMart',

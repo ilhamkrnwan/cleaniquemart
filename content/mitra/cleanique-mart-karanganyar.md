@@ -6,7 +6,7 @@ address: "Jl. Alternatif Matesih, Supan, Tegalgede, Kec. Karanganyar, Kabupaten 
 phone: "08122974601"
 image: "/mitra/Thumbnail-Mitra-Cleanique-Mart-Karanganyar.webp"
 imageAlt: "Cleanique Mart Karanganyar"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-karanganyar-2/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-karanganyar-2/"
 order: 9
 marketplaces:
   - "Shopee"

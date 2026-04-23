@@ -6,7 +6,7 @@ address: "Jl. Raya Tapos 17-A depan Perumahan Permata Cimanggis - Depok"
 phone: "0811843244"
 image: "/mitra/cleanique-mart-tapos-depok.webp"
 imageAlt: "Cleanique Mart Tapos Depok"
-sourceUrl: "https://cleaniquemart.com/cleanique-mart-depok/"
+sourceUrl: "https://cleaniquemart.vercel.app/cleanique-mart-depok/"
 order: 1
 marketplaces:
   - "Shopee"

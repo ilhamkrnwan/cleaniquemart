@@ -1,4 +1,4 @@
-import { buildSeoTitle, seoConfig, withSiteUrl } from '~~/seo.config'
+import { seoConfig, withSiteUrl } from '~~/seo.config'
 import type { ComputedRef, Ref } from 'vue'
 
 type SeoValue = string | number | boolean | null | undefined
@@ -60,7 +60,7 @@ export function usePageSeo(options: PageSeoOptions) {
   }
 
   useSeoMeta({
-    title: () => buildSeoTitle(title.value),
+    title: () => title.value,
     description: () => description.value,
     ogTitle: () => title.value,
     ogDescription: () => description.value,
@@ -77,6 +77,7 @@ export function usePageSeo(options: PageSeoOptions) {
   useHead(() => {
     const meta = [
       { name: 'author', content: author.value, key: 'author' },
+      { name: 'publisher', content: seoConfig.companyName, key: 'publisher' },
       { name: 'theme-color', content: '#0a2553', key: 'theme-color' },
     ]
 
