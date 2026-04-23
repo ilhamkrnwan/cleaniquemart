@@ -24,9 +24,6 @@ Konsentrat ini diformulasikan khusus untuk membantu melicinkan pakaian yang kusu
 
 Aroma Sakura Fresh yang segar dan elegan menjadi daya tarik utama produk ini. Wanginya mampu bertahan lama pada pakaian, memberikan kesan bersih dan harum yang meningkatkan rasa percaya diri Anda.
 
-![Konsentrat Pelicin Pakaian Cleanique Lab](/blog/konsentrat-pelicin-pakaian-praktis-hemat-dan-wangi/image-1.webp)
-
-Konsentrat Pelicin Pakaian Cleanique Lab
 
 Cara Pengolahan Konsentrat Pelicin Pakaian Cleanique Lab
 --------------------------------------------------------

@@ -62,9 +62,6 @@ Setelah jadi, Anda bisa menuang sabun ke dalam botol atau jeriken untuk digunaka
 
 **Catatan:** Selalu ikuti petunjuk resmi di dalam kemasan untuk hasil terbaik.
 
-![paket bahan sabun cuci tangan cair arai isi](/blog/sabun-cuci-tangan-cair-dengan-paket-bahan-arai/image-1.webp)
-
-paket bahan sabun cuci tangan cair arai isi
 
 Manfaat Membuat Sabun Cuci Tangan Sendiri
 -----------------------------------------

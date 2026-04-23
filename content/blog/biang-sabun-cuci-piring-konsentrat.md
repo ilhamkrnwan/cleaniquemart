@@ -12,9 +12,6 @@ Biang Sabun Cuci Piring Konsentrat Adalah?
 
 Biang sabun cuci konsentrat adalah bahan dasar pembuatan sabun cuci piring yang sangat pekat. Dengan hanya sedikit biang sabun, kalian bisa menghasilkan banyak sabun siap pakai. Octa mengandung surfaktan nomor 1 di kelasnya yang mampu menghasilkan busa melimpah dan membersihkan peralatan dapur  secara maksimal, bahkan untuk noda membandel sekalipun.
 
-![](/blog/biang-sabun-cuci-piring-konsentrat/image-1.webp)
-
-Biang Sabun Cuci Piring Konsentrat Murah Dan Hemat
 
 Kelebihan Biang Sabun Cuci Piring Konsentrat
 --------------------------------------------

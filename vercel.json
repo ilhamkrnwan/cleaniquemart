@@ -1,0 +1,67 @@
+{
+  "buildCommand": "pnpm generate",
+  "outputDirectory": ".output/public",
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/cleanique-mart-demak-2",
+      "destination": "/mitra/cleanique-mart-demak",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-boyolali",
+      "destination": "/mitra/cleanique-mart-boyolali",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-jakarta-timur",
+      "destination": "/mitra/cleanique-mart-jakarta-timur",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-depok",
+      "destination": "/mitra/cleanique-mart-depok",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-malang",
+      "destination": "/mitra/cleanique-mart-malang",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-palembang",
+      "destination": "/mitra/cleanique-mart-palembang",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-temanggung-2",
+      "destination": "/mitra/cleanique-mart-temanggung-2",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-situbondo-3",
+      "destination": "/mitra/cleanique-mart-situbondo",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-temanggung-1",
+      "destination": "/mitra/cleanique-mart-temanggung-1",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-tajem-maguwoharjo",
+      "destination": "/mitra/cleanique-mart-maguwoharjo",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-jambi",
+      "destination": "/mitra/cleanique-mart-jambi",
+      "permanent": true
+    },
+    {
+      "source": "/cleanique-mart-karanganyar-2",
+      "destination": "/mitra/cleanique-mart-karanganyar",
+      "permanent": true
+    }
+  ]
+}

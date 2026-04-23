@@ -49,9 +49,6 @@ Ulangi langkah ini sebanyak 9 kali. Total air yang ditambahkan adalah 4,5 liter,
 
 Setelah tercampur rata, cairan siap digunakan untuk mengepel lantai Anda. Simpel, bukan?
 
-![Isi Konsentrat Pel Lantai](/blog/konsentrat-pembersih-lantai-solusi-super-hemat-untuk-lantai-bersih-dan-harum/image-1.webp)
-
-Isi Konsentrat Pel Lantai
 
 Spesifikasi Produk Konsentrat Pembersih Lantai Cleanique Lab
 ------------------------------------------------------------

@@ -54,9 +54,6 @@
               <a href="https://instagram.com/cleaniquemart" target="_blank" rel="noopener noreferrer" class="social-circle">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
               </a>
-              <a href="#" class="social-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-              </a>
             </div>
           </div>
 
@@ -105,24 +102,56 @@
 </template>
 
 <script setup lang="ts">
+import { seoConfig, withSiteUrl } from '~~/seo.config'
+
 const mapsEmbedUrl = 'https://maps.google.com/maps?q=-7.756534592261972,110.36015527589505&z=16&output=embed'
 const mapsDirectUrl = 'https://maps.google.com/?q=Jongke%20Tengah%20No.30%2C%20Mlati%2C%20Sleman%2C%20Yogyakarta'
 
-useSeoMeta({
-  title: 'Hubungi Kami — CleaniqueMart',
-  description: 'Kontak WhatsApp, Email, dan Lokasi Gudang Pusat CleaniqueMart. Kami siap melayani permintaan pengiriman ke seluruh wilayah Indonesia.',
+usePageSeo({
+  title: 'Hubungi Kami',
+  description: 'Kontak WhatsApp, email, dan lokasi gudang pusat Cleanique Mart. Kami siap melayani permintaan pengiriman ke seluruh wilayah Indonesia.',
+  path: '/contact',
+  keywords: 'kontak Cleanique Mart, whatsapp Cleanique Mart, alamat Cleanique Mart, email kemitraan sabun curah',
+  ogComponent: 'Default',
+  ogProps: {
+    title: 'Hubungi Cleanique Mart',
+    description: 'Konsultasi kemitraan, tanya produk, dan kunjungi lokasi pusat Cleanique Mart di Sleman, Yogyakarta.',
+    tagline: seoConfig.tagline,
+    eyebrow: 'Kontak',
+    logoUrl: withSiteUrl(seoConfig.logoPath),
+    companyLogoUrl: withSiteUrl(seoConfig.companyLogoPath),
+  },
 })
 
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) entry.target.classList.add('is-visible')
-    })
-  }, { threshold: 0.1 })
-  setTimeout(() => {
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-  }, 100)
-})
+useSchemaOrg([
+  defineWebPage({
+    name: 'Hubungi Cleanique Mart',
+    description: 'Kontak WhatsApp, email, dan lokasi gudang pusat Cleanique Mart di Sleman, Yogyakarta.',
+    url: withSiteUrl('/contact'),
+    inLanguage: seoConfig.language,
+  }),
+  defineLocalBusiness({
+    name: seoConfig.siteName,
+    description: seoConfig.defaultDescription,
+    url: withSiteUrl('/contact'),
+    image: withSiteUrl(seoConfig.logoPath),
+    telephone: seoConfig.phoneE164,
+    email: seoConfig.email,
+    address: {
+      '@type': 'PostalAddress',
+      ...seoConfig.address,
+    },
+    sameAs: [seoConfig.instagramUrl],
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Beranda', item: '/' },
+      { name: 'Kontak', item: '/contact' },
+    ],
+  }),
+])
+
+useScrollReveal(0.1)
 </script>
 
 <style scoped>

@@ -22,6 +22,8 @@
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
-    "@nuxt/content": "^3.13.0"
+    "@nuxt/content": "^3.13.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "playwright-core": "^1.59.1"
   }
 }

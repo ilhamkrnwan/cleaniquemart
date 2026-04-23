@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { seoConfig, withSiteUrl } from '~~/seo.config'
+
+/*
 useSeoMeta({
   title: 'Paket Kemitraan Sabun Curah — CleaniqueMart',
   description: 'Mulai bisnis sabun curah menguntungkan bersama CleaniqueMart. Pilih Paket Starter Rp 15 juta, Paket King Rp 27,5 juta, atau konsultasi gratis. Lisensi resmi, training lengkap, ROI cepat.',
 })
+
+*/
 
 const carouselIndex = ref(0)
 const partnerCarouselIndex = ref(0)
@@ -12,6 +17,7 @@ let tierTouchStartX = 0
 let tierTouchDeltaX = 0
 let isTierSwiping = false
 let tierBreakpointQuery: MediaQueryList | null = null
+const isMobileViewport = () => import.meta.client && window.matchMedia('(max-width: 767px)').matches
 
 const { data: mitraEntries } = await useAsyncData('mitra-list', () =>
   queryCollection('mitra')
@@ -189,7 +195,7 @@ interface Faq {
   open: boolean
 }
 
-const faqs = ref<Faq[]>([
+const faqEntries = [
   {
     label: 'Apakah ada biaya pendaftaran atau franchise fee untuk menjadi mitra CleaniqueMart?',
     content: 'Tidak ada biaya pendaftaran, franchise fee, maupun royalti. Anda hanya membayar untuk paket produk fisik yang dipilih. Seluruh keuntungan penjualan 100% menjadi milik Anda sepenuhnya.',
@@ -220,7 +226,20 @@ const faqs = ref<Faq[]>([
     content: 'Ya, seluruh produk CleaniqueMart telah tersertifikasi halal dan memiliki nomor izin edar PKRT resmi. Sebagai mitra, Anda berhak mencantumkan logo sertifikat halal dan nomor izin edar pada seluruh materi promosi untuk meningkatkan kepercayaan pelanggan.',
     open: false,
   },
-])
+]
+
+const faqStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqEntries.map((faq) => ({
+    '@type': 'Question',
+    name: faq.label,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.content,
+    },
+  })),
+}
 
 const toggleFaq = (index: number) => {
   const targetFaq = faqs.value[index]
@@ -232,6 +251,54 @@ const toggleFaq = (index: number) => {
   targetFaq.open = !targetFaq.open
 }
 
+usePageSeo({
+  title: 'Paket Kemitraan Sabun Curah',
+  description: 'Mulai bisnis sabun curah menguntungkan bersama Cleanique Mart. Pilih Paket Starter Rp 15 juta, Paket King Rp 27,5 juta, atau konsultasi gratis dengan dukungan branding dan operasional lengkap.',
+  path: '/mitra',
+  keywords: 'kemitraan Cleanique Mart, paket mitra sabun curah, franchise sabun curah, peluang usaha sabun, bisnis refill sabun',
+  ogComponent: 'Default',
+  ogProps: {
+    title: 'Program Mitra Cleanique Mart',
+    description: 'Pilihan paket kemitraan, simulasi ROI, FAQ, dan daftar mitra resmi yang sudah berkembang di berbagai kota.',
+    tagline: seoConfig.tagline,
+    eyebrow: 'Kemitraan',
+    logoUrl: withSiteUrl(seoConfig.logoPath),
+    companyLogoUrl: withSiteUrl(seoConfig.companyLogoPath),
+  },
+})
+
+useHead({
+  script: [
+    {
+      key: 'mitra-faq-schema',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(faqStructuredData),
+    },
+  ],
+})
+
+useSchemaOrg([
+  defineWebPage({
+    name: 'Program Mitra Cleanique Mart',
+    description: 'Pilihan paket kemitraan, simulasi ROI, FAQ, dan daftar mitra resmi yang sudah berkembang di berbagai kota.',
+    url: withSiteUrl('/mitra'),
+    inLanguage: seoConfig.language,
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Beranda', item: '/' },
+      { name: 'Mitra', item: '/mitra' },
+    ],
+  }),
+])
+
+const faqs = ref<Faq[]>(
+  faqEntries.map((faq) => ({
+    ...faq,
+    open: faq.open,
+  })),
+)
+
 function goToPartnerSlide(index: number) {
   if (!partnerList.value.length) {
     return
@@ -240,7 +307,7 @@ function goToPartnerSlide(index: number) {
   const normalizedIndex = (index + partnerList.value.length) % partnerList.value.length
   partnerCarouselIndex.value = normalizedIndex
 
-  if (window.matchMedia('(max-width: 767px)').matches) {
+  if (isMobileViewport()) {
     nextTick(() => {
       scrollToPartnerCard(normalizedIndex)
     })
@@ -248,15 +315,6 @@ function goToPartnerSlide(index: number) {
 }
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) entry.target.classList.add('is-visible')
-    })
-  }, { threshold: 0.1 })
-  setTimeout(() => {
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
-  }, 100)
-
   tierBreakpointQuery = window.matchMedia('(max-width: 767px)')
   tierBreakpointQuery.addEventListener('change', handleTierBreakpointChange)
 
@@ -273,6 +331,8 @@ onUnmounted(() => {
   tierBreakpointQuery?.removeEventListener('change', handleTierBreakpointChange)
 })
 
+useScrollReveal(0.1)
+
 watch(
   () => partnerList.value.length,
   (length) => {
@@ -284,7 +344,7 @@ watch(
       partnerCarouselIndex.value = length - 1
     }
 
-    if (!window.matchMedia('(max-width: 767px)').matches) {
+    if (!isMobileViewport()) {
       return
     }
 
@@ -302,7 +362,7 @@ const goToTierSlide = (index: number) => {
 
   carouselIndex.value = (index + tiers.length) % tiers.length
 
-  if (window.matchMedia('(max-width: 767px)').matches) {
+  if (isMobileViewport()) {
     nextTick(() => {
       scrollToTierCard(carouselIndex.value)
     })

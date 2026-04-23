@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { seoConfig, withSiteUrl } from '~~/seo.config'
+
+/*
 useSeoMeta({
   title: 'Katalog Produk — CleaniqueMart',
   description: 'Jelajahi berbagai produk pembersih dan deterjen premium ukuran 25 Liter dari CleaniqueMart. Formula berkualitas tinggi dengan harga mitra bersaing.',
 })
 
+*/
 const sliderRef = ref<HTMLElement | null>(null)
 const activeGroup = ref(0)
 const isSliderViewport = ref(false)
@@ -68,6 +72,37 @@ const products = [
     features: ['Non-alkohol berbasis air', 'Tahan hingga 7 hari', 'Tidak menodai kerah'],
   },
 ]
+
+usePageSeo({
+  title: 'Katalog Produk',
+  description: 'Jelajahi berbagai produk pembersih dan deterjen premium ukuran 25 liter dari Cleanique Mart. Formula berkualitas tinggi dengan harga mitra bersaing.',
+  path: '/products',
+  keywords: 'katalog produk Cleanique Mart, deterjen curah, sabun cuci piring, hand washing, softener, pel lantai, parfum laundry',
+  ogComponent: 'Default',
+  ogProps: {
+    title: 'Katalog Produk Cleanique Mart',
+    description: 'Rangkaian produk pembersih, deterjen, dan kebutuhan laundry premium ukuran 25 liter untuk rumah tangga dan bisnis.',
+    tagline: seoConfig.tagline,
+    eyebrow: 'Produk',
+    logoUrl: withSiteUrl(seoConfig.logoPath),
+    companyLogoUrl: withSiteUrl(seoConfig.companyLogoPath),
+  },
+})
+
+useSchemaOrg([
+  defineWebPage({
+    name: 'Katalog Produk Cleanique Mart',
+    description: 'Rangkaian produk pembersih, deterjen, dan kebutuhan laundry premium ukuran 25 liter untuk rumah tangga dan bisnis.',
+    url: withSiteUrl('/products'),
+    inLanguage: seoConfig.language,
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Beranda', item: '/' },
+      { name: 'Produk', item: '/products' },
+    ],
+  }),
+])
 
 const sliderDots = computed(() => {
   return Array.from({ length: Math.ceil(products.length / cardsPerGroup) })
@@ -159,16 +194,6 @@ function handleMediaChange(event: MediaQueryListEvent) {
 }
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) entry.target.classList.add('is-visible')
-    })
-  }, { threshold: 0.1 })
-  
-  setTimeout(() => {
-    document.querySelectorAll('.products-catalog .reveal').forEach((el) => observer.observe(el))
-  }, 100)
-
   mediaQuery = window.matchMedia('(max-width: 768px)')
   isSliderViewport.value = mediaQuery.matches
   mediaQuery.addEventListener('change', handleMediaChange)
@@ -181,6 +206,8 @@ onMounted(() => {
 onUnmounted(() => {
   mediaQuery?.removeEventListener('change', handleMediaChange)
 })
+
+useScrollReveal('.products-catalog .reveal', 0.1)
 </script>
 
 <template>

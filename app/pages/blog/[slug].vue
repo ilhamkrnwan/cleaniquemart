@@ -30,7 +30,7 @@
               <!-- Hero Image -->
               <div class="post-hero-img">
                 <NuxtImg
-                  :src="post?.image ?? '/blog/default.webp'"
+                  :src="resolveBlogImage(post?.image)"
                   :alt="post?.title"
                   width="840"
                   height="460"
@@ -92,7 +92,7 @@
                   <NuxtLink :to="`/blog/${rel.stem?.replace('blog/', '')}`" class="related-item">
                     <div class="related-item__img-wrap">
                       <NuxtImg
-                        :src="rel.image ?? '/blog/default.webp'"
+                        :src="resolveBlogImage(rel.image)"
                         :alt="rel.title"
                         class="related-item__img"
                         width="80"
@@ -117,9 +117,12 @@
 </template>
 
 <script setup lang="ts">
+import { resolveBlogImage } from '~/utils/blog'
+import { seoConfig, withSiteUrl } from '~~/seo.config'
+
 const route = useRoute()
 const slug = route.params.slug as string
-const siteUrl = 'https://cleaniquemart.com'
+const siteUrl = seoConfig.siteUrl
 const navbarOffset = ref(72)
 const postBackBarHeight = ref(48)
 const postBackBarRef = ref<HTMLElement | null>(null)
@@ -143,6 +146,63 @@ if (!post.value) {
   throw createError({ statusCode: 404, statusMessage: 'Artikel tidak ditemukan' })
 }
 
+function formatDate(raw?: string) {
+  if (!raw) {
+    return ''
+  }
+
+  return new Date(raw).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+const canonicalPath = `/blog/${slug}`
+const articleAuthor = post.value.author || seoConfig.defaultAuthor
+const articleUpdatedAt = post.value.updatedAt || post.value.date
+
+usePageSeo({
+  title: post.value.title,
+  description: post.value.description,
+  path: canonicalPath,
+  type: 'article',
+  author: articleAuthor,
+  publishedTime: post.value.date,
+  modifiedTime: articleUpdatedAt,
+  keywords: [post.value.category, ...(post.value.tags ?? [])].filter(Boolean).join(', '),
+  ogComponent: 'Blog',
+  ogProps: {
+    title: post.value.title,
+    description: post.value.description,
+    category: post.value.category || 'Artikel',
+    author: articleAuthor,
+    publishedLabel: formatDate(post.value.date),
+    logoUrl: withSiteUrl(seoConfig.logoPath),
+    companyLogoUrl: withSiteUrl(seoConfig.companyLogoPath),
+  },
+})
+
+useSchemaOrg([
+  defineArticle({
+    headline: post.value.title,
+    description: post.value.description,
+    image: withSiteUrl(resolveBlogImage(post.value.image)),
+    datePublished: post.value.date,
+    dateModified: articleUpdatedAt,
+    author: {
+      name: articleAuthor,
+    },
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Beranda', item: '/' },
+      { name: 'Blog', item: '/blog' },
+      { name: post.value.title, item: canonicalPath },
+    ],
+  }),
+])
+
 function updateStickyOffsets() {
   const navbarInner = document.querySelector('.navbar .navbar__inner') as HTMLElement | null
   navbarOffset.value = navbarInner?.offsetHeight ?? 72
@@ -160,7 +220,8 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateStickyOffsets)
 })
 
-// SEO
+/*
+// Legacy SEO block kept for reference during migration.
 useSeoMeta({
   title: `${post.value?.title ?? 'Artikel'} — Blog CleaniqueMart`,
   description: post.value?.description,
@@ -179,6 +240,7 @@ function formatDate(raw?: string) {
     year: 'numeric',
   })
 }
+*/
 </script>
 
 <style scoped>

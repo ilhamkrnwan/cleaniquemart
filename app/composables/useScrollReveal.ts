@@ -24,7 +24,10 @@ export function useScrollReveal(
   legacyThreshold?: number,
 ) {
   let observer: IntersectionObserver | null = null
-  const REVEAL_SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur'
+  const defaultSelector = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur'
+  const revealSelector = typeof selectorOrThreshold === 'string'
+    ? selectorOrThreshold
+    : defaultSelector
 
   // Resolve threshold — handle both call signatures gracefully
   const resolvedThreshold: number = (() => {
@@ -44,7 +47,7 @@ export function useScrollReveal(
     ).matches
 
     if (prefersReducedMotion) {
-      document.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+      document.querySelectorAll(revealSelector).forEach((el) => {
         el.classList.add('is-visible')
       })
       return
@@ -52,7 +55,7 @@ export function useScrollReveal(
 
     // Auto-stagger: assign --reveal-index to children of .reveal-stagger
     document.querySelectorAll('.reveal-stagger').forEach((parent) => {
-      const children = parent.querySelectorAll(REVEAL_SELECTOR)
+      const children = parent.querySelectorAll(revealSelector)
       children.forEach((child, i) => {
         ;(child as HTMLElement).style.setProperty('--reveal-index', String(i))
       })
@@ -74,7 +77,7 @@ export function useScrollReveal(
       }
     )
 
-    document.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+    document.querySelectorAll(revealSelector).forEach((el) => {
       observer!.observe(el)
     })
   })

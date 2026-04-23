@@ -141,6 +141,8 @@
 </template>
 
 <script setup lang="ts">
+import { seoConfig, withSiteUrl } from '~~/seo.config'
+
 const route = useRoute()
 const slug = route.params.slug as string
 
@@ -241,6 +243,56 @@ const whatsAppHref = computed(() => {
   return `https://wa.me/${phone}?text=${text}`
 })
 
+const canonicalPath = `/mitra/${slug}`
+
+usePageSeo({
+  title: `${partner.value.title} - Mitra Cleanique Mart`,
+  description: partner.value.description,
+  path: canonicalPath,
+  keywords: [partner.value.location, 'mitra Cleanique Mart', 'isi ulang sabun', 'sabun curah'].filter(Boolean).join(', '),
+  ogComponent: 'Mitra',
+  ogProps: {
+    title: partner.value.title,
+    description: partner.value.description,
+    location: partner.value.location,
+    address: partner.value.address,
+    imageUrl: withSiteUrl(partner.value.ogImage || partner.value.image),
+    logoUrl: withSiteUrl(seoConfig.logoPath),
+    companyLogoUrl: withSiteUrl(seoConfig.companyLogoPath),
+  },
+})
+
+useSchemaOrg([
+  defineWebPage({
+    name: partner.value.title,
+    description: partner.value.description,
+    url: withSiteUrl(canonicalPath),
+    inLanguage: seoConfig.language,
+  }),
+  defineLocalBusiness({
+    name: partner.value.title,
+    description: partner.value.description,
+    image: withSiteUrl(partner.value.image),
+    url: withSiteUrl(canonicalPath),
+    telephone: `+${normalizePhoneNumber(partner.value.phone)}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: partner.value.address,
+      addressLocality: partner.value.location,
+      addressCountry: 'ID',
+    },
+    sameAs: partner.value.sourceUrl ? [partner.value.sourceUrl] : undefined,
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Beranda', item: '/' },
+      { name: 'Mitra', item: '/mitra' },
+      { name: partner.value.title, item: canonicalPath },
+    ],
+  }),
+])
+
+/*
 useSeoMeta({
   title: `${partner.value.title} - Mitra Cleanique Mart`,
   description: partner.value.description,
@@ -250,6 +302,7 @@ useSeoMeta({
   ogType: 'website',
   twitterCard: 'summary_large_image',
 })
+*/
 
 useScrollReveal()
 </script>

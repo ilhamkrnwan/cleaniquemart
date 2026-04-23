@@ -207,6 +207,8 @@
 </template>
 
 <script setup lang="ts">
+import { seoConfig, withSiteUrl } from '~~/seo.config'
+
 const gallerySliderRef = ref<HTMLElement | null>(null)
 const activeGallerySlide = ref(0)
 const isGallerySliderViewport = ref(false)
@@ -354,15 +356,36 @@ onUnmounted(() => {
   galleryMediaQuery?.removeEventListener('change', handleGalleryMediaChange)
 })
 
-useSeoMeta({
-  title: 'Tentang Kami - CleaniqueMart',
-  description: 'Kenali CleaniqueMart, solusi bisnis sabun curah dan produk kebersihan PKRT dari PT. Indotech Berkah Abadi. Temukan cerita brand, Cleanique Lab, kemitraan, dan komitmen ramah lingkungan kami.',
-  ogTitle: 'Tentang Kami - CleaniqueMart',
-  ogDescription: 'CleaniqueMart menghadirkan produk kebersihan PKRT, kemitraan sabun curah, dan solusi refill ramah lingkungan dari PT. Indotech Berkah Abadi.',
-  ogImage: '/photo-collage.webp',
-  twitterCard: 'summary_large_image',
-  keywords: 'tentang CleaniqueMart, sabun curah, PKRT, Cleanique Lab, PT Indotech Berkah Abadi, mitra Cleanique Mart, produk kebersihan ramah lingkungan',
+usePageSeo({
+  title: 'Tentang Cleanique Mart',
+  description: 'Kenali Cleanique Mart, solusi bisnis sabun curah dan produk kebersihan PKRT dari PT Indotech Berkah Abadi. Temukan cerita brand, Cleanique Lab, kemitraan, dan komitmen ramah lingkungan kami.',
+  path: '/about',
+  keywords: 'tentang Cleanique Mart, sabun curah, PKRT, Cleanique Lab, PT Indotech Berkah Abadi, mitra Cleanique Mart, produk kebersihan ramah lingkungan',
+  ogComponent: 'Default',
+  ogProps: {
+    title: 'Tentang Cleanique Mart',
+    description: 'Cerita brand, fondasi PT Indotech Berkah Abadi, dan ekosistem bisnis refill yang mendukung pertumbuhan mitra di berbagai kota.',
+    tagline: seoConfig.tagline,
+    eyebrow: 'About',
+    logoUrl: withSiteUrl(seoConfig.logoPath),
+    companyLogoUrl: withSiteUrl(seoConfig.companyLogoPath),
+  },
 })
+
+useSchemaOrg([
+  defineWebPage({
+    name: 'Tentang Cleanique Mart',
+    description: 'Cerita brand, fondasi PT Indotech Berkah Abadi, dan ekosistem bisnis refill yang mendukung pertumbuhan mitra di berbagai kota.',
+    url: withSiteUrl('/about'),
+    inLanguage: seoConfig.language,
+  }),
+  defineBreadcrumb({
+    itemListElement: [
+      { name: 'Beranda', item: '/' },
+      { name: 'Tentang', item: '/about' },
+    ],
+  }),
+])
 
 useScrollReveal(0.08)
 </script>
