@@ -7,7 +7,7 @@ useSeoMeta({
 const carouselIndex = ref(0)
 const partnerCarouselIndex = ref(0)
 const tierMobileScroller = ref<HTMLElement | null>(null)
-let partnerCarouselInterval: ReturnType<typeof setInterval> | null = null
+const partnerMobileScroller = ref<HTMLElement | null>(null)
 let tierTouchStartX = 0
 let tierTouchDeltaX = 0
 let isTierSwiping = false
@@ -33,6 +33,68 @@ function getPartnerLink(partner: { path?: string | null; stem?: string | null })
 
   const slug = partner.stem?.replace('mitra/', '')
   return slug ? `/mitra/${slug}` : '/mitra'
+}
+
+function getPartnerCards() {
+  if (!partnerMobileScroller.value) {
+    return [] as HTMLElement[]
+  }
+
+  return Array.from(partnerMobileScroller.value.querySelectorAll('.partner-card--mobile')) as HTMLElement[]
+}
+
+function scrollToPartnerCard(index: number, behavior: ScrollBehavior = 'smooth') {
+  if (!partnerMobileScroller.value) {
+    return
+  }
+
+  const cards = getPartnerCards()
+  if (!cards.length) {
+    return
+  }
+
+  const targetIndex = Math.max(0, Math.min(index, cards.length - 1))
+  const targetCard = cards[targetIndex]
+  if (!targetCard) {
+    return
+  }
+
+  partnerMobileScroller.value.scrollTo({
+    left: targetCard.offsetLeft,
+    behavior,
+  })
+
+  partnerCarouselIndex.value = targetIndex
+}
+
+function syncPartnerIndexFromScroll() {
+  if (!partnerMobileScroller.value) {
+    return
+  }
+
+  const cards = getPartnerCards()
+  if (!cards.length) {
+    return
+  }
+
+  const scrollLeft = partnerMobileScroller.value.scrollLeft
+  let closestIndex = partnerCarouselIndex.value
+  let closestDistance = Number.POSITIVE_INFINITY
+
+  cards.forEach((card, index) => {
+    const distance = Math.abs(card.offsetLeft - scrollLeft)
+
+    if (distance < closestDistance) {
+      closestDistance = distance
+      closestIndex = index
+    }
+  })
+
+  partnerCarouselIndex.value = closestIndex
+}
+
+function onPartnerMobileScroll() {
+  syncPartnerIndexFromScroll()
 }
 
 interface TierFeature {
@@ -170,45 +232,19 @@ const toggleFaq = (index: number) => {
   targetFaq.open = !targetFaq.open
 }
 
-function clearPartnerAutoplay() {
-  if (!partnerCarouselInterval) {
-    return
-  }
-
-  clearInterval(partnerCarouselInterval)
-  partnerCarouselInterval = null
-}
-
-function startPartnerAutoplay() {
-  clearPartnerAutoplay()
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return
-  }
-
-  partnerCarouselInterval = setInterval(() => {
-    nextPartnerSlide(false)
-  }, 4000)
-}
-
-function goToPartnerSlide(index: number, shouldRestart = true) {
+function goToPartnerSlide(index: number) {
   if (!partnerList.value.length) {
     return
   }
 
-  partnerCarouselIndex.value = (index + partnerList.value.length) % partnerList.value.length
+  const normalizedIndex = (index + partnerList.value.length) % partnerList.value.length
+  partnerCarouselIndex.value = normalizedIndex
 
-  if (shouldRestart) {
-    startPartnerAutoplay()
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    nextTick(() => {
+      scrollToPartnerCard(normalizedIndex)
+    })
   }
-}
-
-function nextPartnerSlide(shouldRestart = true) {
-  goToPartnerSlide(partnerCarouselIndex.value + 1, shouldRestart)
-}
-
-function prevPartnerSlide() {
-  goToPartnerSlide(partnerCarouselIndex.value - 1)
 }
 
 onMounted(() => {
@@ -221,22 +257,43 @@ onMounted(() => {
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
   }, 100)
 
-  startPartnerAutoplay()
-
   tierBreakpointQuery = window.matchMedia('(max-width: 767px)')
   tierBreakpointQuery.addEventListener('change', handleTierBreakpointChange)
 
   if (tierBreakpointQuery.matches) {
     nextTick(() => {
       scrollToTierCard(carouselIndex.value, 'auto')
+      scrollToPartnerCard(partnerCarouselIndex.value, 'auto')
+      syncPartnerIndexFromScroll()
     })
   }
 })
 
 onUnmounted(() => {
-  clearPartnerAutoplay()
   tierBreakpointQuery?.removeEventListener('change', handleTierBreakpointChange)
 })
+
+watch(
+  () => partnerList.value.length,
+  (length) => {
+    if (!length) {
+      return
+    }
+
+    if (partnerCarouselIndex.value > length - 1) {
+      partnerCarouselIndex.value = length - 1
+    }
+
+    if (!window.matchMedia('(max-width: 767px)').matches) {
+      return
+    }
+
+    nextTick(() => {
+      scrollToPartnerCard(partnerCarouselIndex.value, 'auto')
+      syncPartnerIndexFromScroll()
+    })
+  },
+)
 
 const goToTierSlide = (index: number) => {
   if (!tiers.length) {
@@ -299,10 +356,8 @@ function scrollToTierCard(index: number, behavior: ScrollBehavior = 'smooth') {
     return
   }
 
-  const centeredOffset = targetCard.offsetLeft - Math.max((tierMobileScroller.value.clientWidth - targetCard.clientWidth) / 2, 0)
-
   tierMobileScroller.value.scrollTo({
-    left: centeredOffset,
+    left: targetCard.offsetLeft,
     behavior,
   })
 }
@@ -318,13 +373,12 @@ function syncTierIndexFromScroll() {
     return
   }
 
-  const viewportCenter = tierMobileScroller.value.scrollLeft + (tierMobileScroller.value.clientWidth / 2)
+  const scrollLeft = tierMobileScroller.value.scrollLeft
   let closestIndex = carouselIndex.value
   let closestDistance = Number.POSITIVE_INFINITY
 
   cards.forEach((card, index) => {
-    const cardCenter = card.offsetLeft + (card.clientWidth / 2)
-    const distance = Math.abs(cardCenter - viewportCenter)
+    const distance = Math.abs(card.offsetLeft - scrollLeft)
 
     if (distance < closestDistance) {
       closestDistance = distance
@@ -375,6 +429,8 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 
   nextTick(() => {
     scrollToTierCard(carouselIndex.value, 'auto')
+    scrollToPartnerCard(partnerCarouselIndex.value, 'auto')
+    syncPartnerIndexFromScroll()
   })
 }
 </script>
@@ -672,55 +728,37 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
         </div>
 
         <div class="partners-carousel" aria-label="Daftar mitra Cleanique Mart">
-          <div class="partners-carousel__viewport">
-            <button
-              class="partners-carousel__nav partners-carousel__nav--prev"
-              type="button"
-              aria-label="Mitra sebelumnya"
-              @click="prevPartnerSlide()"
+          <div
+            ref="partnerMobileScroller"
+            class="partners-carousel__track"
+            @scroll.passive="onPartnerMobileScroll"
+          >
+            <NuxtLink
+              v-for="partner in partnerList"
+              :key="partner.path ?? partner.stem"
+              :to="getPartnerLink(partner)"
+              class="partner-card partner-card--mobile glass-card"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-
-            <div class="partners-carousel__track">
-              <NuxtLink
-                v-for="(partner, index) in partnerList"
-                :key="partner.path ?? partner.stem"
-                :to="getPartnerLink(partner)"
-                class="partner-card partner-card--mobile glass-card partners-carousel__slide"
-                :class="{ 'partners-carousel__slide--active': partnerCarouselIndex === index }"
-                :aria-hidden="partnerCarouselIndex !== index"
-              >
-                <div class="partner-card__media">
-                  <NuxtImg
-                    :src="partner.image"
-                    :alt="partner.imageAlt"
-                    width="640"
-                    height="440"
-                    loading="lazy"
-                    sizes="78vw"
-                    class="partner-card__image"
-                  />
-                </div>
-                <div class="partner-card__body">
-                  <div class="partner-card__location">{{ partner.location }}</div>
-                  <h3 class="partner-card__name">{{ partner.title }}</h3>
-                  <p class="partner-card__address">
-                    <span>Alamat:</span>
-                    {{ partner.address }}
-                  </p>
-                </div>
-              </NuxtLink>
-            </div>
-
-            <button
-              class="partners-carousel__nav partners-carousel__nav--next"
-              type="button"
-              aria-label="Mitra berikutnya"
-              @click="nextPartnerSlide()"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
+              <div class="partner-card__media">
+                <NuxtImg
+                  :src="partner.image"
+                  :alt="partner.imageAlt"
+                  width="640"
+                  height="440"
+                  loading="lazy"
+                  sizes="78vw"
+                  class="partner-card__image"
+                />
+              </div>
+              <div class="partner-card__body">
+                <div class="partner-card__location">{{ partner.location }}</div>
+                <h3 class="partner-card__name">{{ partner.title }}</h3>
+                <p class="partner-card__address">
+                  <span>Alamat:</span>
+                  {{ partner.address }}
+                </p>
+              </div>
+            </NuxtLink>
           </div>
 
           <div class="partners-carousel__dots" role="tablist" aria-label="Pilih mitra">
@@ -1103,14 +1141,14 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
   display: flex;
   gap: var(--space-4);
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: hidden;
   padding: var(--space-3) var(--space-4) var(--space-4);
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--space-4);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  touch-action: pan-x;
+  touch-action: pan-x pan-y;
 }
 
 .tiers-mobile__track::-webkit-scrollbar {
@@ -1336,6 +1374,31 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 
 .partners-carousel {
   display: none;
+  margin-inline: calc(var(--space-4) * -1);
+}
+
+.partners-carousel__track {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 var(--space-4) var(--space-4);
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--space-4);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
+}
+
+.partners-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.partner-card--mobile {
+  flex: 0 0 min(82vw, 320px);
+  min-width: 0;
+  scroll-snap-align: start;
 }
 
 .partners-carousel__dots {
@@ -1595,27 +1658,13 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
     margin-bottom: var(--space-8);
   }
 
-  .partners-carousel__viewport {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .partners-carousel__track {
-    width: 100%;
+    gap: var(--space-3);
+    padding-inline: var(--space-4);
   }
 
   .partner-card--mobile {
-    display: none;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto;
-    animation: fadeSlide 0.35s ease-out;
-  }
-
-  .partners-carousel__slide--active {
-    display: block;
+    flex-basis: calc(100vw - 4.5rem);
   }
 
   .partner-card--mobile .partner-card__body {

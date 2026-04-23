@@ -241,7 +241,7 @@ const galleryImages = [
     caption: 'Display produk yang siap melayani pelanggan',
   },
   {
-    src: '/about/cleanique-mart-palembang-refil-sabun.webp',
+    src: '/about/Cleanique-Mart-Palembang-Refil-Sabun.webp',
     alt: 'Layanan refill sabun Cleanique Mart Palembang',
     caption: 'Konsep refill sabun yang efisien dan ramah lingkungan',
   },
@@ -745,8 +745,8 @@ useScrollReveal(0.08)
   }
 
   .brand-gallery {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(84%, 1fr);
+    display: flex;
+    grid-template-columns: none;
     overflow-x: auto;
     overflow-y: hidden;
     gap: var(--space-4);
@@ -766,6 +766,7 @@ useScrollReveal(0.08)
   }
 
   .brand-gallery__card {
+    flex: 0 0 min(82%, 320px);
     scroll-snap-align: start;
   }
 

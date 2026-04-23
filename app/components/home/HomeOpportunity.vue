@@ -1012,13 +1012,17 @@ useScrollReveal('.reveal', 0.08)
 
 @media (max-width: 768px) {
   .opportunity-slider-dots {
+    display: none;
+  }
+
+  .opportunity__pain-slider .opportunity-slider-dots {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: var(--space-4);
   }
 
-  .opportunity-slider-dot {
+  .opportunity__pain-slider .opportunity-slider-dot {
     width: 18px;
     height: 6px;
     border-radius: var(--radius-full);
@@ -1029,13 +1033,13 @@ useScrollReveal('.reveal', 0.08)
     cursor: pointer;
   }
 
-  .opportunity-slider-dot--active {
+  .opportunity__pain-slider .opportunity-slider-dot--active {
     width: 38px;
     background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
     transform: translateY(-1px);
   }
 
-  .opportunity-slider-dot:focus-visible {
+  .opportunity__pain-slider .opportunity-slider-dot:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 3px;
   }
@@ -1059,96 +1063,94 @@ useScrollReveal('.reveal', 0.08)
   .opportunity__pain-grid::-webkit-scrollbar {
     display: none;
   }
-  
-  .target-grid {
-    display: flex;
-    grid-template-columns: none;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-padding-inline: var(--space-2);
-    scrollbar-width: none;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x pan-y;
-    gap: var(--space-4);
-    padding-inline: var(--space-2);
-    padding-bottom: 0;
-    margin-bottom: var(--space-5);
-  }
 
-  .target-grid::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .benefit-grid {
-    display: flex;
-    grid-template-columns: none;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-padding-inline: var(--space-2);
-    scrollbar-width: none;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x pan-y;
-    gap: var(--space-4);
-    padding-inline: var(--space-2);
-    padding-bottom: 0;
-    margin-bottom: var(--space-5);
-  }
-
-  .benefit-grid::-webkit-scrollbar {
-    display: none;
-  }
-
+  .target-grid,
+  .benefit-grid,
   .market-grid {
-    display: flex;
-    grid-template-columns: none;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-padding-inline: var(--space-2);
-    scrollbar-width: none;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: var(--space-4);
-    padding-inline: var(--space-2);
-    padding-bottom: 0;
-    touch-action: pan-x pan-y;
-    margin-bottom: var(--space-5);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+    gap: var(--space-3);
+    padding: 0;
+    margin-bottom: 0;
+    scroll-snap-type: none;
   }
 
-  .market-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .pain-card,
   .target-card,
   .benefit-item,
   .market-card {
-    scroll-snap-align: start;
+    min-width: 0;
+    width: 100%;
+    scroll-snap-align: unset;
   }
 
   .pain-card {
     flex: 0 0 min(86%, 520px);
+    width: auto;
+    scroll-snap-align: start;
   }
 
   .target-card {
-    flex: 0 0 min(82%, 360px);
+    gap: var(--space-2);
+    padding: var(--space-3);
+    align-items: flex-start;
+    border-radius: var(--radius-md);
+  }
+
+  .target-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .target-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .target-text {
+    font-size: 0.84rem;
+    line-height: 1.35;
   }
 
   .benefit-item {
-    flex: 0 0 min(74%, 290px);
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    align-items: flex-start;
+    font-size: 0.85rem;
+    line-height: 1.35;
+  }
+
+  .benefit-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .benefit-icon svg {
+    width: 12px;
+    height: 12px;
   }
 
   .market-card {
-    flex: 0 0 min(86%, 420px);
+    min-height: 78px;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-width: 1.5px;
   }
 
-  .market-card {
-    min-height: 88px;
+  .market-card__icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .market-card__icon :deep(svg) {
+    width: 22px;
+    height: 22px;
   }
 
   .market-card__text {
-    font-size: 1.05rem;
+    font-size: 0.88rem;
+    line-height: 1.3;
   }
   
   .visual-img {
