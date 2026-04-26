@@ -617,7 +617,7 @@ useScrollReveal()
   }
 
   .hero__person-wrap {
-    max-width: 240px;
+    max-width: 220px;
     margin-top: var(--space-4);
   }
 
@@ -637,17 +637,22 @@ useScrollReveal()
   }
 
   .hero__pill {
-    padding: 6px 14px 6px 6px;
-    gap: 8px;
+    padding: 4px 12px 4px 4px;
+    gap: 6px;
   }
 
   .hero__pill span {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .hero__pill-icon {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .hero__pill-icon svg {
+    width: 12px;
+    height: 12px;
   }
 
   .hero__cloud--bg-left { width: 140px; left: -15%; bottom: -50px; }
@@ -655,10 +660,10 @@ useScrollReveal()
   .hero__cloud--fg-left { width: 180px; left: -5%; bottom: -65px; }
   .hero__cloud--fg-right { width: 180px; right: -5%; bottom: -65px; }
 
-  /* Reposition alternating left/right so it doesn't cover face on mobile */
-  .hero__pill--1 { top: 0%; left: -10%; right: auto; }
-  .hero__pill--2 { top: 40%; right: -20%; left: auto; }
-  .hero__pill--3 { bottom: 5%; left: -5%; right: auto; }
+  /* Reposition using pixel offsets for safer edge distance */
+  .hero__pill--1 { top: -5%; left: -35px; right: auto; }
+  .hero__pill--2 { top: 35%; right: -40px; left: auto; }
+  .hero__pill--3 { bottom: 25%; left: -25px; right: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
