@@ -1568,6 +1568,7 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
   justify-content: center;
   gap: var(--space-2);
   margin-top: var(--space-6);
+
 }
 
 .carousel-dot {
@@ -1589,7 +1590,7 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 @media (max-width: 1024px) {
   .roi-grid {
     grid-template-columns: 1fr;
-    gap: var(--space-10);
+    gap: var(--space-8);
   }
   .partners-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -1,5 +1,12 @@
 <template>
-  <header class="navbar" :class="{ 'navbar--scrolled': isScrolled, 'navbar--open': isMenuOpen }">
+  <header
+    ref="navbarRef"
+    class="navbar"
+    :class="{
+      'navbar--scrolled': isScrolled,
+      'navbar--open': isMenuOpen,
+    }"
+  >
     <div class="navbar__inner container">
       <!-- Logo -->
       <NuxtLink to="/" class="navbar__logo" aria-label="CleaniqueMart - Beranda">
@@ -13,17 +20,41 @@
       </NuxtLink>
 
       <!-- Desktop Navigation (centered) -->
-      <nav class="navbar__nav" role="navigation" aria-label="Navigasi Utama">
+      <nav
+        ref="navRef"
+        class="navbar__nav"
+        role="navigation"
+        aria-label="Navigasi Utama"
+        @mouseleave="onNavMouseLeave"
+      >
         <NuxtLink
           v-for="item in navItems"
           :key="item.href"
           :to="item.href"
+          :ref="(el) => setLinkRef(item.href, el)"
           class="navbar__link"
           active-class="navbar__link--active"
           exact-active-class="navbar__link--active"
+          @mouseenter="onLinkMouseEnter(item.href)"
         >
           {{ item.label }}
         </NuxtLink>
+
+        <!-- Ghost hover underline marker -->
+        <span
+          class="navbar__marker navbar__marker--ghost"
+          :class="{ 'navbar__marker--visible': ghostMarker.visible }"
+          :style="ghostMarkerStyle"
+          aria-hidden="true"
+        ></span>
+
+        <!-- Active underline marker -->
+        <span
+          class="navbar__marker navbar__marker--active"
+          :class="{ 'navbar__marker--visible': activeMarker.visible }"
+          :style="activeMarkerStyle"
+          aria-hidden="true"
+        ></span>
       </nav>
 
       <!-- CTA Button (Desktop) -->
@@ -58,64 +89,64 @@
       </button>
     </div>
 
-    <!-- Mobile Drawer: full-screen, simple & clean -->
-    <Transition name="mobile-drawer">
-      <div
-        v-if="isMenuOpen"
-        id="mobile-menu"
-        class="navbar__drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menu navigasi"
-      >
-        <!-- Header -->
-        <div class="navbar__drawer-header">
-          <NuxtImg
-            src="/cleanique-mart-logo-outline-scaled.webp"
-            alt="CleaniqueMart"
-            fit="contain"
-            class="navbar__drawer-logo"
-          />
-          <button
-            class="navbar__drawer-close"
-            @click="closeMenu"
-            aria-label="Tutup menu"
-            type="button"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Nav Links -->
-        <nav class="navbar__drawer-nav">
+    <!-- Mobile Expand Menu — expands from navbar -->
+    <div
+      id="mobile-menu"
+      class="navbar__expand"
+      :class="{ 'navbar__expand--open': isMenuOpen }"
+      role="navigation"
+      aria-label="Menu navigasi mobile"
+    >
+      <div class="navbar__expand-inner">
+        <nav
+          ref="mobileNavRef"
+          class="navbar__expand-nav"
+          @mouseleave="onMobileNavMouseLeave"
+        >
           <NuxtLink
             v-for="(item, index) in navItems"
             :key="item.href"
             :to="item.href"
-            class="navbar__drawer-link"
-            :class="{ 'navbar__drawer-link--visible': isMenuOpen }"
-            :style="{ transitionDelay: isMenuOpen ? `${index * 45 + 60}ms` : '0ms' }"
-            active-class="navbar__drawer-link--active"
-            exact-active-class="navbar__drawer-link--active"
+            :ref="(el) => setMobileLinkRef(item.href, el)"
+            class="navbar__expand-link"
+            :class="{ 'navbar__expand-link--visible': isMenuOpen }"
+            :style="{ transitionDelay: isMenuOpen ? `${index * 40 + 80}ms` : '0ms' }"
+            active-class="navbar__expand-link--active"
+            exact-active-class="navbar__expand-link--active"
             @click="closeMenu"
+            @mouseenter="onMobileLinkMouseEnter(item.href)"
           >
             {{ item.label }}
           </NuxtLink>
+
+          <!-- Mobile ghost hover marker -->
+          <span
+            class="navbar__expand-marker navbar__expand-marker--ghost"
+            :class="{ 'navbar__expand-marker--visible': mobileGhostMarker.visible }"
+            :style="mobileGhostMarkerStyle"
+            aria-hidden="true"
+          ></span>
+
+          <!-- Mobile active marker -->
+          <span
+            class="navbar__expand-marker navbar__expand-marker--active"
+            :class="{ 'navbar__expand-marker--visible': mobileActiveMarker.visible }"
+            :style="mobileActiveMarkerStyle"
+            aria-hidden="true"
+          ></span>
         </nav>
 
-        <!-- CTA strip -->
+        <!-- CTA -->
         <div
-          class="navbar__drawer-cta-wrap"
-          :class="{ 'navbar__drawer-cta-wrap--visible': isMenuOpen }"
-          :style="{ transitionDelay: isMenuOpen ? `${navItems.length * 45 + 80}ms` : '0ms' }"
+          class="navbar__expand-cta"
+          :class="{ 'navbar__expand-cta--visible': isMenuOpen }"
+          :style="{ transitionDelay: isMenuOpen ? `${navItems.length * 40 + 120}ms` : '0ms' }"
         >
           <a
             href="https://wa.me/6287885590088?text=Halo%2C%20saya%20ingin%20konsultasi%20menjadi%20mitra%20CleaniqueMart"
             target="_blank"
             rel="noopener noreferrer"
-            class="btn btn-primary navbar__drawer-cta"
+            class="btn btn-primary navbar__expand-cta-btn"
             @click="closeMenu"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -123,17 +154,26 @@
             </svg>
             Konsultasi Gratis
           </a>
-          <p class="navbar__drawer-powered">© {{ currentYear }} CleaniqueMart</p>
         </div>
       </div>
-    </Transition>
+    </div>
   </header>
+
+  <!-- Backdrop overlay when menu is open -->
+  <Transition name="backdrop-fade">
+    <div
+      v-if="isMenuOpen"
+      class="navbar__backdrop"
+      @click="closeMenu"
+      aria-hidden="true"
+    ></div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
 const isScrolled = ref(false)
 const isMenuOpen = ref(false)
-const currentYear = new Date().getFullYear()
+const navbarRef = ref<HTMLElement | null>(null)
 
 const navItems = [
   { label: 'Beranda', href: '/' },
@@ -144,6 +184,7 @@ const navItems = [
   { label: 'Kontak', href: '/contact' },
 ]
 
+// --- Menu ---
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
   if (isMenuOpen.value) {
@@ -162,18 +203,173 @@ function handleScroll() {
   isScrolled.value = window.scrollY > 20
 }
 
+// Click outside navbar to close
+function handleClickOutside(event: MouseEvent) {
+  if (!isMenuOpen.value) return
+  if (navbarRef.value && !navbarRef.value.contains(event.target as Node)) {
+    closeMenu()
+  }
+}
+
+// --- Liquid Underline System ---
+const navRef = ref<HTMLElement | null>(null)
+const linkRefs = new Map<string, HTMLElement>()
+
+function setLinkRef(href: string, el: any) {
+  if (el?.$el) {
+    linkRefs.set(href, el.$el as HTMLElement)
+  } else if (el instanceof HTMLElement) {
+    linkRefs.set(href, el)
+  }
+}
+
+const activeMarker = reactive({ left: 0, width: 0, visible: false })
+const ghostMarker = reactive({ left: 0, width: 0, visible: false })
+
+const activeMarkerStyle = computed(() => ({
+  left: `${activeMarker.left}px`,
+  width: `${activeMarker.width}px`,
+}))
+
+const ghostMarkerStyle = computed(() => ({
+  left: `${ghostMarker.left}px`,
+  width: `${ghostMarker.width}px`,
+}))
+
+function getMarkerPosition(href: string) {
+  const linkEl = linkRefs.get(href)
+  const navEl = navRef.value
+  if (!linkEl || !navEl) return null
+
+  const navRect = navEl.getBoundingClientRect()
+  const linkRect = linkEl.getBoundingClientRect()
+
+  return {
+    left: linkRect.left - navRect.left,
+    width: linkRect.width,
+  }
+}
+
+function updateActiveMarker() {
+  const pos = getMarkerPosition(route.path)
+  if (pos) {
+    activeMarker.left = pos.left
+    activeMarker.width = pos.width
+    activeMarker.visible = true
+  } else {
+    activeMarker.visible = false
+  }
+}
+
+function onLinkMouseEnter(href: string) {
+  const pos = getMarkerPosition(href)
+  if (pos) {
+    ghostMarker.left = pos.left
+    ghostMarker.width = pos.width
+    ghostMarker.visible = true
+  }
+}
+
+function onNavMouseLeave() {
+  ghostMarker.visible = false
+}
+
+// --- Mobile Liquid Underline System ---
+const mobileNavRef = ref<HTMLElement | null>(null)
+const mobileLinkRefs = new Map<string, HTMLElement>()
+
+function setMobileLinkRef(href: string, el: any) {
+  if (el?.$el) {
+    mobileLinkRefs.set(href, el.$el as HTMLElement)
+  } else if (el instanceof HTMLElement) {
+    mobileLinkRefs.set(href, el)
+  }
+}
+
+const mobileActiveMarker = reactive({ top: 0, height: 0, visible: false })
+const mobileGhostMarker = reactive({ top: 0, height: 0, visible: false })
+
+const mobileActiveMarkerStyle = computed(() => ({
+  top: `${mobileActiveMarker.top}px`,
+  height: `${mobileActiveMarker.height}px`,
+}))
+
+const mobileGhostMarkerStyle = computed(() => ({
+  top: `${mobileGhostMarker.top}px`,
+  height: `${mobileGhostMarker.height}px`,
+}))
+
+function getMobileMarkerPosition(href: string) {
+  const linkEl = mobileLinkRefs.get(href)
+  const navEl = mobileNavRef.value
+  if (!linkEl || !navEl) return null
+
+  const navRect = navEl.getBoundingClientRect()
+  const linkRect = linkEl.getBoundingClientRect()
+
+  return {
+    top: linkRect.top - navRect.top,
+    height: linkRect.height,
+  }
+}
+
+function updateMobileActiveMarker() {
+  const pos = getMobileMarkerPosition(route.path)
+  if (pos) {
+    mobileActiveMarker.top = pos.top
+    mobileActiveMarker.height = pos.height
+    mobileActiveMarker.visible = true
+  } else {
+    mobileActiveMarker.visible = false
+  }
+}
+
+function onMobileLinkMouseEnter(href: string) {
+  const pos = getMobileMarkerPosition(href)
+  if (pos) {
+    mobileGhostMarker.top = pos.top
+    mobileGhostMarker.height = pos.height
+    mobileGhostMarker.visible = true
+  }
+}
+
+function onMobileNavMouseLeave() {
+  mobileGhostMarker.visible = false
+}
+
+function updateAllMarkers() {
+  updateActiveMarker()
+  updateMobileActiveMarker()
+}
+
+// --- Lifecycle ---
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true })
   handleScroll()
+
+  nextTick(() => {
+    updateAllMarkers()
+  })
+
+  window.addEventListener('resize', updateAllMarkers, { passive: true })
+  document.addEventListener('click', handleClickOutside, true)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', updateAllMarkers)
+  document.removeEventListener('click', handleClickOutside, true)
   document.body.style.overflow = ''
 })
 
 const route = useRoute()
-watch(() => route.path, closeMenu)
+
+watch(() => route.path, () => {
+  closeMenu()
+  nextTick(() => {
+    updateAllMarkers()
+  })
+})
 </script>
 
 <style scoped>
@@ -186,20 +382,39 @@ watch(() => route.path, closeMenu)
   left: 0;
   right: 0;
   z-index: var(--z-sticky);
+  transition:
+    background var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base),
+    top var(--transition-base),
+    margin var(--transition-base),
+    border-radius var(--transition-base);
+}
+
+/* Default state: full width, transparent bg */
+.navbar:not(.navbar--scrolled) {
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px) saturate(1.8);
   -webkit-backdrop-filter: blur(20px) saturate(1.8);
   border-bottom: 1px solid rgba(21, 101, 192, 0.07);
-  transition:
-    background var(--transition-base),
-    box-shadow var(--transition-base),
-    border-color var(--transition-base);
 }
 
+/* Scrolled state: floating */
 .navbar--scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 2px 16px rgba(13, 43, 107, 0.08), 0 1px 4px rgba(13, 43, 107, 0.05);
-  border-bottom-color: rgba(21, 101, 192, 0.1);
+  top: 12px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: 1280px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(24px) saturate(1.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow:
+    0 4px 24px rgba(13, 43, 107, 0.1),
+    0 1px 4px rgba(13, 43, 107, 0.06);
+  border: 1px solid rgba(21, 101, 192, 0.1);
 }
 
 .navbar--open {
@@ -246,9 +461,10 @@ watch(() => route.path, closeMenu)
 .navbar__logo:hover .navbar__logo-img { opacity: 0.82; }
 
 /* ===========================
-   DESKTOP NAV
+   DESKTOP NAV — Liquid Underline
    =========================== */
 .navbar__nav {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -266,28 +482,54 @@ watch(() => route.path, closeMenu)
   font-weight: 500;
   color: var(--color-text-light);
   white-space: nowrap;
-  transition: color var(--transition-fast), background var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 .navbar__link:hover {
   color: var(--color-primary);
-  background: rgba(21, 101, 192, 0.06);
 }
 
 .navbar__link--active {
-  background: var(--color-accent);
-  color: #fff !important;
+  color: var(--color-accent-dark) !important;
   font-weight: 600;
-  box-shadow: 0 2px 10px rgba(67, 160, 71, 0.28);
 }
 
-.navbar__link--active:hover {
-  background: var(--color-accent-dark);
-  color: #fff;
+/* --- Underline Markers --- */
+.navbar__marker {
+  position: absolute;
+  bottom: -4px;
+  height: 2.5px;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+  transition:
+    left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+  opacity: 0;
+}
+
+.navbar__marker--visible {
+  opacity: 1;
+}
+
+.navbar__marker--active {
+  background: var(--color-accent);
+  box-shadow: 0 1px 6px rgba(67, 160, 71, 0.35);
+  z-index: 2;
+}
+
+.navbar__marker--ghost {
+  background: var(--color-primary);
+  opacity: 0;
+  z-index: 1;
+}
+
+.navbar__marker--ghost.navbar__marker--visible {
+  opacity: 0.25;
 }
 
 /* ===========================
-   CTA
+   CTA — Light Sweep Effect
    =========================== */
 .navbar__cta {
   justify-self: end;
@@ -295,11 +537,32 @@ watch(() => route.path, closeMenu)
 }
 
 .navbar__cta-btn {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-2) var(--space-5);
   font-size: 0.875rem;
   min-height: 40px;
   animation: none;
   box-shadow: 0 2px 10px rgba(67, 160, 71, 0.2);
+}
+
+.navbar__cta-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.35) 60%,
+    transparent 100%
+  );
+  animation: badge-light-sweep 4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .navbar__cta-btn:hover {
@@ -357,169 +620,195 @@ watch(() => route.path, closeMenu)
 }
 
 /* ===========================
-   MOBILE DRAWER — full-screen, clean
+   MOBILE EXPAND MENU
+   Uses grid-template-rows: 0fr → 1fr
+   for liquid height animation
    =========================== */
-.navbar__drawer {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100dvh;
-  background: var(--color-white);
-  z-index: var(--z-modal);
+.navbar__expand {
+  display: none;
+}
+
+.navbar__expand-inner {
+  overflow: hidden;
+}
+
+.navbar__expand-nav {
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* no scroll */
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
 }
 
-/* Header strip */
-.navbar__drawer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--space-5);
-  height: 68px;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #091E45 0%, #0D2B6B 60%, #1565C0 100%);
-}
-
-.navbar__drawer-logo {
-  display: block;
-  width: min(170px, 62vw);
-  max-height: 38px;
-  height: auto;
-  object-fit: contain;
-  object-position: left center;
-}
-
-.navbar__drawer-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.85);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.navbar__drawer-close:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #fff;
-}
-
-/* Nav section — fills remaining space, vertically centered */
-.navbar__drawer-nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: var(--space-4) var(--space-6);
-  gap: 4px;
-}
-
-/* Clean text-only links */
-.navbar__drawer-link {
+.navbar__expand-link {
   display: block;
   padding: 12px var(--space-4);
   border-radius: var(--radius-sm);
-  border-left: 3px solid transparent;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-text);
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
   transition:
     color var(--transition-fast),
     background var(--transition-fast),
-    border-color var(--transition-fast),
-    opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.navbar__drawer-link--visible {
+.navbar__expand-link--visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.navbar__drawer-link:hover {
+.navbar__expand-link:hover {
   color: var(--color-primary);
-  background: rgba(21, 101, 192, 0.05);
-  border-left-color: rgba(21, 101, 192, 0.25);
 }
 
-/* Active state: green left border */
-.navbar__drawer-link--active {
+.navbar__expand-link--active {
   color: var(--color-accent-dark);
   font-weight: 700;
-  background: rgba(67, 160, 71, 0.07);
-  border-left-color: var(--color-accent);
 }
 
-.navbar__drawer-link--active:hover {
-  background: rgba(67, 160, 71, 0.1);
+/* --- Mobile Underline Markers --- */
+.navbar__expand-marker {
+  position: absolute;
+  left: var(--space-4);
+  width: 3px;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+  transition:
+    top 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+  opacity: 0;
 }
 
-/* CTA strip at bottom */
-.navbar__drawer-cta-wrap {
-  padding: var(--space-4) var(--space-6) calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid rgba(21, 101, 192, 0.08);
-  flex-shrink: 0;
+.navbar__expand-marker--visible {
+  opacity: 1;
+}
+
+.navbar__expand-marker--active {
+  background: var(--color-accent);
+  box-shadow: 0 1px 6px rgba(67, 160, 71, 0.35);
+  z-index: 2;
+}
+
+.navbar__expand-marker--ghost {
+  background: var(--color-primary);
+  opacity: 0;
+  z-index: 1;
+}
+
+.navbar__expand-marker--ghost.navbar__expand-marker--visible {
+  opacity: 0.25;
+}
+
+/* CTA inside expand */
+.navbar__expand-cta {
+  padding: var(--space-2) var(--space-4) var(--space-4);
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.navbar__drawer-cta-wrap--visible {
+.navbar__expand-cta--visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.navbar__drawer-cta {
+.navbar__expand-cta-btn {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   justify-content: center;
-  font-size: 0.95rem;
-  min-height: 48px;
+  font-size: 0.9rem;
+  min-height: 44px;
   animation: none;
 }
 
-.navbar__drawer-powered {
-  text-align: center;
-  font-size: 0.72rem;
-  color: var(--color-text-light);
-  opacity: 0.45;
-  margin-top: var(--space-3);
+.navbar__expand-cta-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 40%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.35) 60%,
+    transparent 100%
+  );
+  animation: badge-light-sweep 4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* ===========================
-   TRANSITIONS
+   BACKDROP OVERLAY
    =========================== */
-.mobile-drawer-enter-active {
-  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+.navbar__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 43, 107, 0.18);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: calc(var(--z-sticky) - 1);
 }
 
-.mobile-drawer-leave-active {
-  transition: transform 0.26s cubic-bezier(0.7, 0, 0.84, 0);
+.backdrop-fade-enter-active {
+  transition: opacity 0.3s ease;
 }
 
-.mobile-drawer-enter-from,
-.mobile-drawer-leave-to {
-  transform: translateX(100%);
+.backdrop-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.backdrop-fade-enter-from,
+.backdrop-fade-leave-to {
+  opacity: 0;
 }
 
 /* ===========================
    RESPONSIVE
    =========================== */
 @media (max-width: 900px) {
+  /* Keep floating on mobile — just adjust spacing */
+  .navbar:not(.navbar--scrolled) {
+    top: 8px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid rgba(21, 101, 192, 0.1);
+    border-bottom: 1px solid rgba(21, 101, 192, 0.1);
+    box-shadow:
+      0 4px 24px rgba(13, 43, 107, 0.08),
+      0 1px 4px rgba(13, 43, 107, 0.04);
+  }
+
+  .navbar--scrolled {
+    top: 8px;
+    width: calc(100% - 32px);
+    max-width: none;
+  }
+
   .navbar__inner {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr;
+    height: 56px;
+  }
+
+  .navbar--scrolled .navbar__inner {
+    height: 56px;
   }
 
   .navbar__logo { justify-self: start; }
@@ -530,19 +819,84 @@ watch(() => route.path, closeMenu)
     display: flex;
     justify-self: end;
   }
+
+  /* Expand menu — visible on mobile */
+  .navbar__expand {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-top: 0px solid rgba(21, 101, 192, 0);
+  }
+
+  .navbar__expand--open {
+    grid-template-rows: 1fr;
+    border-top: 1px solid rgba(21, 101, 192, 0.08);
+  }
+
+  /* Logo */
+  .navbar__logo-img {
+    max-height: 36px;
+    width: min(180px, 100%);
+  }
+
+  .navbar--scrolled .navbar__logo-img {
+    max-height: 34px;
+  }
 }
 
 @media (max-width: 480px) {
-  .navbar__inner { height: 64px; }
-  .navbar--scrolled .navbar__inner { height: 60px; }
-  .navbar__logo-img {
-    max-height: 38px;
-    width: min(190px, 100%);
+  .navbar:not(.navbar--scrolled),
+  .navbar--scrolled {
+    width: calc(100% - 24px);
   }
-  .navbar--scrolled .navbar__logo-img { max-height: 34px; }
-  .navbar__drawer-logo {
-    max-height: 34px;
-    width: min(150px, 58vw);
+
+  .navbar__inner {
+    height: 52px;
+  }
+
+  .navbar--scrolled .navbar__inner {
+    height: 52px;
+  }
+
+  .navbar__logo-img {
+    max-height: 32px;
+    width: min(160px, 100%);
+  }
+
+  .navbar--scrolled .navbar__logo-img {
+    max-height: 30px;
+  }
+
+  .navbar__expand-link {
+    font-size: 0.95rem;
+    padding: 10px var(--space-3);
+  }
+
+  .navbar__expand-cta-btn {
+    min-height: 42px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ===========================
+   REDUCED MOTION
+   =========================== */
+@media (prefers-reduced-motion: reduce) {
+  .navbar__marker {
+    transition: none;
+  }
+
+  .navbar__cta-btn::after {
+    animation: none;
+  }
+
+  .navbar__expand {
+    transition: none;
+  }
+
+  .navbar__expand-link,
+  .navbar__expand-cta {
+    transition: none;
   }
 }
 </style>
