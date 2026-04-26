@@ -757,6 +757,20 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
           </p>
         </div>
 
+        <div class="partners-map-wrapper reveal reveal-delay-1">
+          <iframe 
+            src="https://maps.google.com/maps?q=cleanique%20mart&ll=-7.4372609,108.6662234&z=8&ie=UTF8&iwloc=&output=embed" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            class="partners-map-iframe"
+            title="Peta Lokasi Mitra Cleanique Mart"
+          ></iframe>
+        </div>
+
         <div class="partners-grid">
           <NuxtLink
             v-for="(partner, index) in partnerList"
@@ -1778,5 +1792,31 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
 @keyframes fadeSlide {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Partners Map --- */
+.partners-map-wrapper {
+  width: 100%;
+  height: 480px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(21, 101, 192, 0.1);
+  margin-bottom: var(--space-12);
+  border: 1px solid rgba(21, 101, 192, 0.1);
+  background: var(--color-surface);
+}
+
+.partners-map-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+@media (max-width: 768px) {
+  .partners-map-wrapper {
+    height: 350px;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-8);
+  }
 }
 </style>

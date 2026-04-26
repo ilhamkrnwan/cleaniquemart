@@ -1165,5 +1165,111 @@ useScrollReveal('.reveal', 0.08)
   .visual-img {
     aspect-ratio: auto;
   }
+
+  /* --- Mobile Background Overlay for Opportunity Split --- */
+  .opportunity-split {
+    position: relative;
+    border-radius: var(--radius-xl, 1.5rem);
+    overflow: hidden;
+    padding: var(--space-8, 2rem) var(--space-5, 1.25rem);
+    min-height: 580px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-6, 1.5rem);
+    /* Adds shadow to make the card pop */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .opportunity-split--reverse {
+    flex-direction: column;
+  }
+
+  .opportunity-split__visual {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    z-index: 1;
+    display: block;
+  }
+
+  .opportunity-split__visual .visual-blob {
+    display: none;
+  }
+
+  .opportunity-split__visual .visual-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none !important; /* Disable hover transform on mobile */
+  }
+
+  .opportunity-split::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10, 15, 30, 0.95) 0%, rgba(10, 15, 30, 0.8) 40%, rgba(10, 15, 30, 0.1) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .opportunity-split__content {
+    position: relative;
+    z-index: 3;
+    text-align: left;
+  }
+
+  .opportunity-split__content .section-badge {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--color-white, #fff);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+  }
+
+  .opportunity-split__content .split-title {
+    color: var(--color-white, #fff);
+  }
+
+  .opportunity-split__content .split-subtitle {
+    /* Brighter gradient for dark background */
+    background: linear-gradient(135deg, #60A5FA, #34D399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .opportunity-split__content .split-desc {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .opportunity-split__content .feature-list li {
+    color: var(--color-white, #fff);
+  }
+
+  .opportunity-split__content .feature-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: #34D399; /* Bright green check */
+  }
+
+  .opportunity-split__content .target-card,
+  .opportunity-split__content .benefit-item {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--color-white, #fff);
+  }
+
+  .opportunity-split__content .target-text {
+    color: var(--color-white, #fff);
+  }
+
+  .opportunity-split__content .target-icon,
+  .opportunity-split__content .benefit-icon {
+    background: rgba(255, 255, 255, 0.15);
+    color: #60A5FA; /* Bright blue icon */
+  }
 }
 </style>
