@@ -3,8 +3,9 @@
     <!-- Subtle dot pattern -->
     <div class="hero__dots" aria-hidden="true"></div>
 
-    <!-- Gradient Mesh Background -->
+    <!-- Gradient Mesh Background & Top Glow -->
     <div class="hero__bg-mesh" aria-hidden="true"></div>
+    <div class="hero__bg-glow" aria-hidden="true"></div>
 
     <!-- Animated Bubbles — reduced to 6 -->
     <div class="hero__bubbles" aria-hidden="true">
@@ -65,53 +66,63 @@
           </div>
         </div>
 
-        <!-- Right: Image Visual (Fixed Shape) -->
+        <!-- Right: Image Visual (Person & Floating Badges) -->
         <div class="hero__visual reveal reveal-delay-2">
-          <!-- Decorative spinning rings -->
-          <div class="hero__ring hero__ring--outer" aria-hidden="true"></div>
-          <div class="hero__ring hero__ring--inner" aria-hidden="true"></div>
+          <!-- Decorative Rings -->
+          <div class="hero__ring hero__ring--1" aria-hidden="true"></div>
+          <div class="hero__ring hero__ring--2" aria-hidden="true"></div>
+          <div class="hero__ring hero__ring--3" aria-hidden="true"></div>
 
-          <!-- Orbiting color accent dots -->
-          <div class="hero__orbit hero__orbit--1" aria-hidden="true">
-            <span class="hero__orbit-dot hero__orbit-dot--green"></span>
-          </div>
-          <div class="hero__orbit hero__orbit--2" aria-hidden="true">
-            <span class="hero__orbit-dot hero__orbit-dot--teal"></span>
-          </div>
-          <div class="hero__orbit hero__orbit--3" aria-hidden="true">
-            <span class="hero__orbit-dot hero__orbit-dot--sky"></span>
-          </div>
+          <!-- Main Person Image -->
+          <div class="hero__person-wrap">
+            <div class="hero__person-glow" aria-hidden="true"></div>
+            
+            <!-- Background Clouds (Left & Right) -->
+            <NuxtImg src="/cloud.webp" alt="" class="hero__cloud hero__cloud--bg-left" aria-hidden="true" width="300" loading="eager" />
+            <NuxtImg src="/cloud.webp" alt="" class="hero__cloud hero__cloud--bg-right" aria-hidden="true" width="300" loading="eager" />
 
-          <!-- Main image card — fixed shape, no morphing -->
-          <div class="hero__img-card" data-mask-style="soft">
-            <!-- Animated gradient border layer (color drifts, shape stays fixed) -->
-            <div class="hero__img-border" aria-hidden="true"></div>
+            <NuxtImg
+              src="/hero.webp"
+              alt="Mitra CleaniqueMart"
+              width="500"
+              height="650"
+              class="hero__person-img"
+              loading="eager"
+              sizes="(max-width: 768px) 100vw, 500px"
+            />
 
-            <!-- Image wrapper (fixed shape) -->
-            <div class="hero__img-wrap">
-              <NuxtImg
-                src="/photo-collage.webp"
-                alt="Koleksi produk CleaniqueMart — sabun curah premium berkualitas"
-                width="480"
-                height="480"
-                class="hero__img"
-                loading="eager"
-                sizes="(max-width: 768px) 100vw, 480px"
-              />
-              <!-- Inner brand gradient overlay -->
-              <div class="hero__img-overlay" aria-hidden="true"></div>
-            </div>
+            <!-- Foreground Clouds (Left & Right) -->
+            <NuxtImg src="/cloud.webp" alt="" class="hero__cloud hero__cloud--fg-left" aria-hidden="true" width="350" loading="eager" />
+            <NuxtImg src="/cloud.webp" alt="" class="hero__cloud hero__cloud--fg-right" aria-hidden="true" width="350" loading="eager" />
 
             <!-- Floating Badges -->
-            <div class="hero__float-badge hero__float-badge--top">
-              <span class="hero__float-dot"></span>
-              Halal MUI Certified
+            <div class="hero__pill hero__pill--1">
+              <div class="hero__pill-icon hero__pill-icon--green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s-8-4.5-8-11.8A6 6 0 0 1 12 2a6 6 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+                </svg>
+              </div>
+              <span>Produk Halal & Aman</span>
             </div>
-            <div class="hero__float-badge hero__float-badge--bottom">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hero__float-trophy" aria-hidden="true">
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-              </svg>
-              #1 Sabun Curah Pilihan Mitra
+
+            <div class="hero__pill hero__pill--2">
+              <div class="hero__pill-icon hero__pill-icon--teal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="7"/>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                </svg>
+              </div>
+              <span>Kualitas Premium</span>
+            </div>
+
+            <div class="hero__pill hero__pill--3">
+              <div class="hero__pill-icon hero__pill-icon--sky">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                  <polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </div>
+              <span>Modal Terjangkau</span>
             </div>
           </div>
         </div>
@@ -170,7 +181,10 @@ useScrollReveal()
 .hero__bubble {
   position: absolute;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   animation: bubble-rise linear infinite;
 }
 
@@ -181,7 +195,7 @@ useScrollReveal()
 .hero__bubble--5 { width: 20px; height: 20px; left: 80%; animation-duration: 13s; animation-delay: 0.5s; }
 .hero__bubble--6 { width: 28px; height: 28px; left: 92%; animation-duration: 9s;  animation-delay: 4s; }
 
-/* === Background mesh === */
+/* === Background mesh & Decorative Glow === */
 .hero__bg-mesh {
   position: absolute;
   inset: 0;
@@ -189,6 +203,13 @@ useScrollReveal()
     radial-gradient(ellipse at 75% 15%, rgba(67, 160, 71, 0.12) 0%, transparent 50%),
     radial-gradient(ellipse at 15% 75%, rgba(66, 165, 245, 0.1) 0%, transparent 50%),
     radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero__bg-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -330,7 +351,7 @@ useScrollReveal()
 }
 
 /* ============================================================
-   IMAGE VISUAL — Fixed shape, animated gradient border
+   IMAGE VISUAL — Person & Floating Badges
    ============================================================ */
 .hero__visual {
   position: relative;
@@ -339,224 +360,181 @@ useScrollReveal()
   justify-content: center;
 }
 
-/* Decorative spinning rings (outline only, no fill) */
+/* Decorative Rings */
 .hero__ring {
   position: absolute;
   border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   pointer-events: none;
-}
-
-.hero__ring--outer {
-  width: 500px;
-  height: 500px;
-  animation: spin-slow 40s linear infinite;
-  border-color: rgba(255, 255, 255, 0.07);
-}
-
-.hero__ring--inner {
-  width: 420px;
-  height: 420px;
-  animation: spin-slow 28s linear infinite reverse;
-  border-color: rgba(67, 160, 71, 0.1);
-}
-
-/* Orbiting accent dots — rotate only (transform: translate) */
-.hero__orbit {
-  position: absolute;
-  border-radius: 50%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.hero__orbit--1 {
-  width: 460px;
-  height: 460px;
-  animation: spin-slow 14s linear infinite;
-}
-
-.hero__orbit--2 {
-  width: 380px;
-  height: 380px;
-  animation: spin-slow 20s linear infinite reverse;
-}
-
-.hero__orbit--3 {
-  width: 520px;
-  height: 520px;
-  animation: spin-slow 32s linear infinite;
-  transform-origin: center;
-}
-
-.hero__orbit-dot {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-top: 0;
-  flex-shrink: 0;
-}
-
-.hero__orbit-dot--green {
-  background: #69F0AE;
-  box-shadow: 0 0 14px 4px rgba(105, 240, 174, 0.55);
-}
-
-.hero__orbit-dot--teal {
-  background: #4DD0E1;
-  box-shadow: 0 0 14px 4px rgba(77, 208, 225, 0.55);
-}
-
-.hero__orbit-dot--sky {
-  background: #90CAF9;
-  box-shadow: 0 0 14px 4px rgba(144, 202, 249, 0.5);
-}
-
-/* Main image card — FIXED shape, gentle float only */
-.hero__img-card {
-  position: relative;
-  width: 400px;
-  height: 400px;
-  animation: float-gentle 8s ease-in-out infinite;
-  --hero-photo-mask: var(--hero-photo-mask-soft);
-  --hero-photo-mask-smooth: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='72%2058%20282%20292'%20preserveAspectRatio='none'%20shape-rendering='geometricPrecision'%3E%3Cpath%20fill='black'%20d='M150.5%2064.9C188.4%2060.4%20261.2%2060.6%20296.0%2084.4C330.8%20108.2%20352.0%20157.6%20349.0%20199.8C346.0%20242.0%20309.6%20300.8%20278.8%20324.2C248.0%20347.6%20199.8%20344.8%20173.0%20332.2C146.2%20319.6%20129.8%20281.8%20127.4%20253.0C125.0%20224.2%20162.2%20188.0%20155.8%20169.4C149.4%20150.8%20104.2%20159.2%2090.6%20147.6C77.0%20136.0%2073.2%20117.8%2083.8%20102.2C94.4%2086.6%20112.6%2069.4%20150.5%2064.9Z'/%3E%3C/svg%3E");
-  --hero-photo-mask-soft: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='72%2058%20282%20292'%20preserveAspectRatio='none'%20shape-rendering='geometricPrecision'%3E%3Cpath%20fill='black'%20d='M150.5%2064.9C188.8%2060.7%20261.0%2061.6%20295.4%2085.6C329.8%20109.6%20350.0%20157.8%20346.8%20198.8C343.6%20239.8%20307.8%20297.8%20277.8%20321.6C247.8%20345.4%20201.4%20343.8%20175.2%20331.0C149.0%20318.2%20132.4%20282.8%20129.8%20255.2C127.2%20227.6%20162.2%20191.6%20157.2%20173.4C152.2%20155.2%20111.8%20160.8%2098.6%20151.6C85.4%20142.4%2080.6%20123.8%2089.6%20108.2C98.6%2092.6%20112.2%2069.6%20150.5%2064.9Z'/%3E%3C/svg%3E");
-  --hero-photo-mask-sharp: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='72%2058%20282%20292'%20preserveAspectRatio='none'%20shape-rendering='geometricPrecision'%3E%3Cpath%20fill='black'%20d='M150.5%2064.9C187.6%2060.2%20262.0%2059.6%20297.6%2082.8C333.2%20106.0%20355.2%20157.4%20352.0%20200.8C348.8%20244.2%20311.2%20304.4%20279.8%20327.6C248.4%20350.8%20198.6%20346.0%20171.6%20333.2C144.6%20320.4%20127.4%20281.0%20124.8%20251.8C122.2%20222.6%20163.8%20184.6%20157.0%20166.6C150.2%20148.6%20101.0%20164.6%2087.8%20153.6C74.6%20142.6%2070.8%20121.4%2081.8%20104.8C92.8%2088.2%20113.4%2069.0%20150.5%2064.9Z'/%3E%3C/svg%3E");
-}
-
-.hero__img-card[data-mask-style='smooth'] {
-  --hero-photo-mask: var(--hero-photo-mask-smooth);
-}
-
-.hero__img-card[data-mask-style='soft'] {
-  --hero-photo-mask: var(--hero-photo-mask-soft);
-}
-
-.hero__img-card[data-mask-style='sharp'] {
-  --hero-photo-mask: var(--hero-photo-mask-sharp);
-}
-
-/* 
-  Gradient border layer:
-  - Fixed border-radius (shape never changes)
-  - background-position animates to create color drift effect
-  - Uses transform/opacity-safe properties: background-size + background-position
-*/
-.hero__img-border {
-  position: absolute;
-  inset: -5px;
-  border-radius: 55% 45% 48% 52% / 52% 48% 55% 45%;
-  background: linear-gradient(
-    135deg,
-    #43A047 0%,
-    #26C6DA 25%,
-    #1E88E5 50%,
-    #0D47A1 75%,
-    #43A047 100%
-  );
-  background-size: 300% 300%;
-  animation: gradient-drift 6s ease-in-out infinite;
-  -webkit-mask-image: var(--hero-photo-mask);
-  mask-image: var(--hero-photo-mask);
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
   z-index: 0;
 }
 
-@keyframes gradient-drift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.hero__ring--1 {
+  width: 380px;
+  height: 380px;
+  animation: spin-slow 40s linear infinite;
 }
 
-/* Image wrapper — SAME fixed border-radius as border layer */
-.hero__img-wrap {
+.hero__ring--2 {
+  width: 520px;
+  height: 520px;
+  animation: spin-slow 30s linear infinite reverse;
+}
+
+.hero__ring--3 {
+  width: 660px;
+  height: 660px;
+  border: 1px solid rgba(255, 255, 255, 0.08); /* solid outer */
+  animation: spin-slow 50s linear infinite;
+}
+
+/* Person Wrapper */
+.hero__person-wrap {
   position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 55% 45% 48% 52% / 52% 48% 55% 45%;
-  -webkit-mask-image: var(--hero-photo-mask);
-  mask-image: var(--hero-photo-mask);
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.hero__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Inner brand gradient overlay on the image */
-.hero__img-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(67, 160, 71, 0.14) 0%,
-    rgba(38, 198, 218, 0.04) 35%,
-    transparent 55%,
-    rgba(21, 101, 192, 0.1) 100%
-  );
-  pointer-events: none;
   z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
 }
 
-/* Floating Badges */
-.hero__float-badge {
+.hero__person-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(144, 202, 249, 0.15) 50%, transparent 70%);
+  filter: blur(24px);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__person-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.2));
+}
+
+/* Clouds */
+.hero__cloud {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.hero__cloud--bg-left {
+  width: 260px;
+  height: auto;
+  bottom: -100px;
+  left: -10%;
+  z-index: 0;
+  transform: scaleX(-1);
+  animation: float-gentle 8s ease-in-out infinite;
+}
+
+.hero__cloud--bg-right {
+  width: 260px;
+  height: auto;
+  bottom: -100px;
+  right: -10%;
+  z-index: 0;
+  animation: float-gentle 9s ease-in-out infinite reverse;
+}
+
+.hero__cloud--fg-left {
+  width: 320px;
+  height: auto;
+  bottom: -130px;
+  left: 0;
+  z-index: 2;
+  animation: float-gentle 10s ease-in-out infinite;
+}
+
+.hero__cloud--fg-right {
+  width: 320px;
+  height: auto;
+  bottom: -130px;
+  right: 0;
+  z-index: 2;
+  transform: scaleX(-1);
+  animation: float-gentle 11s ease-in-out infinite reverse;
+}
+
+/* Floating Badges (Pills) */
+.hero__pill {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 8px var(--space-3);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: var(--radius-md);
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--color-primary-dark);
-  box-shadow: 0 4px 20px rgba(13, 43, 107, 0.15);
-  white-space: nowrap;
+  gap: 12px;
+  padding: 8px 20px 8px 8px;
+  background: var(--color-white, #ffffff);
+  border-radius: 50px;
+  box-shadow: 0 12px 30px rgba(9, 30, 69, 0.2);
   z-index: 3;
+  white-space: nowrap;
 }
 
-.hero__float-badge--top {
-  top: var(--space-4);
-  left: -20px;
-  animation: float-gentle 5s ease-in-out infinite;
+.hero__pill span {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1E293B;
+  font-family: var(--font-sans, sans-serif);
 }
 
-.hero__float-badge--bottom {
-  bottom: var(--space-6);
-  right: -20px;
-  animation: float-gentle 6s ease-in-out infinite;
-  animation-delay: 1.5s;
-}
-
-.hero__float-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--color-accent);
+.hero__pill-icon {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
   flex-shrink: 0;
 }
 
-.hero__float-trophy {
-  color: #F59E0B;
-  flex-shrink: 0;
+.hero__pill-icon--green {
+  background: #10B981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.hero__pill-icon--teal {
+  background: #06B6D4;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+}
+
+.hero__pill-icon--sky {
+  background: #3B82F6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.hero__pill--1 {
+  top: 15%;
+  right: -5%;
+  animation: float-gentle 6s ease-in-out infinite;
+}
+
+.hero__pill--2 {
+  top: 45%;
+  right: -15%;
+  animation: float-gentle 5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.hero__pill--3 {
+  bottom: 25%;
+  right: -5%;
+  animation: float-gentle 7s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 /* ============================================================
@@ -611,36 +589,26 @@ useScrollReveal()
 
   .hero__visual {
     order: -1;
+    margin-top: var(--space-4);
   }
 
-  .hero__img-card {
-    width: 300px;
-    height: 300px;
+  .hero__person-wrap {
+    max-width: 320px;
   }
 
-  .hero__ring--outer {
-    width: 380px;
-    height: 380px;
-  }
+  .hero__ring--1 { width: 300px; height: 300px; }
+  .hero__ring--2 { width: 420px; height: 420px; }
+  .hero__ring--3 { width: 540px; height: 540px; }
 
-  .hero__ring--inner {
-    width: 320px;
-    height: 320px;
-  }
+  .hero__cloud--bg-left { width: 200px; left: -20%; bottom: -80px; }
+  .hero__cloud--bg-right { width: 200px; right: -20%; bottom: -80px; }
+  .hero__cloud--fg-left { width: 240px; left: -10%; bottom: -100px; }
+  .hero__cloud--fg-right { width: 240px; right: -10%; bottom: -100px; }
 
-  .hero__orbit--1 { width: 360px; height: 360px; }
-  .hero__orbit--2 { width: 290px; height: 290px; }
-  .hero__orbit--3 { width: 410px; height: 410px; }
-
-  .hero__float-badge--top {
-    left: -10px;
-    font-size: 0.72rem;
-  }
-
-  .hero__float-badge--bottom {
-    right: -10px;
-    font-size: 0.72rem;
-  }
+  /* Reposition to avoid face cover on tablet */
+  .hero__pill--1 { top: 5%; left: -5%; right: auto; }
+  .hero__pill--2 { top: 45%; right: -10%; left: auto; }
+  .hero__pill--3 { bottom: 10%; left: -5%; right: auto; }
 }
 
 @media (max-width: 600px) {
@@ -648,19 +616,14 @@ useScrollReveal()
     padding-top: var(--space-12);
   }
 
-  .hero__img-card {
-    width: 260px;
-    height: 260px;
+  .hero__person-wrap {
+    max-width: 240px;
+    margin-top: var(--space-4);
   }
 
-  .hero__ring--outer,
-  .hero__ring--inner {
-    display: none;
-  }
-
-  .hero__orbit--1 { width: 300px; height: 300px; }
-  .hero__orbit--2 { width: 240px; height: 240px; }
-  .hero__orbit--3 { display: none; }
+  .hero__ring--1 { width: 260px; height: 260px; }
+  .hero__ring--2 { width: 340px; height: 340px; }
+  .hero__ring--3 { display: none; }
 
   .hero__cta-group {
     flex-direction: column;
@@ -673,15 +636,29 @@ useScrollReveal()
     justify-content: center;
   }
 
-  .hero__float-badge--top {
-    left: -8px;
-    top: 0;
+  .hero__pill {
+    padding: 6px 14px 6px 6px;
+    gap: 8px;
   }
 
-  .hero__float-badge--bottom {
-    right: -8px;
-    bottom: var(--space-3);
+  .hero__pill span {
+    font-size: 0.75rem;
   }
+
+  .hero__pill-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .hero__cloud--bg-left { width: 140px; left: -15%; bottom: -50px; }
+  .hero__cloud--bg-right { width: 140px; right: -15%; bottom: -50px; }
+  .hero__cloud--fg-left { width: 180px; left: -5%; bottom: -65px; }
+  .hero__cloud--fg-right { width: 180px; right: -5%; bottom: -65px; }
+
+  /* Reposition alternating left/right so it doesn't cover face on mobile */
+  .hero__pill--1 { top: 0%; left: -10%; right: auto; }
+  .hero__pill--2 { top: 40%; right: -20%; left: auto; }
+  .hero__pill--3 { bottom: 5%; left: -5%; right: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
