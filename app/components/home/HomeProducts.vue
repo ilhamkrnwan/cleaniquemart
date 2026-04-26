@@ -474,6 +474,11 @@ useScrollReveal('.reveal', 0.08)
     scroll-snap-align: start;
   }
 
+  .product-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+
   .product-card:hover .product-card__img {
     transform: none;
   }

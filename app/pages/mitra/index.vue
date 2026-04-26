@@ -1646,6 +1646,17 @@ function handleTierBreakpointChange(event: MediaQueryListEvent) {
     box-shadow: var(--shadow-blue);
   }
 
+  .partners-carousel .partner-card:hover,
+  .partners-carousel .partner-card--mobile:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+
+  .partners-carousel .partner-card:hover .partner-card__image,
+  .partners-carousel .partner-card--mobile:hover .partner-card__image {
+    transform: none;
+  }
+
   .partners-grid { display: none; }
   .partners-carousel { display: block; }
 }

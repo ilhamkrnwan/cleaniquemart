@@ -605,7 +605,7 @@ useScrollReveal('.reveal', 0.08)
 
 .pain-card {
   padding: clamp(1.5rem, 3vw, 2.5rem);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(21, 101, 192, 0.1);
   display: flex;
   flex-direction: column;
@@ -951,7 +951,7 @@ useScrollReveal('.reveal', 0.08)
   height: auto;
   aspect-ratio: 4/3;
   object-fit: cover;
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-sm);
   box-shadow: 0 20px 50px rgba(21, 101, 192, 0.15);
   position: relative;
   z-index: 2;
@@ -1088,6 +1088,15 @@ useScrollReveal('.reveal', 0.08)
     flex: 0 0 min(86%, 520px);
     width: auto;
     scroll-snap-align: start;
+  }
+
+  .pain-card:hover {
+    transform: none;
+    box-shadow: 0 10px 30px rgba(21, 101, 192, 0.04);
+  }
+
+  .pain-card--dark:hover {
+    box-shadow: 0 10px 30px rgba(13, 22, 41, 0.3);
   }
 
   .target-card {

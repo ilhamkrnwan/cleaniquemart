@@ -9,10 +9,10 @@
       aria-label="Hubungi via WhatsApp"
     >
       <!-- WhatsApp icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="floating-sidebar__icon">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 4.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 11.9a16 16 0 0 0 6.06 6.06l1.27-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 19.24z"/>
       </svg>
-      <span class="floating-sidebar__tooltip">WhatsApp</span>
+      <span class="floating-sidebar__label">Telepon</span>
     </a>
 
     <a
@@ -21,10 +21,10 @@
       aria-label="Kirim email ke CleaniqueMart"
     >
       <!-- Email icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="floating-sidebar__icon">
         <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
       </svg>
-      <span class="floating-sidebar__tooltip">Email</span>
+      <span class="floating-sidebar__label">Email</span>
     </a>
   </div>
 
@@ -101,6 +101,7 @@ onBeforeUnmount(() => {
   z-index: var(--z-overlay);
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 2px;
 }
 
@@ -108,16 +109,18 @@ onBeforeUnmount(() => {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 11.5px;
   width: 42px;
   height: 42px;
   color: #fff;
   cursor: pointer;
   transition:
-    width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow var(--transition-base),
-    transform var(--transition-fast);
+    background-color var(--transition-base);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .floating-sidebar__btn--wa {
@@ -132,10 +135,30 @@ onBeforeUnmount(() => {
   box-shadow: -2px 2px 16px rgba(21, 101, 192, 0.3);
 }
 
+.floating-sidebar__icon {
+  flex-shrink: 0;
+}
+
+.floating-sidebar__label {
+  margin-left: 10px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .floating-sidebar__btn:hover {
-  width: 52px;
-  transform: translateX(-2px);
+  width: 108px;
   box-shadow: -4px 4px 24px rgba(0, 0, 0, 0.18);
+}
+
+.floating-sidebar__btn:hover .floating-sidebar__label {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.05s;
 }
 
 /* Tooltip */
@@ -169,11 +192,6 @@ onBeforeUnmount(() => {
   transform: translateY(-50%);
   border: 5px solid transparent;
   border-left-color: var(--color-primary-dark);
-}
-
-.floating-sidebar__btn:hover .floating-sidebar__tooltip {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
 }
 
 /* ===========================

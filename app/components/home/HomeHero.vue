@@ -215,6 +215,8 @@ useScrollReveal()
 }
 
 .hero__trust-tag {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -229,6 +231,23 @@ useScrollReveal()
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   letter-spacing: 0.01em;
+}
+
+.hero__trust-tag::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 10%,
+    rgba(255, 255, 255, 0.72) 50%,
+    transparent 90%
+  );
+  animation: badge-light-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .hero__trust-dot {
@@ -662,6 +681,12 @@ useScrollReveal()
   .hero__float-badge--bottom {
     right: -8px;
     bottom: var(--space-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__trust-tag::after {
+    animation: none;
   }
 }
 </style>

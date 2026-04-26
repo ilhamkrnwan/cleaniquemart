@@ -478,6 +478,14 @@ useScrollReveal('.reveal', 0.08)
     box-shadow: var(--shadow-sm);
   }
 
+  .testimonial-card:hover .testimonial-card__img {
+    transform: none;
+  }
+
+  .testimonial-card:hover .testimonial-card__overlay {
+    opacity: 0;
+  }
+
   .testimonials__map-banner {
     flex-direction: column;
     text-align: center;

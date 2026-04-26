@@ -128,6 +128,8 @@ useScrollReveal()
 }
 
 .cta-section__label {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -140,6 +142,23 @@ useScrollReveal()
   color: var(--color-accent-light);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.cta-section__label::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 38%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 10%,
+    rgba(255, 255, 255, 0.72) 50%,
+    transparent 90%
+  );
+  animation: badge-light-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .cta-section__headline {
@@ -226,6 +245,12 @@ useScrollReveal()
 
   .hide-mobile {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-section__label::after {
+    animation: none;
   }
 }
 </style>

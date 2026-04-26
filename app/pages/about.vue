@@ -426,7 +426,7 @@ useScrollReveal(0.08)
 
 .story-img-wrapper {
   position: relative;
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   aspect-ratio: 4 / 5;
   aspect-ratio: 4 / 5;
@@ -448,7 +448,7 @@ useScrollReveal(0.08)
   bottom: -var(--space-8);
   left: var(--space-8);
   border: 2px dashed rgba(67, 160, 71, 0.3);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-sm);
   z-index: 1;
 }
 
@@ -462,7 +462,7 @@ useScrollReveal(0.08)
   flex: 1;
   background: var(--color-surface);
   padding: var(--space-6);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(21, 101, 192, 0.05);
 }
 
@@ -598,7 +598,7 @@ useScrollReveal(0.08)
 .brand-gallery__card {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(21, 101, 192, 0.08);
   box-shadow: var(--shadow-sm);
   background: var(--color-white);
@@ -632,7 +632,7 @@ useScrollReveal(0.08)
 
 .brand-logo-panel {
   padding: var(--space-6);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(21, 101, 192, 0.08);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, #f8fbff 100%);
   box-shadow: var(--shadow-sm);
@@ -682,7 +682,7 @@ useScrollReveal(0.08)
 
 .proof-awards {
   overflow: hidden;
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(21, 101, 192, 0.08);
   background: linear-gradient(180deg, #ffffff 0%, #f6fbff 100%);
   box-shadow: var(--shadow-sm);
@@ -733,7 +733,7 @@ useScrollReveal(0.08)
 .proof-awards__img {
   width: 100%;
   display: block;
-  border-radius: calc(var(--radius-xl) + 2px);
+  border-radius: var(--radius-sm);
 }
 
 @media (max-width: 1100px) {

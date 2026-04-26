@@ -452,6 +452,12 @@ onUnmounted(() => {
     overflow: hidden;
     position: relative;
   }
+
+  .join__carousel .join__step-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+    border-color: rgba(21, 101, 192, 0.06);
+  }
 }
 
 @media (min-width: 901px) {
